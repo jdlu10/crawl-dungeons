@@ -1,0 +1,13 @@
+<h1>Campaigns#index</h1>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Key</th>
+  </tr>
+  <% @campaigns.each do |campaign| %>
+    <tr>
+      <td><%= campaign.name %></td>
+      <td><%= campaign.key %></td>
+    </tr>
+  <% end %>
+</table>
