@@ -8,8 +8,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  Rails.application.routes.draw do
-    root "campaigns#index"
-    get "/campaigns", to: "campaigns#index"
-  end
+  root "campaigns#index"
+  get "/campaigns", to: "campaigns#index"
+
 end
