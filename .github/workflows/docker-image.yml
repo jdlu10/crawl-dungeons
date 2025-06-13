@@ -27,6 +27,6 @@ jobs:
 
       - name: Build and push with commit hash tag
         run: |
-          docker compose build prod
+          docker compose build
           docker tag ci-cd-pipeline-prod lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
           docker push lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
