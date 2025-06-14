@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   database:
     image: postgres:14
@@ -16,6 +15,38 @@ services:
       - "5434:5432"
     environment:
       # Sets the superuser password for PostgreSQL
-      POSTGRES_PASSWORD: mehh
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+  crawl-dungeons:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: crawl-dungeons
+    ports:
+      # Map to something other than default 3000 on host in case Rails
+      # is also running natively on host.
+      # Format is "host:container"
+      - "3000:3000"
+    depends_on:
+      - database
+    command: "./bin/rails server -b 0.0.0.0"
+    environment:
+      # Database connection settings
+      RAILS_ENV: ${RAILS_ENV}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_DB: ${DATABASE_DB}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_PORT: ${DATABASE_PORT}
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+    volumes:
+      # Named volume to persist application data outside of container.
+      # Format is "named_volume:path/in/container"
+      - app-storage:/app/storage
+      # Host mount for local development.
+      # Format is "./path/on/host:/path/in/container"
+      - .:/app
+
 volumes:
-  db_pg_data:
+  db_pg_data: {}
+  app-storage: {}

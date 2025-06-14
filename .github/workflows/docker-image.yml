@@ -26,8 +26,7 @@ jobs:
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Build and push with commit hash tag
-        run: docker compose build
-      - name: Build and push with commit hash tag 2
-        run: docker tag seventhforge lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
-      - name: Build and push with commit hash tag 3
-        run: docker push lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
+        run: |
+          docker compose build
+          docker tag seventhforge lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
+          docker push lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}

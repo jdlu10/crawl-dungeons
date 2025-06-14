@@ -18,16 +18,17 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  database: <%= ENV['DATABASE_NAME'] || "crawl_dungeons" %>
+  database: <%= ENV['DATABASE_DB'] || "crawl_dungeons" %>
   username: <%= ENV['DATABASE_USER'] || "crawl_dungeons" %>
   password: <%= ENV['DATABASE_PASSWORD'] || "crawl_dungeons" %>
   port: <%= ENV['DATABASE_PORT'] || "5432" %>
-  host: <%= ENV['DATABASE_HOST'] || "127.0.0.1" %>
+  host: <%= ENV['DATABASE_HOST'] || "localhost" %>
 
 development:
   <<: *default
   database: crawl_dungeons_development
-  port: 5434
+  username: <%= ENV["DATABASE_USER"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -45,7 +46,7 @@ development:
 
   # The TCP port the server listens on. Defaults to 5432.
   # If your server runs on a different port number, change accordingly.
-  #port: 5432
+  # port: 5434
 
   # Schema search path. The server defaults to $user,public
   #schema_search_path: myapp,sharedapp,public
@@ -62,7 +63,9 @@ development:
 test:
   <<: *default
   database: crawl_dungeons_test
-  port: 5434
+  username: <%= ENV["DATABASE_USER"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  # port: 5434
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -86,6 +89,6 @@ test:
 #
 production:
   <<: *default
-  database: crawl_dungeons_production
-  username: crawl_dungeons
-  password: <%= ENV["CRAWL_DUNGEONS_DATABASE_PASSWORD"] %>
+  database: <%= ENV["DATABASE_DB"] %>
+  username: <%= ENV["DATABASE_USER"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
