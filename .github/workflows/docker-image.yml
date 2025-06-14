@@ -30,3 +30,39 @@ jobs:
           docker compose build
           docker tag crawl-dungeons lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
           docker push lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
+
+  deploy-prod-image:
+    needs: build-push-prod-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print sha_short value
+        run: echo "sha_short=${{ needs.build-push-prod-image.outputs.sha_short }}"
+
+      - name: Deploy to AWS-EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER_NAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Log in to Docker Hub using the access token
+            echo ${{ secrets.DOCKERHUB_TOKEN }} || docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            # Stop running container
+            if [ "$(docker ps -f name=crawl-dungeons -q)" ]; then
+              docker stop crawl-dungeons
+            fi
+
+            # Remove stopped container
+            if [ "$(docker ps -a -f name=crawl-dungeons -q)" ]; then
+              docker rm crawl-dungeons
+            fi
+
+            # Remove old image
+            docker rmi $(docker images 'lujw10/seventhforge' -q)
+
+            # Pull new image & run container
+            docker run -d --name crawl-dungeons -p 80:3000 lujw10/seventhforge:${{ needs.build-push-prod-image.outputs.sha_short }}
+
+            # Logout doker
+            docker logout
