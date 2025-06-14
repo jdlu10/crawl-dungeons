@@ -28,5 +28,5 @@ jobs:
       - name: Build and push with commit hash tag
         run: |
           docker compose build
-          docker tag seventhforge lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
+          docker tag crawl-dungeons lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
           docker push lujw10/seventhforge:${{ steps.vars.outputs.sha_short }}
