@@ -41,9 +41,9 @@ jobs:
       - name: Deploy to AWS-EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER_NAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.SEVENTHFORGE_EC2_HOST }}
+          username: ${{ secrets.SEVENTHFORGE_EC2_USERNAME }}
+          key: ${{ secrets.SEVENTHFORGE_EC2_SSH_KEY }}
           script: |
             # Log in to Docker Hub using the access token
             echo ${{ secrets.DOCKERHUB_TOKEN }} || docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
