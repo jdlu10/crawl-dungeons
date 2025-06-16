@@ -62,7 +62,7 @@ jobs:
             docker rmi $(docker images 'lujw10/seventhforge' -q)
 
             # Pull new image & run container
-            docker run -d  --env RAILS_ENV=production --env RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }} --name crawl-dungeons -p 80:3000 lujw10/seventhforge:${{ needs.build-push-prod-image.outputs.sha_short }}
+            docker run -d  --env RAILS_ENV=production --env RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }} --env DATABASE_HOST=${{ secrets.DATABASE_HOST }} --env DATABASE_DB=${{ secrets.DATABASE_DB }} --env DATABASE_USER=${{ secrets.DATABASE_USER }} --env DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} --name crawl-dungeons -p 80:3000 lujw10/seventhforge:${{ needs.build-push-prod-image.outputs.sha_short }}
 
             # Logout doker
             docker logout
