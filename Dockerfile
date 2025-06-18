@@ -19,7 +19,20 @@ FROM base as build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
+    apt-get install --no-install-recommends -y curl build-essential git libpq-dev libvips pkg-config
+
+# Install JavaScript dependencies and Node.js for asset compilation
+#
+# Uncomment the following lines if you are using NodeJS need to compile assets
+#
+ARG NODE_VERSION=18.12.0
+ARG YARN_VERSION=1.22.19
+ENV PATH=/usr/local/node/bin:$PATH
+RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    npm install -g yarn@$YARN_VERSION && \
+    npm install -g mjml && \
+    rm -rf /tmp/node-build-master
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -29,6 +42,17 @@ RUN bundle install && \
 
 # Copy application code
 COPY . .
+
+# Install node modules
+#
+# Uncomment the following lines if you are using NodeJS need to compile assets
+#
+# COPY package.json yarn.lock ./
+RUN --mount=type=cache,id=yarn,target=/rails/.cache/yarn YARN_CACHE_FOLDER=/rails/.cache/yarn \
+    yarn install --frozen-lockfile
+
+RUN yarn build && \
+    yarn cache clean
 
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
@@ -47,7 +71,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libvips postgresql-client && \
+    apt-get install --no-install-recommends -y libvips postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
