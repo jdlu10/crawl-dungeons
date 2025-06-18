@@ -29,7 +29,7 @@ services:
       - "3000:3000"
     depends_on:
       - database
-    command: "./bin/rails server -b 0.0.0.0"
+    command: "ruby bin/rails server -b 0.0.0.0"
     environment:
       # Database connection settings
       RAILS_ENV: ${RAILS_ENV}
@@ -40,13 +40,8 @@ services:
       DATABASE_PORT: ${DATABASE_PORT}
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
     volumes:
-      # Named volume to persist application data outside of container.
-      # Format is "named_volume:path/in/container"
-      - app-storage:/app/storage
-      # Host mount for local development.
-      # Format is "./path/on/host:/path/in/container"
-      - .:/app
+      # Mount the current directory to the container for live code reloading
+      - .:/rails
 
 volumes:
   db_pg_data: {}
-  app-storage: {}
