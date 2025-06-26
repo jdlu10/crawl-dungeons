@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  tileset: MyString
+  notes: MyText
+  campaign: one
+  detail: MyText
+  level: 1
+
+two:
+  name: MyString
+  tileset: MyString
+  notes: MyText
+  campaign: two
+  detail: MyText
+  level: 1

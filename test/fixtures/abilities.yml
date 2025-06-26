@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  passive: false
+  name: MyString
+  cost: 1
+  type: 
+  potency: 9.99
+  range: 1
+  level: 1
+  group: MyString
+  icon: one
+  element: one
+
+two:
+  passive: false
+  name: MyString
+  cost: 1
+  type: 
+  potency: 9.99
+  range: 1
+  level: 1
+  group: MyString
+  icon: two
+  element: two

@@ -1,0 +1,2 @@
+class VisualRender < ApplicationRecord
+end
