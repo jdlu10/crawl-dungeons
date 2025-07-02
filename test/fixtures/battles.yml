@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  current_turn: 1
+  dropped_wealth: 1
+  dropped_items: one
+  experience_gain: 1
+
+two:
+  current_turn: 1
+  dropped_wealth: 1
+  dropped_items: two
+  experience_gain: 1

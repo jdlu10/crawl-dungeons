@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_24_223939) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_27_231630) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,6 +30,27 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_223939) do
     t.integer "level_requirement"
     t.index ["element_id"], name: "index_abilities_on_element_id"
     t.index ["icon_id"], name: "index_abilities_on_icon_id"
+  end
+
+  create_table "battle_turns", force: :cascade do |t|
+    t.bigint "character_id", null: false
+    t.integer "turn_order"
+    t.bigint "battle_id", null: false
+    t.integer "row"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["battle_id"], name: "index_battle_turns_on_battle_id"
+    t.index ["character_id"], name: "index_battle_turns_on_character_id"
+  end
+
+  create_table "battles", force: :cascade do |t|
+    t.integer "current_turn"
+    t.integer "dropped_wealth"
+    t.bigint "dropped_items_id", null: false
+    t.integer "experience_gain"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dropped_items_id"], name: "index_battles_on_dropped_items_id"
   end
 
   create_table "campaigns", force: :cascade do |t|
@@ -67,6 +88,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_223939) do
     t.index ["race_id"], name: "index_characters_on_race_id"
     t.index ["visual_render_id"], name: "index_characters_on_visual_render_id"
     t.index ["vocation_id"], name: "index_characters_on_vocation_id"
+  end
+
+  create_table "effects", force: :cascade do |t|
+    t.string "name"
+    t.string "effect_key"
+    t.decimal "potency"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "elemental_effectivenesses", force: :cascade do |t|
@@ -108,12 +137,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_223939) do
 
   create_table "item_effects", force: :cascade do |t|
     t.bigint "item_id", null: false
-    t.string "effect_key"
-    t.decimal "potency"
-    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["effect_key"], name: "index_item_effects_on_effect_key", unique: true
+    t.bigint "effects_id", null: false
+    t.index ["effects_id"], name: "index_item_effects_on_effects_id"
     t.index ["item_id"], name: "index_item_effects_on_item_id"
   end
 
@@ -139,7 +166,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_223939) do
     t.integer "charisma"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "template"
+    t.bigint "equippable_slot_id", null: false
     t.index ["element_id"], name: "index_items_on_element_id"
+    t.index ["equippable_slot_id"], name: "index_items_on_equippable_slot_id"
     t.index ["visual_render_id"], name: "index_items_on_visual_render_id"
   end
 
@@ -226,11 +256,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_223939) do
     t.bigint "icon_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "character_template_id", null: false
+    t.index ["character_template_id"], name: "index_vocations_on_character_template_id"
     t.index ["icon_id"], name: "index_vocations_on_icon_id"
   end
 
   add_foreign_key "abilities", "elements"
   add_foreign_key "abilities", "visual_renders", column: "icon_id"
+  add_foreign_key "battle_turns", "battles"
+  add_foreign_key "battle_turns", "characters"
+  add_foreign_key "battles", "items", column: "dropped_items_id"
   add_foreign_key "characters", "elements"
   add_foreign_key "characters", "parties"
   add_foreign_key "characters", "races"
@@ -241,8 +276,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_223939) do
   add_foreign_key "equippable_slots", "items"
   add_foreign_key "games", "campaigns"
   add_foreign_key "games", "players"
+  add_foreign_key "item_effects", "effects", column: "effects_id"
   add_foreign_key "item_effects", "items"
   add_foreign_key "items", "elements"
+  add_foreign_key "items", "equippable_slots"
   add_foreign_key "items", "visual_renders"
   add_foreign_key "maps", "campaigns"
   add_foreign_key "parties", "games"
@@ -252,5 +289,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_223939) do
   add_foreign_key "possessions", "items"
   add_foreign_key "vocation_abilities", "abilities"
   add_foreign_key "vocation_abilities", "vocations"
+  add_foreign_key "vocations", "characters", column: "character_template_id"
   add_foreign_key "vocations", "visual_renders", column: "icon_id"
 end

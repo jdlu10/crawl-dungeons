@@ -21,8 +21,6 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl build-essential git libpq-dev libvips pkg-config
 
-# Install JavaScript dependencies and Node.js for asset compilation
-#
 # Uncomment the following lines if you are using NodeJS need to compile assets
 #
 ARG NODE_VERSION=18.12.0
