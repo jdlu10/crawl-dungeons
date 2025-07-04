@@ -9,7 +9,7 @@ export default function MainMenu() {
 
   return (
     <>
-      <p className="text-fuchsia-500 text-7xl">blah</p>
+      <p className="text-amber-900 text-2xl">blah</p>
     </>
   );
 }
