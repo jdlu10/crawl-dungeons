@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_27_231630) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_02_203335) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_231630) do
     t.boolean "passive"
     t.string "name"
     t.integer "cost"
-    t.string "type"
+    t.string "ability_type"
     t.decimal "potency"
     t.integer "range"
     t.integer "level"
@@ -58,7 +58,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_231630) do
     t.string "key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "starting_map", default: 1, null: false
+    t.integer "starting_map", default: 1
+    t.string "description"
+    t.boolean "active"
     t.index ["key"], name: "index_campaigns_on_key", unique: true
   end
 
@@ -113,6 +115,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_231630) do
     t.string "key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "element_type"
   end
 
   create_table "equippable_slots", force: :cascade do |t|
@@ -252,12 +255,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_231630) do
 
   create_table "vocations", force: :cascade do |t|
     t.string "name"
-    t.string "type"
+    t.string "vocation_type"
     t.bigint "icon_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "character_template_id", null: false
-    t.index ["character_template_id"], name: "index_vocations_on_character_template_id"
     t.index ["icon_id"], name: "index_vocations_on_icon_id"
   end
 
@@ -289,6 +290,5 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_231630) do
   add_foreign_key "possessions", "items"
   add_foreign_key "vocation_abilities", "abilities"
   add_foreign_key "vocation_abilities", "vocations"
-  add_foreign_key "vocations", "characters", column: "character_template_id"
   add_foreign_key "vocations", "visual_renders", column: "icon_id"
 end

@@ -7,3 +7,29 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Dir[Rails.root.join('db', 'seeds', '*.rb')].sort.each do |seed_file|
+#   load seed_file
+# end
+
+load 'db/seeds/player_types.rb'
+load 'db/seeds/players.rb'
+
+load 'db/seeds/visual_renders.rb'
+load 'db/seeds/vocations.rb'
+
+load 'db/seeds/campaigns.rb'
+load 'db/seeds/maps.rb'
+
+# Example for environment-specific seeds:
+# if Rails.env.development?
+#   Dir[Rails.root.join('db', 'seeds', 'development', '*.rb')].sort.each do |seed_file|
+#     load seed_file
+#   end
+# end
+
+# if Rails.env.production?
+#   Dir[Rails.root.join('db', 'seeds', 'production', '*.rb')].sort.each do |seed_file|
+#     load seed_file
+#   end
+# end

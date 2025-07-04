@@ -8,8 +8,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  root "campaigns#index"
-  get "/campaigns", to: "campaigns#index"
+  root "game#index"
+  # get "/campaigns", to: "campaigns#index"
 
   namespace :api do
     namespace :v1 do

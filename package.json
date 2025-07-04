@@ -2,6 +2,7 @@
   "name": "app",
   "private": true,
   "devDependencies": {
+    "@tailwindcss/cli": "^4.1.11",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
@@ -9,17 +10,21 @@
     "esbuild": "^0.25.5",
     "postcss": "^8.5.6",
     "sass": "^1.89.2",
+    "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets --loader:.tsx=tsx --loader:.ts=ts --loader:.js=jsx",
+    "check-types": "tsc --project tsconfig.json --noEmit --preserveWatchOutput",
     "build:css": "sass ./app/assets/stylesheets/application.sass.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
-    "build:all": "yarn build && yarn build:css",
-    "build:all:watch": "concurrently \"yarn build --watch\" \"yarn build:css --watch\""
+    "build:tailwind": "tailwindcss -i ./app/assets/tailwind/application.css -o ./app/assets/builds/tailwind.css --minify",
+    "build:all": "yarn build && yarn build:css && yarn check-types && yarn build:tailwind",
+    "build:all:watch": "concurrently \"yarn build --watch\" \"yarn build:css --watch\" \"yarn check-types --watch\" \"yarn build:tailwind --watch\""
   },
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.3",
     "zustand": "^5.0.5"
   }
 }

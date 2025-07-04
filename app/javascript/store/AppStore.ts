@@ -1,33 +1,31 @@
 import { create } from "zustand";
 
 type ThemeTypes = "light" | "dark" | "";
+type gameStateTypes = "main-menu" | "game" | "battle" | "settings" | "error";
 
 type AppStore = {
   theme: ThemeTypes;
-  mode: "2D" | "3D";
-  readability: boolean;
+  gameState: gameStateTypes;
   setTheme: (theme: ThemeTypes) => void;
+  setGameState: (gameState: gameStateTypes) => void;
   toggleTheme: () => void;
-  toggleMode: () => void;
-  toggleReadability: () => void;
 };
 
 export const useAppStore = create<AppStore>((set) => ({
   theme: "",
-  mode: "2D",
-  readability: false,
+  gameState: "main-menu",
   setTheme: (theme) => {
     set(() => ({ theme: theme }));
+  },
+  setGameState: (gameState) => {
+    set(() => ({ gameState: gameState }));
   },
   toggleTheme: () => {
     set((state) => ({ theme: state.theme === "light" ? "dark" : "light" }));
   },
-  toggleMode: () => {
-    set((state) => ({ mode: state.mode === "2D" ? "3D" : "2D" }));
-  },
-  toggleReadability: () => {
-    set((state) => ({
-      readability: state.readability === true ? false : true,
-    }));
-  },
+  // toggleReadability: () => {
+  //   set((state) => ({
+  //     readability: state.readability === true ? false : true,
+  //   }));
+  // },
 }));

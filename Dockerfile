@@ -23,7 +23,7 @@ RUN apt-get update -qq && \
 
 # Uncomment the following lines if you are using NodeJS need to compile assets
 #
-ARG NODE_VERSION=18.12.0
+ARG NODE_VERSION=21.0.0
 ARG YARN_VERSION=1.22.19
 ENV PATH=/usr/local/node/bin:$PATH
 RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
@@ -51,7 +51,7 @@ COPY . .
 RUN --mount=type=cache,id=yarn,target=/rails/.cache/yarn YARN_CACHE_FOLDER=/rails/.cache/yarn \
     yarn install --frozen-lockfile
 
-RUN yarn build && \
+RUN yarn build:all && \
     yarn cache clean
 
 # Precompile bootsnap code for faster boot times
