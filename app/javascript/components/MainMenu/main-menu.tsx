@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAppStore } from "../../store/AppStore";
-import EntranceImage from "./entrance-main-landscape.png";
+import EntranceImage from "../../../assets/images/entrance-main-landscape.png";
 import Campaigns from "./Campagns";
 import Games from "./Games";
 import MainMenuButton from "./MainMenuButton";
