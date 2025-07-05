@@ -14,7 +14,7 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets --loader:.tsx=tsx --loader:.ts=ts --loader:.js=jsx",
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets --loader:.tsx=tsx --loader:.ts=ts --loader:.js=jsx --loader:.png=file --loader:.jpg=file --loader:.jpeg=file --loader:.gif=file --loader:.svg=file",
     "check-types": "tsc --project tsconfig.json --noEmit --preserveWatchOutput",
     "build:css": "sass ./app/assets/stylesheets/application.sass.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
     "build:tailwind": "tailwindcss -i ./app/assets/tailwind/application.css -o ./app/assets/builds/tailwind.css --minify",
@@ -22,6 +22,7 @@
     "build:all:watch": "concurrently \"yarn build --watch\" \"yarn build:css --watch\" \"yarn check-types --watch\" \"yarn build:tailwind --watch\""
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.81.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3",

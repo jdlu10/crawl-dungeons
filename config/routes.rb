@@ -14,7 +14,13 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :campaigns, only: [:index, :show]
-      
+      resources :games, only: [:index, :show] do
+        collection do
+          get 'by_player/:player_id', to: 'games#by_player', as: :by_player
+        end
+      end
+      post 'games/new_game', to: 'games#new_game', as: :new_game
+      delete 'games/delete_game/:id', to: 'games#delete_game', as: :delete_game
     end
   end
 
