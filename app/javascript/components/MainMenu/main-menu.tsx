@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useAppStore } from "../../store/AppStore";
-import EntranceImage from "../../../assets/images/entrance-main-landscape.png";
 import Campaigns from "./Campagns";
 import Games from "./Games";
 import MainMenuButton from "./MainMenuButton";
@@ -15,7 +14,11 @@ export default function MainMenu() {
   return (
     <div className="bg-amber-950 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl relative">
       <section className="rounded-t-lg overflow-hidden relative">
-        <img className="w-full object-cover" src={EntranceImage} alt="" />
+        <img
+          className="w-full object-cover"
+          src="/images/entrance-main-landscape.png"
+          alt=""
+        />
         <div className="flame1"></div>
         <div className="flame2"></div>
       </section>
