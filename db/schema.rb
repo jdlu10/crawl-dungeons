@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_02_203335) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,10 +58,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_02_203335) do
     t.string "key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "starting_map", default: 1
     t.string "description"
     t.boolean "active"
+    t.bigint "starting_map_id"
     t.index ["key"], name: "index_campaigns_on_key", unique: true
+    t.index ["starting_map_id"], name: "index_campaigns_on_starting_map_id"
   end
 
   create_table "characters", force: :cascade do |t|
@@ -195,11 +196,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_02_203335) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "facing_direction"
-    t.bigint "map_id", null: false
+    t.bigint "current_map_id", null: false
     t.string "position"
     t.string "status"
+    t.index ["current_map_id"], name: "index_parties_on_current_map_id"
     t.index ["game_id"], name: "index_parties_on_game_id"
-    t.index ["map_id"], name: "index_parties_on_map_id"
   end
 
   create_table "player_types", force: :cascade do |t|
@@ -267,6 +268,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_02_203335) do
   add_foreign_key "battle_turns", "battles"
   add_foreign_key "battle_turns", "characters"
   add_foreign_key "battles", "items", column: "dropped_items_id"
+  add_foreign_key "campaigns", "maps", column: "starting_map_id"
   add_foreign_key "characters", "elements"
   add_foreign_key "characters", "parties"
   add_foreign_key "characters", "races"
@@ -284,7 +286,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_02_203335) do
   add_foreign_key "items", "visual_renders"
   add_foreign_key "maps", "campaigns"
   add_foreign_key "parties", "games"
-  add_foreign_key "parties", "maps"
+  add_foreign_key "parties", "maps", column: "current_map_id"
   add_foreign_key "players", "player_types"
   add_foreign_key "possessions", "characters"
   add_foreign_key "possessions", "items"

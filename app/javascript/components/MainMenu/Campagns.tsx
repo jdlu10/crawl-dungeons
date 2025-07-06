@@ -20,6 +20,7 @@ type CampaignsProps = {
 };
 
 export default function Campaigns(props: CampaignsProps) {
+  const playerId = useAppStore((state) => state.playerId);
   const queryClient = useQueryClient();
   const {
     data: campaigns,
@@ -37,7 +38,10 @@ export default function Campaigns(props: CampaignsProps) {
   });
 
   const { mutateAsync: startGame } = useMutation({
-    mutationFn: async (newGame: { campaign_id: number; player_id: number }) => {
+    mutationFn: async (newGame: {
+      campaign_id: number;
+      player_id: number | undefined;
+    }) => {
       const response = await fetch("/api/v1/games/new_game", {
         method: "POST",
         headers: {
@@ -56,7 +60,9 @@ export default function Campaigns(props: CampaignsProps) {
     },
     onError: (error) => {
       console.error("Error starting game:", error);
-      alert("Failed to start game. Please try again.");
+      alert(
+        "Failed to start game. Please try again. If you already have 3 save games please delete one before starting a new game."
+      );
     },
   });
 
@@ -68,17 +74,19 @@ export default function Campaigns(props: CampaignsProps) {
       <div className="cta-buttons">
         {isLoading && <Loading />}
         {campaigns?.map((campaign) => (
-          <MainMenuButton
-            key={campaign.key}
-            onClick={() => {
-              startGame({
-                campaign_id: campaign.id,
-                player_id: 1, // Replace with actual player ID
-              });
-            }}
-          >
-            {campaign.name}
-          </MainMenuButton>
+          <div key={campaign.key}>
+            <MainMenuButton
+              onClick={() => {
+                startGame({
+                  campaign_id: campaign.id,
+                  player_id: playerId,
+                });
+              }}
+            >
+              {campaign.name}
+            </MainMenuButton>
+            <br />
+          </div>
         ))}
         <br />
         <MainMenuButton onClick={() => props.setCurrentMenu("main-menu")}>

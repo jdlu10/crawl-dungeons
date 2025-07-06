@@ -21,8 +21,17 @@ class Api::V1::GamesController < ApplicationController
     active_games = Game.where(player_id: player_id, active: true)
 
     if active_games.count < 3
-        game = Game.new(player_id: player_id, campaign_id: campaign_id, active: true)
-        game.save
+        game = {}
+        ActiveRecord::Base.transaction do
+          game = Game.new(player_id: player_id, campaign_id: campaign_id, active: true)
+          game.save!
+          party = Party.find_or_initialize_by(game: game, name: "Player Party")
+          party.current_map = game.campaign.starting_map
+          party.status = "creation"
+          party.position = game.campaign.starting_map.starting_position
+          party.facing_direction = "N"
+          party.save!
+        end
         render json: game
     else
         render json: { error: "Too many active save games, please delete 1 to start more games" }, status: :not_acceptable

@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppStore } from "../store/AppStore";
 import MainMenu from "./MainMenu/main-menu";
 
 export default function Main() {
+  const setPlayerId = useAppStore((state) => state.setPlayerId);
   const gameState = useAppStore((state) => state.gameState);
 
-  function renderGame() {
+  useEffect(() => {
+    setPlayerId(1); // Set a default player ID, replace with actual logic to get player ID
+  }, []);
+
+  const renderGame = () => {
     switch (gameState) {
       case "main-menu":
         return <MainMenu />;
@@ -20,7 +25,7 @@ export default function Main() {
       default:
         return <MainMenu />;
     }
-  }
+  };
 
   return <>{renderGame()}</>;
 }
