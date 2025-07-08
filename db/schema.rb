@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_08_173110) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,8 +28,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
     t.datetime "updated_at", null: false
     t.bigint "icon_id", null: false
     t.integer "level_requirement"
+    t.string "description"
+    t.string "key"
     t.index ["element_id"], name: "index_abilities_on_element_id"
     t.index ["icon_id"], name: "index_abilities_on_icon_id"
+  end
+
+  create_table "ability_effects", force: :cascade do |t|
+    t.bigint "ability_id", null: false
+    t.bigint "effect_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ability_id"], name: "index_ability_effects_on_ability_id"
+    t.index ["effect_id"], name: "index_ability_effects_on_effect_id"
   end
 
   create_table "battle_turns", force: :cascade do |t|
@@ -69,14 +80,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
     t.string "name"
     t.bigint "vocation_id", null: false
     t.bigint "race_id", null: false
-    t.bigint "party_id", null: false
+    t.integer "party_id"
     t.integer "party_position"
     t.bigint "visual_render_id", null: false
     t.bigint "element_id", null: false
     t.integer "level"
-    t.integer "experience_point"
-    t.integer "hit_point"
-    t.integer "power_point"
+    t.integer "experience_points"
+    t.integer "hit_points"
+    t.integer "power_points"
     t.integer "strength"
     t.integer "dexterity"
     t.integer "constitution"
@@ -86,7 +97,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
     t.boolean "template"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "games_id"
+    t.string "description"
     t.index ["element_id"], name: "index_characters_on_element_id"
+    t.index ["games_id"], name: "index_characters_on_games_id"
     t.index ["party_id"], name: "index_characters_on_party_id"
     t.index ["race_id"], name: "index_characters_on_race_id"
     t.index ["visual_render_id"], name: "index_characters_on_visual_render_id"
@@ -99,6 +113,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
     t.decimal "potency"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "description"
   end
 
   create_table "elemental_effectivenesses", force: :cascade do |t|
@@ -117,6 +132,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "element_type"
+    t.string "description"
   end
 
   create_table "equippable_slots", force: :cascade do |t|
@@ -172,6 +188,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
     t.datetime "updated_at", null: false
     t.boolean "template"
     t.bigint "equippable_slot_id", null: false
+    t.string "description"
     t.index ["element_id"], name: "index_items_on_element_id"
     t.index ["equippable_slot_id"], name: "index_items_on_equippable_slot_id"
     t.index ["visual_render_id"], name: "index_items_on_visual_render_id"
@@ -243,6 +260,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
     t.string "render"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "visual_type"
+    t.string "url"
   end
 
   create_table "vocation_abilities", force: :cascade do |t|
@@ -260,16 +279,20 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_06_030002) do
     t.bigint "icon_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "description"
     t.index ["icon_id"], name: "index_vocations_on_icon_id"
   end
 
   add_foreign_key "abilities", "elements"
   add_foreign_key "abilities", "visual_renders", column: "icon_id"
+  add_foreign_key "ability_effects", "abilities"
+  add_foreign_key "ability_effects", "effects"
   add_foreign_key "battle_turns", "battles"
   add_foreign_key "battle_turns", "characters"
   add_foreign_key "battles", "items", column: "dropped_items_id"
   add_foreign_key "campaigns", "maps", column: "starting_map_id"
   add_foreign_key "characters", "elements"
+  add_foreign_key "characters", "games", column: "games_id"
   add_foreign_key "characters", "parties"
   add_foreign_key "characters", "races"
   add_foreign_key "characters", "visual_renders"

@@ -12,7 +12,7 @@ export default function MainMenu() {
   const [currentMenu, setCurrentMenu] = useState("main-menu");
 
   return (
-    <div className="bg-amber-950 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl relative">
+    <div className="bg-amber-950 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl relative min-h-96">
       <section className="rounded-t-lg overflow-hidden relative">
         <img
           className="w-full object-cover"
