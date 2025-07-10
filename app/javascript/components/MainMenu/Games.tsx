@@ -1,61 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppStore } from "../../store/AppStore";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import MainMenuButton from "./MainMenuButton";
 import Loading from "../Utils/Loading";
-
-type Game = {
-  id: number;
-  campaign_id: number;
-  player_id: number;
-  active: boolean;
-  updated_at: string;
-};
+import {
+  useDeleteGameQuery,
+  useQueryGetPlayerGames,
+  useQueryLoadGameInfo,
+} from "../../utils/hooks/gameHooks";
 
 type GamesProps = {
   setCurrentMenu: (menu: string) => void;
 };
 
 export default function Games(props: GamesProps) {
+  const { playerId, game } = useAppStore();
   const queryClient = useQueryClient();
-  const playerId = useAppStore((state) => state.playerId);
+  const [gameId, setGameId] = useState<number | undefined>(undefined);
 
-  const {
-    data: games,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["games"],
-    queryFn: async () => {
-      const response = await fetch("/api/v1/games/by_player/" + playerId);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return (await response.json()) as Game[];
-    },
-  });
+  const { data: games, isLoading, isError } = useQueryGetPlayerGames(playerId);
 
-  const { mutateAsync: deleteGame } = useMutation({
-    mutationFn: async (gameToDelete: {
-      campaign_id: number;
-      player_id: number | undefined;
-      game_id: number;
-    }) => {
-      const response = await fetch(
-        "/api/v1/games/delete_game/" + gameToDelete.game_id,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(gameToDelete),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to delete game");
-      }
-      return await response.json();
-    },
+  const { mutateAsync: deleteGame } = useDeleteGameQuery({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["games"] });
       props.setCurrentMenu("main-menu");
@@ -66,6 +31,25 @@ export default function Games(props: GamesProps) {
     },
   });
 
+  const {
+    data: fetechedGame,
+    refetch: refetchGameInfo,
+    isLoading: isLoadingGameInfo,
+    isFetched: isFetchedGameInfo,
+    isError: isErrorLoadGame,
+  } = useQueryLoadGameInfo(gameId);
+
+  useEffect(() => {
+    if (fetechedGame) {
+      const { game_state } = fetechedGame;
+      if (game_state === "character-creation") {
+        game.setGameState("character-creation");
+      } else {
+        game.setGameState(game_state);
+      }
+    }
+  }, [fetechedGame]);
+
   return (
     <>
       <h1 className="mb-10 text-4xl font-semibold tracking-tight">
@@ -75,7 +59,12 @@ export default function Games(props: GamesProps) {
         {isLoading && <Loading />}
         {games?.map((game) => (
           <div key={`game-${game.id}`}>
-            <MainMenuButton onClick={() => props.setCurrentMenu("game")}>
+            <MainMenuButton
+              onClick={() => {
+                setGameId(game.id);
+                refetchGameInfo();
+              }}
+            >
               SAVE {game.id}:{" "}
               {`${new Date(game.updated_at).toLocaleDateString()} ${new Date(
                 game.updated_at
@@ -88,7 +77,6 @@ export default function Games(props: GamesProps) {
                 );
                 if (confirmDelete) {
                   deleteGame({
-                    campaign_id: game.campaign_id,
                     player_id: playerId,
                     game_id: game.id,
                   });

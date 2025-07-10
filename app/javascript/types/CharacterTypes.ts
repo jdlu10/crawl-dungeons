@@ -1,0 +1,23 @@
+export type Character = {
+  id: number;
+  name: string;
+  vocation_id: number;
+  race_id: number;
+  party_id: number;
+  party_position: number;
+  visual_render_id: number;
+  element_id: number;
+  level: number;
+  experience_points: number;
+  hit_points: number;
+  power_points: number;
+  strength: number;
+  dexterity: number;
+  constitution: number;
+  intelligence: number;
+  wisdom: number;
+  charisma: number;
+  template: boolean;
+  games_id: number;
+  description: string;
+};

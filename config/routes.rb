@@ -14,13 +14,18 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :campaigns, only: [:index, :show]
-      resources :games, only: [:index, :show] do
+      resources :games do
         collection do
           get 'by_player/:player_id', to: 'games#by_player', as: :by_player
+          post 'new_game', to: 'games#new_game', as: :new_game
+          delete 'delete_game/:id', to: 'games#delete_game', as: :delete_game
         end
       end
-      post 'games/new_game', to: 'games#new_game', as: :new_game
-      delete 'games/delete_game/:id', to: 'games#delete_game', as: :delete_game
+      get 'games/:id', to: 'games#load_game_data', as: :load_game_data
+      get 'games/:id/available_characters', to: 'games#list_available_characters', as: :list_available_characters
+      get 'games/:id/available_characters/new', to: 'games#list_available_characters_new', as: :list_available_characters_new
+      get 'games/:id/party', to: 'games#player_party', as: :player_party
+      get 'games/:id/party/characters/new', to: 'games#player_party_character_new', as: :player_party_character_new
     end
   end
 

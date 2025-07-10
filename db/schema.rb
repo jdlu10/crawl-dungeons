@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_08_173110) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -151,6 +151,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_08_173110) do
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "game_state"
     t.index ["campaign_id"], name: "index_games_on_campaign_id"
     t.index ["player_id"], name: "index_games_on_player_id"
   end
@@ -216,6 +217,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_08_173110) do
     t.bigint "current_map_id", null: false
     t.string "position"
     t.string "status"
+    t.bigint "battles_id"
+    t.boolean "player_party"
+    t.index ["battles_id"], name: "index_parties_on_battles_id"
     t.index ["current_map_id"], name: "index_parties_on_current_map_id"
     t.index ["game_id"], name: "index_parties_on_game_id"
   end
@@ -308,6 +312,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_08_173110) do
   add_foreign_key "items", "equippable_slots"
   add_foreign_key "items", "visual_renders"
   add_foreign_key "maps", "campaigns"
+  add_foreign_key "parties", "battles", column: "battles_id"
   add_foreign_key "parties", "games"
   add_foreign_key "parties", "maps", column: "current_map_id"
   add_foreign_key "players", "player_types"
