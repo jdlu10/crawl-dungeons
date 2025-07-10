@@ -37,7 +37,7 @@ export default function Games(props: GamesProps) {
     isLoading: isLoadingGameInfo,
     isFetched: isFetchedGameInfo,
     isError: isErrorLoadGame,
-  } = useQueryLoadGameInfo(gameId);
+  } = useQueryLoadGameInfo(gameId, playerId);
 
   useEffect(() => {
     if (fetechedGame) {
