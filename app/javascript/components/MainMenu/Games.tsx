@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "../../store/AppStore";
 import { useQueryClient } from "@tanstack/react-query";
-import MainMenuButton from "./MainMenuButton";
+import Button from "../Utils/Button";
 import Loading from "../Utils/Loading";
 import {
   useDeleteGameQuery,
@@ -14,7 +14,8 @@ type GamesProps = {
 };
 
 export default function Games(props: GamesProps) {
-  const { playerId, game } = useAppStore();
+  const playerId = useAppStore((state) => state.playerId);
+  const game = useAppStore((state) => state.game);
   const queryClient = useQueryClient();
   const [gameId, setGameId] = useState<number | undefined>(undefined);
 
@@ -22,7 +23,7 @@ export default function Games(props: GamesProps) {
 
   const { mutateAsync: deleteGame } = useDeleteGameQuery({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["games"] });
+      queryClient.invalidateQueries({ queryKey: ["games", playerId] });
       props.setCurrentMenu("main-menu");
     },
     onError: (error) => {
@@ -32,7 +33,7 @@ export default function Games(props: GamesProps) {
   });
 
   const {
-    data: fetechedGame,
+    data: fetchedGame,
     refetch: refetchGameInfo,
     isLoading: isLoadingGameInfo,
     isFetched: isFetchedGameInfo,
@@ -40,15 +41,12 @@ export default function Games(props: GamesProps) {
   } = useQueryLoadGameInfo(gameId, playerId);
 
   useEffect(() => {
-    if (fetechedGame) {
-      const { game_state } = fetechedGame;
-      if (game_state === "character-creation") {
-        game.setGameState("character-creation");
-      } else {
-        game.setGameState(game_state);
-      }
+    if (fetchedGame) {
+      const { game_state } = fetchedGame;
+      game.setId(fetchedGame.id);
+      game.setGameState(game_state);
     }
-  }, [fetechedGame]);
+  }, [fetchedGame]);
 
   return (
     <>
@@ -59,7 +57,7 @@ export default function Games(props: GamesProps) {
         {isLoading && <Loading />}
         {games?.map((game) => (
           <div key={`game-${game.id}`}>
-            <MainMenuButton
+            <Button
               onClick={() => {
                 setGameId(game.id);
                 refetchGameInfo();
@@ -69,8 +67,8 @@ export default function Games(props: GamesProps) {
               {`${new Date(game.updated_at).toLocaleDateString()} ${new Date(
                 game.updated_at
               ).toLocaleTimeString()}`}
-            </MainMenuButton>
-            <MainMenuButton
+            </Button>
+            <Button
               onClick={() => {
                 let confirmDelete = window.confirm(
                   `Are you sure you want to delete save ${game.id}? This action cannot be undone.`
@@ -87,13 +85,13 @@ export default function Games(props: GamesProps) {
               classNames="ml-2"
             >
               DELETE SAVE {game.id}
-            </MainMenuButton>
+            </Button>
           </div>
         ))}
         <br />
-        <MainMenuButton onClick={() => props.setCurrentMenu("main-menu")}>
+        <Button onClick={() => props.setCurrentMenu("main-menu")}>
           Back to Main Menu
-        </MainMenuButton>
+        </Button>
       </div>
     </>
   );

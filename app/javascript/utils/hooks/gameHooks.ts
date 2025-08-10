@@ -1,6 +1,18 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Game, Party } from "../../types/GameTypes";
-import { Character } from "../../types/CharacterTypes";
+import {
+  FacingDirections,
+  Game,
+  Party,
+  PartyCoordinates,
+  TypeMap,
+} from "../../types/GameTypes";
+import {
+  Character,
+  Race,
+  TypeElement,
+  VisualRender,
+  Vocation,
+} from "../../types/CharacterTypes";
 
 export function useQueryGetPlayerGames(playerId: number | undefined) {
   const playerGamesQuery = useQuery({
@@ -46,6 +58,34 @@ export function useGameStart(options?: useGameStartOptions) {
   });
 
   return gameStartQuery;
+}
+
+export function useResumeAdventure(options?: useGameStartOptions) {
+  const resumeAdventureQuery = useMutation({
+    mutationFn: async (resumeGame: {
+      game_id: number | undefined;
+      player_id: number | undefined;
+    }) => {
+      const response = await fetch(
+        "/api/v1/games/" + resumeGame.game_id + "/resume_adventure",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(resumeGame),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to start game from backend.");
+      }
+      return await response.json();
+    },
+    onSuccess: options?.onSuccess,
+    onError: options?.onError,
+  });
+
+  return resumeAdventureQuery;
 }
 
 type useDeleteGameQueryOptions = {
@@ -103,29 +143,26 @@ export function useQueryLoadGameInfo(
   return loadGameInfoQuery;
 }
 
-export function useQueryGetAvailableCharacters(
+export function useQueryLoadCurrentMapInfo(
   gameId: number | undefined,
   player_id: number | undefined
 ) {
-  const loadGameInfoQuery = useQuery({
-    queryKey: ["get_available_characters", gameId, player_id],
+  const loadCurrentMapQuery = useQuery({
+    queryKey: ["load_current_map_info", gameId, player_id],
     queryFn: async () => {
-      if (!gameId || !player_id) return {} as Game;
+      if (!gameId || !player_id) return {} as TypeMap;
       const response = await fetch(
-        "/api/v1/games/" +
-          gameId +
-          "/available_characters?player_id=" +
-          player_id
+        "/api/v1/games/" + gameId + "/current_map?player_id=" + player_id
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      return (await response.json()) as Character[];
+      return (await response.json()) as TypeMap;
     },
     enabled: !!gameId,
   });
 
-  return loadGameInfoQuery;
+  return loadCurrentMapQuery;
 }
 
 export function useQueryGetPlayerPartyInfo(
@@ -148,4 +185,136 @@ export function useQueryGetPlayerPartyInfo(
   });
 
   return loadGameInfoQuery;
+}
+
+export function useGetElements() {
+  const getElementsQuery = useQuery({
+    queryKey: ["get_elements"],
+    queryFn: async () => {
+      const response = await fetch("/api/v1/get_elements");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return (await response.json()) as TypeElement[];
+    },
+  });
+
+  return getElementsQuery;
+}
+
+export function useGetPortraits() {
+  const getCharacterPortraitsQuery = useQuery({
+    queryKey: ["get_character_portraits"],
+    queryFn: async () => {
+      const response = await fetch("/api/v1/get_character_portraits");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return (await response.json()) as VisualRender[];
+    },
+  });
+
+  return getCharacterPortraitsQuery;
+}
+
+export function useGetVocations() {
+  const getVocationsQuery = useQuery({
+    queryKey: ["get_vocations"],
+    queryFn: async () => {
+      const response = await fetch("/api/v1/get_vocations");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return (await response.json()) as Vocation[];
+    },
+  });
+
+  return getVocationsQuery;
+}
+
+export function useGetRaces() {
+  const getRacesQuery = useQuery({
+    queryKey: ["get_races"],
+    queryFn: async () => {
+      const response = await fetch("/api/v1/get_races");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return (await response.json()) as Race[];
+    },
+  });
+
+  return getRacesQuery;
+}
+
+export function useTurnPartyQuery(options?: {
+  onSuccess?: (data: Party, direction: FacingDirections) => void;
+  onError?: (error: any) => void;
+}) {
+  const updatePartyQuery = useMutation({
+    mutationFn: async (turnPartyParams: {
+      player_id: number | undefined;
+      game_id: number | undefined;
+      direction: FacingDirections;
+    }) => {
+      const response = await fetch(
+        "/api/v1/games/" + turnPartyParams.game_id + "/party/turn",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(turnPartyParams),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to turn player party");
+      }
+      return await response.json();
+    },
+    onSuccess: (data, variables) => {
+      if (options?.onSuccess) {
+        options?.onSuccess(data, variables.direction);
+      }
+    },
+    onError: options?.onError,
+  });
+
+  return updatePartyQuery;
+}
+
+export function useMovePartyQuery(options?: {
+  onSuccess?: (data: Party, position: PartyCoordinates) => void;
+  onError?: (error: any) => void;
+}) {
+  const updatePartyQuery = useMutation({
+    mutationFn: async (movePartyParams: {
+      player_id: number | undefined;
+      game_id: number | undefined;
+      position: PartyCoordinates;
+    }) => {
+      const response = await fetch(
+        "/api/v1/games/" + movePartyParams.game_id + "/party/move",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(movePartyParams),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to move player party");
+      }
+      return await response.json();
+    },
+    onSuccess: (data, variables) => {
+      if (options?.onSuccess) {
+        options?.onSuccess(data, variables.position);
+      }
+    },
+    onError: options?.onError,
+  });
+
+  return updatePartyQuery;
 }

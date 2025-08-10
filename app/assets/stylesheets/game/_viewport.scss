@@ -1,0 +1,143 @@
+.viewport {
+  perspective: 400px;
+  .viewport-grid {
+    transform-style: preserve-3d;
+    transform: rotateX(90deg) translateY(125px) translateZ(-40px);
+  }
+
+  .dungeon-stone-wall {
+    // background-image: url("images/game/tileset/dungeon-tiles-1.png");
+    // background-repeat: no-repeat;
+    // background-size: cover;
+  }
+
+  .viewport-tile {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+
+    .face {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      background-repeat: no-repeat;
+      background-size: cover;
+
+      &.top {
+        transform: translateZ(100px) rotateY(180deg);
+        background-image: url("images/game/tileset/dungeon-tiles-1.png");
+      }
+      &.bottom {
+        background-image: url("images/game/tileset/dungeon-tiles-1.png");
+      }
+      &.left {
+        transform: rotateX(-90deg) rotateY(-90deg) translateZ(64px)
+          translateY(-59px);
+      }
+      &.right {
+        transform: rotateX(270deg) rotateY(-270deg) translateZ(64px)
+          translateY(-59px);
+      }
+      &.front {
+        transform: rotateX(90deg);
+        transform-origin: top;
+      }
+      &.back {
+        transform: rotateX(-90deg);
+        transform-origin: bottom;
+      }
+    }
+
+    &.tile-label-W {
+      .face {
+        &.left,
+        &.right,
+        &.front,
+        &.back {
+          background-image: url("images/game/tileset/dungeon-tiles-1.png");
+        }
+      }
+    }
+    &.tile-label-D {
+      .face {
+        &.left,
+        &.right,
+        &.front,
+        &.back {
+          background-image: url("images/game/tileset/door-1.png");
+        }
+      }
+    }
+    &.player-tile {
+      .face {
+        &.left,
+        &.right,
+        &.front,
+        &.back {
+          background-image: none !important;
+        }
+      }
+    }
+
+    &.farthest .face {
+      filter: brightness(40%);
+    }
+    &.farther .face {
+      filter: brightness(50%);
+    }
+    &.far .face {
+      filter: brightness(60%);
+    }
+    &.near .face {
+      filter: brightness(80%);
+    }
+    &.nearest .face {
+    }
+  }
+}
+
+.movement-controls {
+  button {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+    svg {
+      opacity: 0.5;
+      height: 75%;
+      width: 75%;
+    }
+  }
+  button.move-left {
+    svg {
+      transform: rotate(-90deg);
+    }
+  }
+  button.move-forward {
+    svg {
+    }
+  }
+  button.move-right {
+    svg {
+      transform: rotate(90deg);
+    }
+  }
+  button.turn-left {
+    svg {
+    }
+  }
+  button.move-back {
+    svg {
+      transform: rotate(180deg);
+    }
+  }
+  button.turn-right {
+    svg {
+    }
+  }
+}
+
+.status-bar {
+  transition: width 0.3s linear, height 0.3s linear;
+}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_01_184434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -81,7 +81,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
     t.bigint "vocation_id", null: false
     t.bigint "race_id", null: false
     t.integer "party_id"
-    t.integer "party_position"
     t.bigint "visual_render_id", null: false
     t.bigint "element_id", null: false
     t.integer "level"
@@ -99,6 +98,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
     t.datetime "updated_at", null: false
     t.bigint "games_id"
     t.string "description"
+    t.integer "max_hit_points"
+    t.integer "max_power_points"
+    t.integer "party_position_row"
+    t.integer "party_position_column"
     t.index ["element_id"], name: "index_characters_on_element_id"
     t.index ["games_id"], name: "index_characters_on_games_id"
     t.index ["party_id"], name: "index_characters_on_party_id"
@@ -114,6 +117,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "description"
+    t.string "effect_type"
+    t.boolean "prefix"
+    t.boolean "suffix"
+    t.decimal "rarity"
   end
 
   create_table "elemental_effectivenesses", force: :cascade do |t|
@@ -133,15 +140,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
     t.datetime "updated_at", null: false
     t.string "element_type"
     t.string "description"
+    t.bigint "visual_render_id"
+    t.index ["visual_render_id"], name: "index_elements_on_visual_render_id"
   end
 
   create_table "equippable_slots", force: :cascade do |t|
-    t.bigint "item_id", null: false
     t.string "key"
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["item_id"], name: "index_equippable_slots_on_item_id"
     t.index ["key"], name: "index_equippable_slots_on_key", unique: true
   end
 
@@ -156,42 +163,46 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
     t.index ["player_id"], name: "index_games_on_player_id"
   end
 
-  create_table "item_effects", force: :cascade do |t|
+  create_table "inventories", force: :cascade do |t|
     t.bigint "item_id", null: false
+    t.string "attachable_type", null: false
+    t.bigint "attachable_id", null: false
+    t.boolean "equipped"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "effects_id", null: false
-    t.index ["effects_id"], name: "index_item_effects_on_effects_id"
-    t.index ["item_id"], name: "index_item_effects_on_item_id"
+    t.index ["attachable_type", "attachable_id"], name: "index_inventories_on_attachable"
+    t.index ["item_id"], name: "index_inventories_on_item_id"
+  end
+
+  create_table "item_effects", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "effect_id", null: false
+    t.string "attachable_type", null: false
+    t.bigint "attachable_id", null: false
+    t.index ["attachable_type", "attachable_id"], name: "index_item_effects_on_attachable"
+    t.index ["effect_id"], name: "index_item_effects_on_effect_id"
   end
 
   create_table "items", force: :cascade do |t|
     t.string "name"
     t.text "notes"
-    t.boolean "equippable"
     t.boolean "valuable"
     t.boolean "usable"
     t.integer "worth"
-    t.integer "attack_value"
-    t.integer "defensive_value"
+    t.string "attack_value"
+    t.string "defensive_value"
     t.decimal "potency"
     t.bigint "visual_render_id", null: false
     t.bigint "element_id", null: false
-    t.integer "hit_point"
-    t.integer "power_point"
-    t.integer "strength"
-    t.integer "dexterity"
-    t.integer "constitution"
-    t.integer "intelligence"
-    t.integer "wisdom"
-    t.integer "charisma"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "template"
-    t.bigint "equippable_slot_id", null: false
+    t.integer "equippable_slot_id"
     t.string "description"
+    t.boolean "twohanded"
+    t.decimal "rarity"
     t.index ["element_id"], name: "index_items_on_element_id"
-    t.index ["equippable_slot_id"], name: "index_items_on_equippable_slot_id"
     t.index ["visual_render_id"], name: "index_items_on_visual_render_id"
   end
 
@@ -242,21 +253,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
     t.index ["player_type_id"], name: "index_players_on_player_type_id"
   end
 
-  create_table "possessions", force: :cascade do |t|
-    t.bigint "item_id", null: false
-    t.bigint "character_id", null: false
-    t.boolean "equipped"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["character_id"], name: "index_possessions_on_character_id"
-    t.index ["item_id"], name: "index_possessions_on_item_id"
-  end
-
   create_table "races", force: :cascade do |t|
     t.string "name"
     t.string "key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.bigint "game_id", null: false
+    t.boolean "movement_controls_hud"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_settings_on_game_id"
   end
 
   create_table "visual_renders", force: :cascade do |t|
@@ -303,11 +312,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
   add_foreign_key "characters", "vocations"
   add_foreign_key "elemental_effectivenesses", "elements", column: "source_element_id"
   add_foreign_key "elemental_effectivenesses", "elements", column: "target_element_id"
-  add_foreign_key "equippable_slots", "items"
+  add_foreign_key "elements", "visual_renders"
   add_foreign_key "games", "campaigns"
   add_foreign_key "games", "players"
-  add_foreign_key "item_effects", "effects", column: "effects_id"
-  add_foreign_key "item_effects", "items"
+  add_foreign_key "inventories", "items"
+  add_foreign_key "item_effects", "effects"
   add_foreign_key "items", "elements"
   add_foreign_key "items", "equippable_slots"
   add_foreign_key "items", "visual_renders"
@@ -316,8 +325,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_194410) do
   add_foreign_key "parties", "games"
   add_foreign_key "parties", "maps", column: "current_map_id"
   add_foreign_key "players", "player_types"
-  add_foreign_key "possessions", "characters"
-  add_foreign_key "possessions", "items"
+  add_foreign_key "settings", "games"
   add_foreign_key "vocation_abilities", "abilities"
   add_foreign_key "vocation_abilities", "vocations"
   add_foreign_key "vocations", "visual_renders", column: "icon_id"

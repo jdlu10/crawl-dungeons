@@ -62,7 +62,7 @@ abilities = [
         description: "Attempt to cast a spell.",
     },
     {
-        name: "Use Items",
+        name: "Use Item",
         key: "use_item",
         passive: false,
         element: Element.find_by(key: "null"),

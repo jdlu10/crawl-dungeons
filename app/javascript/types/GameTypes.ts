@@ -8,7 +8,7 @@ export type Game = {
   updated_at: string;
   game_state:
     | "main-menu"
-    | "character-creation"
+    | "party-preparation"
     | "game"
     | "battle"
     | "settings"
@@ -16,5 +16,60 @@ export type Game = {
 };
 
 export type Party = {
+  id: number | undefined;
+  name: string;
+  game_id: 30;
+  wealth: number;
+  facing_direction: string;
+  current_map_id: number;
+  position: [x: number, y: number];
+  status: string;
+  battles_id: number;
+  player_party: boolean;
   characters: Character[];
+};
+
+export type useQueryGetGameInfoParams = {
+  gameId: number | undefined;
+  playerId: number | undefined;
+};
+
+export type ElementName =
+  | "element_fire"
+  | "element_water"
+  | "element_air"
+  | "element_darkness"
+  | "element_earth"
+  | "element_ice"
+  | "element_light"
+  | "element_lightning"
+  | "element_null"
+  | "element_poison";
+
+export type VocationName =
+  | "vocation_warrior"
+  | "vocation_vagabond"
+  | "vocation_physician"
+  | "vocation_scholar"
+  | "vocation_guardian"
+  | "vocation_ritualist"
+  | "vocation_swordsman";
+
+export type TypeMap = {
+  id: number;
+  name: string;
+  tileset: string;
+  notes: string;
+  campaign_id: number;
+  detail: string[][];
+  level: number;
+};
+
+export const DIRECTIONS = ["N", "E", "S", "W"] as const;
+export type FacingDirections = (typeof DIRECTIONS)[number];
+export type MoveDirections = "forward" | "back" | "left" | "right";
+export type PartyCoordinates = [number, number];
+
+export type GameSetting = {
+  movement_controls_hud: boolean;
 };

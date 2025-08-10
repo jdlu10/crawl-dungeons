@@ -9,17 +9,17 @@ maps = [
         notes: "Default campaign level 1",
         campaign: default_campaign,
         level: 1,
-        # W = Wall, . = Floor, S = Start, E = Exit, U = Up, D = Down, T = Treasure, M = Monster
+        # W = Wall, . = Floor, S = Start, E = Exit, D = Door, T = Treasure, B = Boss
         detail: [
             %w[W W W W W W W W W W W W W W W W W W W W W W W W W W W W W W],
             %w[W . . . . . W . . . . . . W . . . . . . . . . W . . T . . W],
             %w[W . . . . . W W W W W W W W . W W W W W W W W W . . . . . W],
-            %w[W . . M . . . . . . . . . . . W . . . . . . . . . . . . . W],
+            %w[W . . B . . . . . . . . . . . W . . . . . . . . . . . . . W],
             %w[W . . . . . W W W W W . W W W W . . W . W W W W W W D W W W],
             %w[W . . . . . W . . . W . W . . . . . W . W . . . . W . W . W],
             %w[W W W W W W W W W W W . W . . . . . W . W . . . . W . W . W],
             %w[W . . . W . . . . . . . W W W W W W W . W . . W W W D W W W],
-            %w[W . . . W . W W W W W . . . . . . . W . W . . w . . . . . W],
+            %w[W . . . W . W W W W W . . . . . . . W . W . . D . . . . . W],
             %w[W . . . W . W . . . W . W W W W W W W . W . . W . . . . . W],
             %w[W W D W W . W W W W W . W . . . . . W . W . . W . . . . . W],
             %w[W . . . . . . . . . . . W . . . . . W D W W W W W W . W W W],

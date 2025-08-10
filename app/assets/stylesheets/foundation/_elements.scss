@@ -1,0 +1,36 @@
+@keyframes flicker {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1) translateY(-5px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+$element-colors: (
+  "fire": #ff0000,
+  "water": #00ff15,
+  "earth": #ffa600,
+  "air": #00d9ff,
+  "light": #f1f1f1,
+  "darkness": #7a7a7a,
+  "ice": #cacaca,
+  "lightning": #ffea00,
+  "poison": #ff00e1,
+  "null": #70f5ff,
+);
+
+@each $name, $color in $element-colors {
+  .bg-element-#{$name} {
+    background-color: $color;
+  }
+  .icon-element-#{$name} {
+    color: $color;
+  }
+}

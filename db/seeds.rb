@@ -14,10 +14,14 @@
 
 load 'db/seeds/player_types.rb'
 load 'db/seeds/players.rb'
+load 'db/seeds/visual_renders.rb'
 
 load 'db/seeds/elements.rb'
+load 'db/seeds/equippable_slots.rb'
+load 'db/seeds/effects.rb'
+load 'db/seeds/items.rb'
+load 'db/seeds/item_effects.rb'
 
-load 'db/seeds/visual_renders.rb'
 load 'db/seeds/vocations.rb'
 load 'db/seeds/abilities.rb'
 load 'db/seeds/vocation_abilities.rb'
@@ -28,6 +32,7 @@ load 'db/seeds/maps.rb'
 
 load 'db/seeds/character_templates.rb'
 # load 'db/seeds/monster_templates.rb'
+load 'db/seeds/inventories.rb'
 
 # Example for environment-specific seeds:
 # if Rails.env.development?

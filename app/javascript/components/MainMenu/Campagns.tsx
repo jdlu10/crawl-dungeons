@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAppStore } from "../../store/AppStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import MainMenuButton from "./MainMenuButton";
+import Button from "../Utils/Button";
 import Loading from "../Utils/Loading";
 import { useQueryCampaigns } from "../../utils/hooks/campaignHooks";
 import { useGameStart } from "../../utils/hooks/gameHooks";
@@ -12,14 +12,16 @@ type CampaignsProps = {
 
 export default function Campaigns(props: CampaignsProps) {
   const queryClient = useQueryClient();
-  const { playerId, game } = useAppStore();
+  const playerId = useAppStore((state) => state.playerId);
+  const game = useAppStore((state) => state.game);
 
   const { data: campaigns, isLoading, isError } = useQueryCampaigns();
 
   const { mutateAsync: startGame } = useGameStart({
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["games"] });
-      game.setGameState("character-creation");
+      game.setId(data.id);
+      game.setGameState("party-preparation");
     },
     onError: (error) => {
       console.error("Error starting game:", error);
@@ -38,7 +40,7 @@ export default function Campaigns(props: CampaignsProps) {
         {isLoading && <Loading />}
         {campaigns?.map((campaign) => (
           <div key={campaign.key}>
-            <MainMenuButton
+            <Button
               onClick={() => {
                 startGame({
                   campaign_id: campaign.id,
@@ -47,14 +49,14 @@ export default function Campaigns(props: CampaignsProps) {
               }}
             >
               {campaign.name}
-            </MainMenuButton>
+            </Button>
             <br />
           </div>
         ))}
         <br />
-        <MainMenuButton onClick={() => props.setCurrentMenu("main-menu")}>
+        <Button onClick={() => props.setCurrentMenu("main-menu")}>
           Back to Main Menu
-        </MainMenuButton>
+        </Button>
       </div>
     </>
   );

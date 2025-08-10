@@ -16,4 +16,6 @@ class Element < ApplicationRecord
     has_many :weak_against,
         through: :incoming_effectivenesses,
         source: :source_element
+
+    belongs_to :visual_render
 end

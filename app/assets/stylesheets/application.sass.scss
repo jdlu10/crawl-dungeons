@@ -1,1 +1,5 @@
 // Entry point for your Sass build
+@use "foundation/elements";
+@use "foundation/vocations";
+@use "main-menu/styles";
+@use "game/viewport";

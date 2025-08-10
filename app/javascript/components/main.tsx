@@ -1,27 +1,42 @@
 import React, { useEffect } from "react";
 import { useAppStore } from "../store/AppStore";
 import MainMenu from "./MainMenu/main-menu";
-import PartyFormation from "./PartyFormation/PartyFormation";
+import PartyPreparation from "./PartyPreparation/party-preparation";
+import GameScreen from "./Game/game-screen";
+import { useQueryGetCurrentParty } from "../utils/hooks/characterHooks";
 
 export default function Main() {
-  const { setPlayerId, game } = useAppStore();
-  // const setPlayerId = useAppStore((state) => state.setPlayerId);
-  // const gameState = useAppStore((state) => state.gameState);
+  const game = useAppStore((s) => s.game);
+  const playerId = useAppStore((s) => s.playerId);
+  const party = useAppStore((s) => s.party);
+  const setPlayerId = useAppStore((s) => s.setPlayerId);
+
+  const {
+    data: current_party,
+    isLoading: isLoadingCurrentyParty,
+    isError: isErrorCurrentParty,
+  } = useQueryGetCurrentParty({ gameId: game.id, playerId: playerId });
 
   useEffect(() => {
     setPlayerId(1); // Set a default player ID, replace with actual logic to get player ID
   }, []);
 
+  // tracking changes to current party
+  useEffect(() => {
+    if (current_party) {
+      party.setPartyData(current_party);
+    }
+  }, [current_party]);
+
   const renderGame = () => {
     switch (game.gameState) {
       case "main-menu":
         return <MainMenu />;
-      case "character-creation":
-        return <PartyFormation />;
-      case "game":
-        return <div>Game Component</div>;
+      case "party-preparation":
+        return <PartyPreparation />;
       case "battle":
-        return <div>Battle Component</div>;
+      case "game":
+        return <GameScreen />;
       case "settings":
         return <div>Settings Component</div>;
       case "error":
@@ -31,5 +46,12 @@ export default function Main() {
     }
   };
 
-  return <>{renderGame()}</>;
+  return (
+    <>
+      {renderGame()}
+      <pre className="debugging absolute w-150 h-150 right-0 bottom-0 overflow-scroll">
+        {JSON.stringify(party, null, 2)}
+      </pre>
+    </>
+  );
 }

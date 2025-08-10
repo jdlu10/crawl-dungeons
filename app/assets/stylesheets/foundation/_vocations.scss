@@ -1,0 +1,15 @@
+$vocation-colors: (
+  "Warrior": #ff0000,
+  "Vagabond": #ff00dd,
+  "Physician": #ffa600,
+  "Scholar": #003cff,
+  "Ritualist": #797979,
+  "Guardian": #00eeff,
+  "Swordsman": #00ff0d,
+);
+
+@each $name, $color in $vocation-colors {
+  .icon-vocation-#{$name} {
+    color: $color;
+  }
+}

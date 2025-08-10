@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import { useAppStore } from "../../store/AppStore";
 import Campaigns from "./Campagns";
 import Games from "./Games";
-import CharacterCreation from "../PartyFormation/CharacterCreation";
-import MainMenuButton from "./MainMenuButton";
-
-import "./styles.css";
+import Button from "../Utils/Button";
 
 export default function MainMenu() {
   const theme = useAppStore((state) => state.theme);
@@ -13,10 +10,10 @@ export default function MainMenu() {
   const [currentMenu, setCurrentMenu] = useState("main-menu");
 
   return (
-    <div className="bg-amber-950 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl relative min-h-96">
-      <div className="rounded-t-lg overflow-hidden relative">
+    <div className="bg-amber-950 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl relative max-h-150">
+      <div className="rounded-t-lg overflow-hidden relative h-150 rounded-lg">
         <img
-          className="w-full object-cover"
+          className="w-full object-cover h-full"
           src="/images/entrance-main-landscape.png"
           alt=""
         />
@@ -42,20 +39,20 @@ export default function MainMenu() {
                 explore, battle, and strategize in a variety of dungeons.
               </p>
               <div className="cta-buttons">
-                <MainMenuButton onClick={() => setCurrentMenu("campaigns")}>
+                <Button onClick={() => setCurrentMenu("campaigns")}>
                   New Game
-                </MainMenuButton>
+                </Button>
                 <br />
-                <MainMenuButton onClick={() => setCurrentMenu("continue")}>
+                <Button onClick={() => setCurrentMenu("continue")}>
                   Continue
-                </MainMenuButton>
+                </Button>
                 <br />
-                <MainMenuButton
+                <Button
                   onClick={() => setCurrentMenu("settings")}
                   disabled={true}
                 >
                   Settings
-                </MainMenuButton>
+                </Button>
               </div>
             </>
           )}
