@@ -271,6 +271,9 @@ class Api::V1::GamesController < ApplicationController
   end
 
   def move_item_to_character
+    character = Character.find(params[:character_id])
+    if character.games_id == @game.id
+    end
   end
 
   def move_item_to_party
