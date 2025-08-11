@@ -1,4 +1,4 @@
-import { Character } from "./CharacterTypes";
+import { Character, Inventory } from "./CharacterTypes";
 
 export type Game = {
   id: number;
@@ -26,6 +26,7 @@ export type Party = {
   status: string;
   battles_id: number;
   player_party: boolean;
+  filtered_inventories: Inventory[];
   characters: Character[];
 };
 

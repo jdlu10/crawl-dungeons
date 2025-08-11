@@ -3,4 +3,6 @@ class Inventory < ApplicationRecord
     belongs_to :item
 
     has_many :item_effects, as: :attachable
+
+    scope :active, -> { where(active: true) }
 end

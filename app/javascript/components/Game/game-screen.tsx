@@ -6,11 +6,13 @@ import MovementControls from "./Hud/MovementControls";
 import { useAppStore } from "../../store/AppStore";
 import CharacterPanel from "./Hud/CharacterPanel";
 import { Character } from "../../types/CharacterTypes";
+import { Party } from "../../types/GameTypes";
 
 type GameState = "exploring" | "combat" | undefined;
 
 export default function GameScreen() {
   const game = useAppStore((state) => state.game);
+  const partyData = useAppStore<Party | undefined>((state) => state.party.data);
   const [gameScreenState, setGameScreenState] = useState<GameState>();
   const [characterSheet, setCharacterSheet] = useState<Character | undefined>();
 
@@ -98,8 +100,9 @@ export default function GameScreen() {
       )}
       {characterSheet && (
         <CharacterPanel
+          party={partyData}
           character={characterSheet}
-          closeButtonHandler={setCharacterSheet}
+          setCharacterSheet={setCharacterSheet}
         />
       )}
     </div>

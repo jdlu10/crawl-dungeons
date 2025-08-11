@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_01_184434) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_11_151639) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,6 +30,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_01_184434) do
     t.integer "level_requirement"
     t.string "description"
     t.string "key"
+    t.boolean "usable_outside_combat"
     t.index ["element_id"], name: "index_abilities_on_element_id"
     t.index ["icon_id"], name: "index_abilities_on_icon_id"
   end
@@ -170,6 +171,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_01_184434) do
     t.boolean "equipped"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "active"
     t.index ["attachable_type", "attachable_id"], name: "index_inventories_on_attachable"
     t.index ["item_id"], name: "index_inventories_on_item_id"
   end

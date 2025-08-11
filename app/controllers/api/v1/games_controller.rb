@@ -1,4 +1,6 @@
 class Api::V1::GamesController < ApplicationController
+  include JsonErrorHandler
+
   skip_before_action :verify_authenticity_token
   before_action :find_player_game, only: [
     :delete_game,
@@ -11,11 +13,10 @@ class Api::V1::GamesController < ApplicationController
     :current_map,
     :player_party_turn,
     :player_party_move,
-    :move_item_to_character,
-    :move_item_to_party,
-    :use_item_in_party_inventory,
-    :equip_item_for_character,
-    :use_item_in_character_inventory,
+    :move_item,
+    :use_item,
+    :equip_item,
+    :discard_item,
     :use_character_ability
   ]
 
@@ -67,7 +68,8 @@ class Api::V1::GamesController < ApplicationController
                 Inventory.find_or_create_by!({ 
                     attachable: new_game_character, 
                     item: Item.find_by(name: item[:name], template: true),
-                    equipped: item[:equipped] 
+                    equipped: item[:equipped],
+                    active: true
                 })
             end
           end
@@ -173,7 +175,7 @@ class Api::V1::GamesController < ApplicationController
 
     render json: party.as_json(
       include: {
-        inventories: {
+        filtered_inventories: {
           include: {
             item: {}
           }
@@ -182,7 +184,7 @@ class Api::V1::GamesController < ApplicationController
           include: {
             race: {},
             visual_render: {},
-            inventories: {
+            filtered_inventories: {
               include: {
                 item: {
                   include: [:visual_render, :element, :equippable_slot]
@@ -270,25 +272,72 @@ class Api::V1::GamesController < ApplicationController
     render json: party, status: :ok
   end
 
-  def move_item_to_character
-    character = Character.find(params[:character_id])
-    if character.games_id == @game.id
+  def move_item
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    iventory_item = Inventory.find(params[:inventory_id])
+    character = Character.find(params[:character_id]) if params[:character_id]
+
+    return json_error("Incorrect game id.") unless party.game_id == @game.id
+    return json_error("Inactive item.") unless iventory_item&.active?
+
+    if character
+      iventory_item.update(attachable: character)
+    else 
+      iventory_item.update(attachable: party)
     end
+
+    player_party
   end
 
-  def move_item_to_party
+  def use_item
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    iventory_item = Inventory.find(params[:inventory_id])
+    character = Character.find(params[:character_id]) if params[:character_id]
+
+    return json_error("Incorrect game id.") unless party.game_id == @game.id
+    return json_error("Inactive item.") unless iventory_item&.active?
+
+    player_party
   end
 
-  def use_item_in_party_inventory
+  def equip_item
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    iventory_item = Inventory.find(params[:inventory_id])
+    character = Character.find(params[:character_id]) if params[:character_id]
+
+    return json_error("Incorrect game id.") unless party.game_id == @game.id
+    return json_error("Inactive item.") unless iventory_item&.active?
+
+    if (inventory_item.item.equippable_slot && character)
+      if (inventory_item.equipped?)
+        inventory_item.update(equipped: false)
+      else
+        inventory_item.update(equipped: true, attachable: character)
+      end
+    end
+
+    player_party
   end
 
-  def equip_item_for_character
-  end
+  def discard_item
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    iventory_item = Inventory.find(params[:inventory_id])
 
-  def use_item_in_character_inventory
+    return json_error("Incorrect game id.") unless party.game_id == @game.id
+    return json_error("Inactive item.") unless iventory_item&.active?
+
+    if (inventory_item)
+      inventory_item.item.update(active: false);
+    end
+
+    player_party
   end
   
   def use_character_ability
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    character = Character.find(params[:character_id])
+
+    render json: party, status: :ok
   end
 
 

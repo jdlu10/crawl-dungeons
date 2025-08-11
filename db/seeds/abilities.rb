@@ -15,6 +15,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "A basic attack using a weapon. Deals 100% weapon damage + 100% strength modifier damage.",
+        usable_outside_combat: false,
     },
     {
         name: "Defend",
@@ -30,6 +31,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "A basic defensive action that reduces incoming damage by 50% for one turn.",
+        usable_outside_combat: false,
     },
     {
         name: "Skills",
@@ -45,6 +47,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "Attempt to use a skill.",
+        usable_outside_combat: false,
     },
     {
         name: "Magic",
@@ -60,6 +63,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "Attempt to cast a spell.",
+        usable_outside_combat: false,
     },
     {
         name: "Use Item",
@@ -75,6 +79,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "Attempt to use an item.",
+        usable_outside_combat: false,
     },
     {
         name: "Flee",
@@ -90,6 +95,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "A basic action to attempt to escape from combat.",
+        usable_outside_combat: false,
     },
     {
         name: "Power Attack",
@@ -105,6 +111,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "A stronger single target atttack that deals 150% weapon damage + 150% strength modifier damage.",
+        usable_outside_combat: false,
     },
     {
         name: "Full Swing",
@@ -120,6 +127,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "A wide reaching attack that hits all enemies in melee range, dealing 50% weapon damage + 50% strength modifier damage to each.",
+        usable_outside_combat: false,
     },
     {
         name: "Hide",
@@ -135,6 +143,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "Attempt to hide in shadows, making it harder for enemies to target you. If successful, you gain a stealth bonus that increases your evasion and reduces the chance of being hit by enemy attacks.",
+        usable_outside_combat: false,
     },
     {
         name: "Sneak Attack",
@@ -150,6 +159,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "Attack from the shadows, dealing double damage to an unsuspecting target.",
+        usable_outside_combat: false,
     },
     {
         name: "Steal",
@@ -165,6 +175,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "Try to steal an item from an enemy.",
+        usable_outside_combat: false,
     },
     {
         name: "Fire Bolt",
@@ -180,6 +191,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "A magical fire attack that hits a single target, dealing spell damage based on the caster's intelligence and the target's resistance to fire with a chance to ignite the target, causing additional damage over time.",
+        usable_outside_combat: false,
     },
     {
         name: "Water Bolt",
@@ -195,6 +207,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 2,
         description: "A magical water attack that hits a single target, dealing spell damage based on the caster's intelligence and the target's resistance to water with a chance to slow the target, reducing their speed for a short duration.",
+        usable_outside_combat: false,
     },
     {
         name: "Earth Bolt",
@@ -210,6 +223,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 3,
         description: "A magical earth attack that hits a single target, dealing spell damage based on the caster's intelligence and the target's resistance to earth with a chance to stun the target, making them unable to act for one or more turns.",
+        usable_outside_combat: false,
     },
     {
         name: "Lightning Bolt",
@@ -225,6 +239,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 4,
         description: "A magical lightning attack that hits a single target, dealing spell damage based on the caster's intelligence and the target's resistance to lightning with a chance to paralyze the target, which may prevent them from moving for a few turns.",
+        usable_outside_combat: false,
     },
     {
         name: "Heal",
@@ -240,6 +255,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 1,
         description: "A spell that restores a small amount of hit points to a target, based on the caster's wisdom.",
+        usable_outside_combat: true,
     },
     {
         name: "Cure",
@@ -255,6 +271,7 @@ abilities = [
         icon: VisualRender.find_by(name: "icon_placeholder"),
         level_requirement: 2,
         description: "A spell that cures a status effect from a target, such as poison or stun.",
+        usable_outside_combat: true,
     },
 ]
 

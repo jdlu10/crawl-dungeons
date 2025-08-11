@@ -29,11 +29,10 @@ Rails.application.routes.draw do
       patch 'games/:id/party/characters/remove', to: 'games#player_party_character_remove', as: :player_party_character_remove
       patch 'games/:id/party/characters/swap', to: 'games#player_party_character_swap_position', as: :player_party_character_swap_position
 
-      patch 'games/:id/party/characters/:character_id/inventory/:iventory_id', to: 'games#move_item_to_character', as: :move_item_to_character
-      patch 'games/:id/party/inventory/:inventory_id', to: 'games#move_item_to_party', as: :move_item_to_party
-      patch 'games/:id/party/inventory/:inventory_id/use', to: 'games#use_item_in_party_inventory', as: :use_item_in_party_inventory
-      patch 'games/:id/party/characters/:character_id/inventory/:inventory_id/equip', to: 'games#equip_item_for_character', as: :equip_item_for_character
-      patch 'games/:id/party/characters/:character_id/inventory/:inventory_id/use', to: 'games#use_item_in_character_inventory', as: :use_item_in_character_inventory
+      patch 'games/:id/party/inventory/:inventory_id/move', to: 'games#move_item', as: :move_item
+      patch 'games/:id/party/inventory/:inventory_id/use', to: 'games#use_item', as: :use_item
+      patch 'games/:id/party/inventory/:inventory_id/equip', to: 'games#equip_item', as: :equip_item
+      patch 'games/:id/party/inventory/:inventory_id/discard', to: 'games#discard_item', as: :discard_item
       patch 'games/:id/party/characters/:character_id/ability/:ability_id/use', to: 'games#use_character_ability', as: :use_character_ability
 
       get 'character_template', to: 'games#find_character_template_by_vocation', as: :find_character_template_by_vocation

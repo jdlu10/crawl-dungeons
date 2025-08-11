@@ -7,7 +7,8 @@ PLAYER_VOCATIONS.each do |vocation|
         Inventory.find_or_create_by!({ 
             attachable: character_template_by_vocation, 
             item: Item.find_by(name: item[:name], template: true),
-            equipped: item[:equipped] 
+            equipped: item[:equipped],
+            active: true
         })
         puts "Created inventory: #{item[:name]} for #{character_template_by_vocation[:name]}"
     end

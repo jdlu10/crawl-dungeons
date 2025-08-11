@@ -30,7 +30,7 @@ export type Character = CharacterBase & {
   race: Race;
   vocation: Vocation;
   visual_render: VisualRender;
-  inventories: Inventory[];
+  filtered_inventories: Inventory[];
 };
 
 export const abilityScoreKeys = [
@@ -109,6 +109,7 @@ export type Ability = {
   description: string;
   key: string;
   element: TypeElement;
+  usable_outside_combat: boolean | undefined;
 };
 
 export type PartyPosition = {

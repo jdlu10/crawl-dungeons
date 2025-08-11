@@ -199,3 +199,63 @@ export function useQueryCreateCharacter(params: {
   });
   return createCharacterQuery;
 }
+
+type ItemActions = "move" | "use" | "equip" | "discard";
+
+type useCharacterInteractionQueriesParams = {
+  onSuccess?: (
+    data: Party,
+    action: ItemActions,
+    targetCharacterId: number | undefined
+  ) => void;
+  onError?: (error: any) => void;
+};
+
+export function useQueryInventoryActions(
+  params: useCharacterInteractionQueriesParams
+) {
+  const createCharacterQuery = useMutation({
+    mutationFn: async (inventoryActionParams: {
+      game_id: number | undefined;
+      player_id: number | undefined;
+      character_id: number | undefined;
+      inventory_id: number;
+      action: ItemActions;
+    }) => {
+      const response = await fetch(
+        "/api/v1/games/" +
+          inventoryActionParams.game_id +
+          "/party/inventory/" +
+          inventoryActionParams.inventory_id +
+          "/" +
+          inventoryActionParams.action,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(inventoryActionParams),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to ${inventoryActionParams.action} item: ${
+            inventoryActionParams.inventory_id
+          } ${
+            inventoryActionParams.character_id
+              ? "for character " + inventoryActionParams.character_id
+              : ""
+          }`
+        );
+      }
+      return await response.json();
+    },
+    onSuccess: (data, variables) => {
+      if (params?.onSuccess) {
+        params?.onSuccess(data, variables.action, variables.character_id);
+      }
+    },
+    onError: params?.onError,
+  });
+  return createCharacterQuery;
+}
