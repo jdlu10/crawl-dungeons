@@ -515,7 +515,21 @@ items = [
         element: Element.find_by(key: 'null'),
         template: true,
         description: "A healing herb that restores a small amount of health."
-    }
+    },
+    {
+        name: "Panacea",
+        valuable: false, 
+        usable: true, 
+        worth: 50, 
+        rarity: 10.0,
+        attack_value: [1,1].to_json, 
+        defensive_value: [0,0].to_json, 
+        potency: 1,
+        visual_render: VisualRender.find_by(name: 'item_panacea'),
+        element: Element.find_by(key: 'null'),
+        template: true,
+        description: "A mixture that cures all ailments."
+    },
 ]
 
 items.each do |item|

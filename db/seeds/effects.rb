@@ -32,6 +32,9 @@ effects = [
     
     { name: "Group", effect_key: "group", potency: 1, description: "Targets entire group", effect_type: 'abilities', prefix: false, suffix: false, rarity: 5.0 },
     { name: "Row", effect_key: "row", potency: 1, description: "Targets a row", effect_type: 'abilities', prefix: false, suffix: false, rarity: 10.0 },
+
+    { name: "Healing", effect_key: "healing", potency: 1, description: "heals target hit points", effect_type: 'items', prefix: false, suffix: false, rarity: 1.0 },
+    { name: "Curing", effect_key: "curing", potency: 1, description: "remove negative statuses", effect_type: 'items', prefix: false, suffix: false, rarity: 1.0 },
 ]
 
 effects.each do |effect|

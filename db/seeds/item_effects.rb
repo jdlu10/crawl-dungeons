@@ -9,7 +9,11 @@ item_effects = [
     { attachable: Item.find_by(name: "Short Bow"), effect: Effect.find_by(effect_key: "ranged", potency: 1) },
     { attachable: Item.find_by(name: "Long Bow"), effect: Effect.find_by(effect_key: "ranged", potency: 1) },
     { attachable: Item.find_by(name: "Mandate of Heaven"), effect: Effect.find_by(effect_key: "keen") },
-    { attachable: Item.find_by(name: "Mandate of Heaven"), effect: Effect.find_by(effect_key: "intelligence", potency: 5) }
+    { attachable: Item.find_by(name: "Mandate of Heaven"), effect: Effect.find_by(effect_key: "intelligence", potency: 5) },
+    { attachable: Item.find_by(name: "Herb"), effect: Effect.find_by(effect_key: "healing") },
+    { attachable: Item.find_by(name: "Potion of Healing"), effect: Effect.find_by(effect_key: "healing") },
+    { attachable: Item.find_by(name: "Potion of Greater Healing"), effect: Effect.find_by(effect_key: "healing") },
+    { attachable: Item.find_by(name: "Panacea"), effect: Effect.find_by(effect_key: "curing") },
 ]
 
 item_effects.each do |item_effect|

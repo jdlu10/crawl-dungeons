@@ -14,13 +14,15 @@ export default function GameScreen() {
   const game = useAppStore((state) => state.game);
   const partyData = useAppStore<Party | undefined>((state) => state.party.data);
   const [gameScreenState, setGameScreenState] = useState<GameState>();
-  const [characterSheet, setCharacterSheet] = useState<Character | undefined>();
+  const [characterSheetId, setCharacterSheetId] = useState<
+    number | undefined
+  >();
 
   const { MiniMap } = useMiniMap();
 
   const { CurrentPartyFrame } = useCurrentPartyFrame({
     onClick: (character) => {
-      setCharacterSheet(character);
+      setCharacterSheetId(character.id);
     },
     innerFrameStyle: "w-24 h-24",
     additionalElements: (character) => (
@@ -98,11 +100,11 @@ export default function GameScreen() {
       {gameScreenState === "combat" && (
         <section className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12"></section>
       )}
-      {characterSheet && (
+      {characterSheetId && (
         <CharacterPanel
           party={partyData}
-          character={characterSheet}
-          setCharacterSheet={setCharacterSheet}
+          characterId={characterSheetId}
+          setCharacterSheetId={setCharacterSheetId}
         />
       )}
     </div>

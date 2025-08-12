@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_11_151639) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_12_132420) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,6 +31,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_11_151639) do
     t.string "description"
     t.string "key"
     t.boolean "usable_outside_combat"
+    t.string "ability_key"
     t.index ["element_id"], name: "index_abilities_on_element_id"
     t.index ["icon_id"], name: "index_abilities_on_icon_id"
   end
@@ -75,6 +76,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_11_151639) do
     t.bigint "starting_map_id"
     t.index ["key"], name: "index_campaigns_on_key", unique: true
     t.index ["starting_map_id"], name: "index_campaigns_on_starting_map_id"
+  end
+
+  create_table "character_statuses", force: :cascade do |t|
+    t.bigint "character_id", null: false
+    t.bigint "status_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id"], name: "index_character_statuses_on_character_id"
+    t.index ["status_id"], name: "index_character_statuses_on_status_id"
   end
 
   create_table "characters", force: :cascade do |t|
@@ -270,6 +280,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_11_151639) do
     t.index ["game_id"], name: "index_settings_on_game_id"
   end
 
+  create_table "statuses", force: :cascade do |t|
+    t.string "name"
+    t.string "key"
+    t.string "status_type"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "visual_renders", force: :cascade do |t|
     t.string "name"
     t.string "render"
@@ -306,6 +325,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_11_151639) do
   add_foreign_key "battle_turns", "characters"
   add_foreign_key "battles", "items", column: "dropped_items_id"
   add_foreign_key "campaigns", "maps", column: "starting_map_id"
+  add_foreign_key "character_statuses", "characters"
+  add_foreign_key "character_statuses", "statuses"
   add_foreign_key "characters", "elements"
   add_foreign_key "characters", "games", column: "games_id"
   add_foreign_key "characters", "parties"

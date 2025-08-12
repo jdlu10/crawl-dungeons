@@ -8,19 +8,23 @@ import EquipmentIcon from "../../Utils/EquipmentIcon";
 import { useQueryInventoryActions } from "../../../utils/hooks/characterHooks";
 import { useAppStore } from "../../../store/AppStore";
 import { useQueryClient } from "@tanstack/react-query";
+import { useContextMenu } from "../../../utils/hooks/utilityHooks";
 
 type EquippableSlot = {
   [key: string]: { inventoryId: number; imageUrl: string; itemName: string };
 };
 
 export default function CharacterPanel(params: {
-  character: Character;
+  characterId: number;
   party: Party | undefined;
-  setCharacterSheet:
-    | React.Dispatch<React.SetStateAction<Character | undefined>>
+  setCharacterSheetId:
+    | React.Dispatch<React.SetStateAction<number | undefined>>
     | undefined;
 }) {
-  const { party, character, setCharacterSheet } = params;
+  const { party, characterId, setCharacterSheetId } = params;
+  const character =
+    party?.characters.find((character) => character.id === characterId) ||
+    ({} as Character);
   const [equippedItems, setEquippedItems] = useState<Inventory[]>([]);
   const game = useAppStore((s) => s.game);
   const playerId = useAppStore((s) => s.playerId);
@@ -36,16 +40,56 @@ export default function CharacterPanel(params: {
   };
 
   const closePanel = useCallback(() => {
-    if (typeof setCharacterSheet === "function") setCharacterSheet(undefined);
-  }, [setCharacterSheet]);
+    if (typeof setCharacterSheetId === "function")
+      setCharacterSheetId(undefined);
+  }, [setCharacterSheetId]);
+
+  const { mutateAsync: inventoryAction, isPending } = useQueryInventoryActions({
+    onSuccess: (data, action, targetCharacterId) => {
+      queryClient.invalidateQueries({ queryKey: ["party", game.id, playerId] });
+      if (targetCharacterId) {
+        setCharacterSheetId?.(targetCharacterId);
+      }
+    },
+    onError: (error) => {
+      console.error("Error with the item action:", error);
+    },
+  });
+
+  const { ContextMenu, showMenu, hideMenu } = useContextMenu(
+    party?.characters || [],
+    (targetCharacter, inventory_item, sourceCharacter) => {
+      const inventoryItem = inventory_item as Inventory;
+      inventoryAction({
+        game_id: game.id,
+        player_id: playerId,
+        character_id: targetCharacter?.id,
+        inventory_id: inventoryItem?.id,
+        action: "use",
+      });
+    }
+  );
 
   const EquipmentSlot = (params: { equipmentSlotKey: string }) => {
     const equippedItem = getEquippedItem(
       equippedItems,
       params.equipmentSlotKey
     );
+
     return equippedItem ? (
-      <EquipmentIcon onClick={() => {}} title={equippedItem?.item.name}>
+      <EquipmentIcon
+        disabled={isPending}
+        onClick={() => {
+          inventoryAction({
+            game_id: game.id,
+            player_id: playerId,
+            character_id: character?.id,
+            inventory_id: equippedItem.id,
+            action: "equip",
+          });
+        }}
+        title={equippedItem?.item.name}
+      >
         {equippedItem && (
           <img
             className="max-w-14 max-h-14"
@@ -57,24 +101,6 @@ export default function CharacterPanel(params: {
       <EquipmentIcon />
     );
   };
-
-  const { mutateAsync: inventoryAction, isPending } = useQueryInventoryActions({
-    onSuccess: (data, action, targetCharacterId) => {
-      queryClient.invalidateQueries({ queryKey: ["party", game.id, playerId] });
-      if (targetCharacterId) {
-        setCharacterSheet?.(
-          data.characters.find((char) => char.id === targetCharacterId)
-        );
-      } else {
-        setCharacterSheet?.(
-          data.characters.find((char) => char.id === character.id)
-        );
-      }
-    },
-    onError: (error) => {
-      console.error("Error with the item action:", error);
-    },
-  });
 
   const ItemActions = (params: {
     inventory_item: Inventory;
@@ -104,14 +130,15 @@ export default function CharacterPanel(params: {
         {inventory_item.item.usable && (
           <button
             disabled={isPending}
-            onClick={() => {
-              inventoryAction({
-                game_id: game.id,
-                player_id: playerId,
-                character_id: character?.id,
-                inventory_id: inventory_item.id,
-                action: "use",
-              });
+            onClick={(e) => {
+              showMenu(e, inventory_item, undefined);
+              // inventoryAction({
+              //   game_id: game.id,
+              //   player_id: playerId,
+              //   character_id: character?.id,
+              //   inventory_id: inventory_item.id,
+              //   action: "use",
+              // });
             }}
             className="item-action border-2 px-2.5 cursor-pointer text-sm hover:bg-green-700 active:bg-green-800 font-bold disabled:bg-gray-800 disabled:cursor-not-allowed"
           >
@@ -138,13 +165,20 @@ export default function CharacterPanel(params: {
         <button
           disabled={isPending}
           onClick={() => {
-            inventoryAction({
-              game_id: game.id,
-              player_id: playerId,
-              character_id: character?.id,
-              inventory_id: inventory_item.id,
-              action: "discard",
-            });
+            let confirmDiscard = window.confirm(
+              `Are you sure you want to discard ${inventory_item.item.name}? This action cannot be undone.`
+            );
+            if (confirmDiscard) {
+              inventoryAction({
+                game_id: game.id,
+                player_id: playerId,
+                character_id: character?.id,
+                inventory_id: inventory_item.id,
+                action: "discard",
+              });
+            } else {
+              console.log("Discard action cancelled by user.");
+            }
           }}
           className="item-discard border-2 px-2.5 cursor-pointer text-sm hover:bg-red-800 active:bg-red-900 font-bold disabled:bg-gray-800 disabled:cursor-not-allowed"
         >
@@ -448,6 +482,7 @@ export default function CharacterPanel(params: {
       <div className="notes row-span-2 col-span-2 border-2 p-2.5 overflow-auto">
         {character.description}
       </div>
+      {ContextMenu}
     </section>
   );
 }

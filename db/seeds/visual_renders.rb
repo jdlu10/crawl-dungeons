@@ -61,6 +61,7 @@ images = [
     { name: "item_silver_ring", url: "/images/item/icon-silver_ring.svg", visual_type: "item" },
     { name: "item_gold_ring", url: "/images/item/icon-gold_ring.svg", visual_type: "item" },
     { name: "item_diamond_ring", url: "/images/item/icon-diamond_ring.svg", visual_type: "item" },
+    { name: "item_panacea", url: "/images/item/icon-panacea.svg", visual_type: "item" },
 ]
 
 images.each do |image|

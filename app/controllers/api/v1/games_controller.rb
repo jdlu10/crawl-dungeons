@@ -274,16 +274,16 @@ class Api::V1::GamesController < ApplicationController
 
   def move_item
     party = Party.find_by(game_id: @game.id, player_party: true)
-    iventory_item = Inventory.find(params[:inventory_id])
+    inventory_item = Inventory.find(params[:inventory_id])
     character = Character.find(params[:character_id]) if params[:character_id]
 
     return json_error("Incorrect game id.") unless party.game_id == @game.id
-    return json_error("Inactive item.") unless iventory_item&.active?
+    return json_error("Inactive item.") unless inventory_item&.active?
 
     if character
-      iventory_item.update(attachable: character)
+      inventory_item.update(attachable: character)
     else 
-      iventory_item.update(attachable: party)
+      inventory_item.update(attachable: party)
     end
 
     player_party
@@ -291,28 +291,37 @@ class Api::V1::GamesController < ApplicationController
 
   def use_item
     party = Party.find_by(game_id: @game.id, player_party: true)
-    iventory_item = Inventory.find(params[:inventory_id])
+    inventory_item = Inventory.find(params[:inventory_id])
     character = Character.find(params[:character_id]) if params[:character_id]
 
     return json_error("Incorrect game id.") unless party.game_id == @game.id
-    return json_error("Inactive item.") unless iventory_item&.active?
+    return json_error("Inactive item.") unless inventory_item&.active?
+
+    if (character)
+      
+    else
+    
+    end
+    inventory_item.update(active: false);
 
     player_party
   end
 
   def equip_item
     party = Party.find_by(game_id: @game.id, player_party: true)
-    iventory_item = Inventory.find(params[:inventory_id])
+    inventory_item = Inventory.find(params[:inventory_id])
     character = Character.find(params[:character_id]) if params[:character_id]
 
     return json_error("Incorrect game id.") unless party.game_id == @game.id
-    return json_error("Inactive item.") unless iventory_item&.active?
+    return json_error("Inactive item.") unless inventory_item&.active?
 
-    if (inventory_item.item.equippable_slot && character)
+    if (inventory_item.item.equippable_slot)
       if (inventory_item.equipped?)
         inventory_item.update(equipped: false)
-      else
+      elsif (character)
         inventory_item.update(equipped: true, attachable: character)
+      else
+        inventory_item.update(equipped: true)
       end
     end
 
@@ -321,13 +330,13 @@ class Api::V1::GamesController < ApplicationController
 
   def discard_item
     party = Party.find_by(game_id: @game.id, player_party: true)
-    iventory_item = Inventory.find(params[:inventory_id])
+    inventory_item = Inventory.find(params[:inventory_id])
 
     return json_error("Incorrect game id.") unless party.game_id == @game.id
-    return json_error("Inactive item.") unless iventory_item&.active?
+    return json_error("Inactive item.") unless inventory_item&.active?
 
     if (inventory_item)
-      inventory_item.item.update(active: false);
+      inventory_item.update(active: false);
     end
 
     player_party
