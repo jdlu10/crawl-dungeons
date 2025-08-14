@@ -1,11 +1,13 @@
 import { create } from "zustand";
 import {
   FacingDirections,
+  GameEvent,
   GameSetting,
   Party,
   PartyCoordinates,
   TypeMap,
 } from "../types/GameTypes";
+import { Character, Inventory } from "../types/CharacterTypes";
 
 type ThemeTypes = "light" | "dark" | "";
 type gameStateTypes =
@@ -37,6 +39,22 @@ type AppStore = {
     setCurrentMap: (currentMap: TypeMap) => void;
     setPartyFacing: (direction: FacingDirections) => void;
     setPartyPosition: (position: PartyCoordinates) => void;
+    setPartyStatus: (status: "exploring" | "combat") => void;
+  };
+  battle: {
+    events: GameEvent[];
+    enemies: Character[];
+    rewards: Inventory[];
+    round: number;
+    currentTurnCharacterId: number;
+    turnOrder: number[];
+    pushBattleEvent: (event: GameEvent) => void;
+    nextBattleEvent: () => GameEvent | undefined;
+    setEnemies: (enemies: Character[]) => void;
+    setRewards: (rewards: Inventory[]) => void;
+    setRound: (round: number) => void;
+    setCurrentTurnCharacterId: (characterId: number) => void;
+    setTurnOrder: (turnOrder: number[]) => void;
   };
 };
 
@@ -106,6 +124,60 @@ export const useAppStore = create<AppStore>((set) => ({
           return { party: { ...state.party } };
         }
       });
+    },
+    setPartyStatus: (status: "exploring" | "combat") => {
+      set((state) => {
+        if (state.party.data) {
+          return {
+            party: {
+              ...state.party,
+              data: {
+                ...state.party?.data,
+                status: status,
+              },
+            },
+          };
+        } else {
+          return { party: { ...state.party } };
+        }
+      });
+    },
+  },
+  battle: {
+    events: [],
+    enemies: [],
+    rewards: [],
+    round: 0,
+    currentTurnCharacterId: 0,
+    turnOrder: [],
+    pushBattleEvent: (event: GameEvent) => {
+      set((state) => {
+        state.battle.events.push(event);
+        return { battle: { ...state.battle, events: state.battle.events } };
+      });
+    },
+    nextBattleEvent: () => {
+      let nextEvent: GameEvent | undefined;
+      set((state) => {
+        nextEvent = state.battle.events.shift();
+        return { battle: { ...state.battle, events: state.battle.events } };
+      });
+      return nextEvent;
+    },
+    setEnemies: (enemies) => {
+      set((state) => ({ battle: { ...state.battle, enemies } }));
+    },
+    setRewards: (rewards) => {
+      set((state) => ({ battle: { ...state.battle, rewards } }));
+    },
+    setRound: (round) => {
+      set((state) => ({ battle: { ...state.battle, round } }));
+    },
+    setCurrentTurnCharacterId: (characterId) => {
+      set((state) => ({ battle: { ...state.battle, characterId } }));
+    },
+    setTurnOrder: (turnOrder) => {
+      set((state) => ({ battle: { ...state.battle, turnOrder } }));
     },
   },
 }));

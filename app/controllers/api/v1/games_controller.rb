@@ -269,6 +269,13 @@ class Api::V1::GamesController < ApplicationController
   def player_party_move
     party = Party.find_by(game_id: @game.id, player_party: true)
     party.update(position: params[:position])
+    
+    ActiveRecord::Base.transaction do
+      set_up_battle(party)
+      set_up_enemies(party)
+      party.update(status: "combat") if Encounters.step(party)
+    end
+    
     render json: party, status: :ok
   end
 
@@ -297,14 +304,16 @@ class Api::V1::GamesController < ApplicationController
     return json_error("Incorrect game id.") unless party.game_id == @game.id
     return json_error("Inactive item.") unless inventory_item&.active?
 
-    if (character)
-      
-    else
-    
-    end
-    inventory_item.update(active: false);
+    events = []
 
-    player_party
+    ActiveRecord::Base.transaction do
+      inventory_item.item.item_effects.each do |item_effect|
+        events.push(ItemActions.execute(item_effect.effect.effect_key, inventory_item: inventory_item, target: character, item_effect: item_effect));
+      end
+      inventory_item.update(active: false);
+    end
+
+    render json: events, status: :ok
   end
 
   def equip_item
@@ -372,5 +381,11 @@ class Api::V1::GamesController < ApplicationController
       break if starting_position
     end
     starting_position
+  end
+
+  def set_up_battle(party)
+  end
+
+  def set_up_enemies(party)
   end
 end

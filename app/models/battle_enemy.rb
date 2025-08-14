@@ -1,4 +1,4 @@
-class BattleTurn < ApplicationRecord
+class BattleEnemy < ApplicationRecord
   belongs_to :character
   belongs_to :battle
 end

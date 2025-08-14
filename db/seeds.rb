@@ -31,7 +31,7 @@ load 'db/seeds/campaigns.rb'
 load 'db/seeds/maps.rb'
 
 load 'db/seeds/character_templates.rb'
-# load 'db/seeds/monster_templates.rb'
+load 'db/seeds/monster_templates.rb'
 load 'db/seeds/inventories.rb'
 
 # Example for environment-specific seeds:

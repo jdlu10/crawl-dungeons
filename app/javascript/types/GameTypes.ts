@@ -18,7 +18,7 @@ export type Game = {
 export type Party = {
   id: number | undefined;
   name: string;
-  game_id: 30;
+  game_id: number;
   wealth: number;
   facing_direction: string;
   current_map_id: number;
@@ -73,4 +73,16 @@ export type PartyCoordinates = [number, number];
 
 export type GameSetting = {
   movement_controls_hud: boolean;
+};
+
+export type GameEvent = {
+  action: string;
+  sourceEntity: Character;
+  targetEntities: Character[];
+  eventType: string;
+  value: number | undefined;
+  verb: string | undefined;
+  units: string | undefined;
+  description: string | undefined;
+  played: boolean;
 };

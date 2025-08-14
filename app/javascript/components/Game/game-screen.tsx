@@ -13,7 +13,8 @@ type GameState = "exploring" | "combat" | undefined;
 export default function GameScreen() {
   const game = useAppStore((state) => state.game);
   const partyData = useAppStore<Party | undefined>((state) => state.party.data);
-  const [gameScreenState, setGameScreenState] = useState<GameState>();
+  const [gameScreenState, setGameScreenState] =
+    useState<GameState>("exploring");
   const [characterSheetId, setCharacterSheetId] = useState<
     number | undefined
   >();
@@ -72,12 +73,10 @@ export default function GameScreen() {
   });
 
   useEffect(() => {
-    if (game.gameState === "game") {
-      setGameScreenState("exploring");
-    } else if (game.gameState === "battle") {
+    if (partyData?.status === "combat") {
       setGameScreenState("combat");
     }
-  }, []);
+  }, [partyData]);
 
   return (
     <div className="bg-gray-800 h-150 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl max-h-150 relative">
@@ -98,7 +97,11 @@ export default function GameScreen() {
         </section>
       )}
       {gameScreenState === "combat" && (
-        <section className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12"></section>
+        <section className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12">
+          <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">
+            <CurrentPartyFrame />
+          </div>
+        </section>
       )}
       {characterSheetId && (
         <CharacterPanel

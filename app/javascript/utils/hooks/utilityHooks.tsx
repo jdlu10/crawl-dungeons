@@ -52,7 +52,6 @@ export function useContextMenu<T extends Character = Character>(
       sourceEntity: T | undefined
     ) => {
       event.preventDefault();
-      console.log(actionEntity);
       setActionEntity(actionEntity);
       setSourceEntity(sourceEntity);
       setContextMenuState((prev) => ({

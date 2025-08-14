@@ -34,7 +34,6 @@ export default function Main() {
         return <MainMenu />;
       case "party-preparation":
         return <PartyPreparation />;
-      case "battle":
       case "game":
         return <GameScreen />;
       case "settings":

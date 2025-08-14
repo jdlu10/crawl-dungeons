@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_12_132420) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -45,25 +45,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_12_132420) do
     t.index ["effect_id"], name: "index_ability_effects_on_effect_id"
   end
 
-  create_table "battle_turns", force: :cascade do |t|
+  create_table "battle_enemies", force: :cascade do |t|
     t.bigint "character_id", null: false
-    t.integer "turn_order"
     t.bigint "battle_id", null: false
-    t.integer "row"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["battle_id"], name: "index_battle_turns_on_battle_id"
-    t.index ["character_id"], name: "index_battle_turns_on_character_id"
+    t.index ["battle_id"], name: "index_battle_enemies_on_battle_id"
+    t.index ["character_id"], name: "index_battle_enemies_on_character_id"
   end
 
   create_table "battles", force: :cascade do |t|
-    t.integer "current_turn"
+    t.integer "current_turn_character_id"
     t.integer "dropped_wealth"
-    t.bigint "dropped_items_id", null: false
     t.integer "experience_gain"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["dropped_items_id"], name: "index_battles_on_dropped_items_id"
+    t.integer "round"
+    t.string "turn_order"
   end
 
   create_table "campaigns", force: :cascade do |t|
@@ -113,6 +111,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_12_132420) do
     t.integer "max_power_points"
     t.integer "party_position_row"
     t.integer "party_position_column"
+    t.decimal "threat"
     t.index ["element_id"], name: "index_characters_on_element_id"
     t.index ["games_id"], name: "index_characters_on_games_id"
     t.index ["party_id"], name: "index_characters_on_party_id"
@@ -242,6 +241,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_12_132420) do
     t.string "status"
     t.bigint "battles_id"
     t.boolean "player_party"
+    t.integer "steps_since_last_encounter"
     t.index ["battles_id"], name: "index_parties_on_battles_id"
     t.index ["current_map_id"], name: "index_parties_on_current_map_id"
     t.index ["game_id"], name: "index_parties_on_game_id"
@@ -321,9 +321,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_12_132420) do
   add_foreign_key "abilities", "visual_renders", column: "icon_id"
   add_foreign_key "ability_effects", "abilities"
   add_foreign_key "ability_effects", "effects"
-  add_foreign_key "battle_turns", "battles"
-  add_foreign_key "battle_turns", "characters"
-  add_foreign_key "battles", "items", column: "dropped_items_id"
+  add_foreign_key "battle_enemies", "battles"
+  add_foreign_key "battle_enemies", "characters"
   add_foreign_key "campaigns", "maps", column: "starting_map_id"
   add_foreign_key "character_statuses", "characters"
   add_foreign_key "character_statuses", "statuses"

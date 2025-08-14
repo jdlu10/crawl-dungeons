@@ -73,6 +73,9 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
   const { mutateAsync: moveParty } = useMovePartyQuery({
     onSuccess: (data, position) => {
       party.setPartyPosition(position);
+      if (data.status === "exploring" || data.status === "combat") {
+        party.setPartyStatus(data.status);
+      }
       setIsMoving(false);
     },
     onError: (error) => {
