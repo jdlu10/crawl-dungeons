@@ -9,11 +9,12 @@ export default function Main() {
   const game = useAppStore((s) => s.game);
   const playerId = useAppStore((s) => s.playerId);
   const party = useAppStore((s) => s.party);
+  const battle = useAppStore((s) => s.battle);
   const setPlayerId = useAppStore((s) => s.setPlayerId);
 
   const {
     data: current_party,
-    isLoading: isLoadingCurrentyParty,
+    isLoading: isLoadingCurrentParty,
     isError: isErrorCurrentParty,
   } = useQueryGetCurrentParty({ gameId: game.id, playerId: playerId });
 
@@ -50,6 +51,7 @@ export default function Main() {
       {renderGame()}
       <pre className="debugging absolute w-150 h-150 right-0 bottom-0 overflow-scroll">
         {JSON.stringify(party, null, 2)}
+        {JSON.stringify(battle, null, 2)}
       </pre>
     </>
   );

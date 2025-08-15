@@ -62,6 +62,19 @@ images = [
     { name: "item_gold_ring", url: "/images/item/icon-gold_ring.svg", visual_type: "item" },
     { name: "item_diamond_ring", url: "/images/item/icon-diamond_ring.svg", visual_type: "item" },
     { name: "item_panacea", url: "/images/item/icon-panacea.svg", visual_type: "item" },
+
+    { name: "monster_goblin", url: "/images/item/icon-goblin.svg", visual_type: "monster" },
+    { name: "monster_goblin_warrior", url: "/images/item/icon-goblin_warrior.svg", visual_type: "monster" },
+    { name: "monster_orc", url: "/images/item/icon-orc.svg", visual_type: "monster" },
+    { name: "monster_skeleton", url: "/images/item/icon-skeleton.svg", visual_type: "monster" },
+    { name: "monster_skeleton_warrior", url: "/images/item/icon-skeleton_warrior.svg", visual_type: "monster" },
+    { name: "monster_zombie", url: "/images/item/icon-zombie.svg", visual_type: "monster" },
+    { name: "monster_ghost", url: "/images/item/icon-ghost.svg", visual_type: "monster" },
+    { name: "monster_wolf", url: "/images/item/icon-wolf.svg", visual_type: "monster" },
+    { name: "monster_imp", url: "/images/item/icon-imp.svg", visual_type: "monster" },
+    { name: "monster_stone_golem", url: "/images/item/icon-stone_golem.svg", visual_type: "monster" },
+    { name: "monster_slime", url: "/images/item/icon-slime.svg", visual_type: "monster" },
+    { name: "monster_dragon", url: "/images/item/icon-dragon.svg", visual_type: "monster" },
 ]
 
 images.each do |image|

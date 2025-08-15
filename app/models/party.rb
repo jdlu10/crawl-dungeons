@@ -11,4 +11,8 @@ class Party < ApplicationRecord
   def filtered_inventories
     inventories.select(&:active?)
   end
+
+  def battle
+    Battle.find(battles_id)
+  end
 end

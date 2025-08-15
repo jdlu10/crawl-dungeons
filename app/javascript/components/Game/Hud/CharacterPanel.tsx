@@ -71,9 +71,9 @@ export default function CharacterPanel(params: {
   );
 
   const EquipmentSlot = (params: { equipmentSlotKey: string }) => {
-    const equippedItem = getEquippedItem(
-      equippedItems,
-      params.equipmentSlotKey
+    const equippedItem = React.useMemo(
+      () => getEquippedItem(equippedItems, params.equipmentSlotKey),
+      [equippedItems, params.equipmentSlotKey]
     );
 
     return equippedItem ? (
@@ -132,13 +132,6 @@ export default function CharacterPanel(params: {
             disabled={isPending}
             onClick={(e) => {
               showMenu(e, inventory_item, undefined);
-              // inventoryAction({
-              //   game_id: game.id,
-              //   player_id: playerId,
-              //   character_id: character?.id,
-              //   inventory_id: inventory_item.id,
-              //   action: "use",
-              // });
             }}
             className="item-action border-2 px-2.5 cursor-pointer text-sm hover:bg-green-700 active:bg-green-800 font-bold disabled:bg-gray-800 disabled:cursor-not-allowed"
           >
@@ -216,10 +209,10 @@ export default function CharacterPanel(params: {
           <EquipmentSlot equipmentSlotKey="back" />
         </div>
         <div className="left-hand -ml-15">
-          <EquipmentSlot equipmentSlotKey="left_hand_one" />
+          <EquipmentSlot equipmentSlotKey="right_hand_one" />
         </div>
         <div className="right-hand justify-self-end -mr-15">
-          <EquipmentSlot equipmentSlotKey="right_hand_one" />
+          <EquipmentSlot equipmentSlotKey="left_hand_one" />
         </div>
         <div className="waist -ml-5">
           <EquipmentSlot equipmentSlotKey="waist" />

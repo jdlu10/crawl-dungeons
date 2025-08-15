@@ -5,19 +5,35 @@ import GameViewport from "./Hud/GameViewport";
 import MovementControls from "./Hud/MovementControls";
 import { useAppStore } from "../../store/AppStore";
 import CharacterPanel from "./Hud/CharacterPanel";
-import { Character } from "../../types/CharacterTypes";
 import { Party } from "../../types/GameTypes";
+import { useQueryLoadCombatInfo } from "../../utils/hooks/combatHooks";
+import Enemies from "./Battle/Enemies";
+import BattleCommands from "./Battle/BattleCommands";
+import TurnOrder from "./Battle/TurnOrder";
+import BattleEvents from "./Battle/BattleEvents";
 
 type GameState = "exploring" | "combat" | undefined;
 
 export default function GameScreen() {
-  const game = useAppStore((state) => state.game);
+  const game = useAppStore((s) => s.game);
+  const playerId = useAppStore((s) => s.playerId);
+  const battle = useAppStore((s) => s.battle);
   const partyData = useAppStore<Party | undefined>((state) => state.party.data);
   const [gameScreenState, setGameScreenState] =
     useState<GameState>("exploring");
   const [characterSheetId, setCharacterSheetId] = useState<
     number | undefined
   >();
+
+  const {
+    data: battleInfo,
+    isLoading: isLoadingCombatInfo,
+    isError: isErrorCombatInfo,
+  } = useQueryLoadCombatInfo({
+    gameId: game.id,
+    playerId: playerId,
+    combat: gameScreenState,
+  });
 
   const { MiniMap } = useMiniMap();
 
@@ -78,6 +94,18 @@ export default function GameScreen() {
     }
   }, [partyData]);
 
+  useEffect(() => {
+    if (battleInfo) {
+      battle.setEnemies(battleInfo.enemies);
+      battle.setRewards(battleInfo.rewards);
+      battle.setDroppedWealth(battleInfo.dropped_wealth);
+      battle.setExperienceGain(battleInfo.experience_gain);
+      battle.setRound(battleInfo.round);
+      battle.setCurrentTurnCharacterId(battleInfo.current_turn_character_id);
+      battle.setTurnOrder(battleInfo.turn_order);
+    }
+  }, [battleInfo]);
+
   return (
     <div className="bg-gray-800 h-150 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl max-h-150 relative">
       <section className="viewport-container absolute top-0 right-0 left-0 bottom-0 bg-black flex justify-center overflow-hidden">
@@ -96,10 +124,23 @@ export default function GameScreen() {
           </div>
         </section>
       )}
-      {gameScreenState === "combat" && (
+      {!characterSheetId && gameScreenState === "combat" && (
         <section className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12">
+          <div className="turn-order row-start-1 row-span-3 col-span-1 justify-items-center">
+            <TurnOrder />
+          </div>
+          <div className="combat-screen row-start-1 row-span-3 col-start-2 col-span-10 justify-items-center">
+            <Enemies />
+            {/* <Rewards /> */}
+          </div>
+          <div className="battle-commands row-start-4 row-span-3 col-span-3 justify-items-center">
+            <BattleCommands />
+          </div>
           <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">
             <CurrentPartyFrame />
+          </div>
+          <div className="battle-events row-start-4 row-span-3 col-start-10 col-span-3 justify-items-center">
+            <BattleEvents />
           </div>
         </section>
       )}

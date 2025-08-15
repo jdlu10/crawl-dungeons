@@ -55,35 +55,32 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
   const partyData = useAppStore((s) => s.party.data);
   const [zoomLevel, setZoonLevel] = useState<number>(ZOOM_LEVEL_NORMAL);
   const [minimap, setMinimap] = useState<React.ReactElement>(<></>);
-  const [isMoving, setIsMoving] = useState(false);
 
   let gridSize = ZOOM_LEVEL_NORMAL * 2 + 1;
 
-  const { mutateAsync: turnParty } = useTurnPartyQuery({
-    onSuccess: (data, direction) => {
-      party.setPartyFacing(direction);
-      setIsMoving(false);
-    },
-    onError: (error) => {
-      setIsMoving(false);
-      console.error("Error turning player party:", error);
-      alert("Failed to turn the party. Please try again.");
-    },
-  });
-  const { mutateAsync: moveParty } = useMovePartyQuery({
-    onSuccess: (data, position) => {
-      party.setPartyPosition(position);
-      if (data.status === "exploring" || data.status === "combat") {
-        party.setPartyStatus(data.status);
-      }
-      setIsMoving(false);
-    },
-    onError: (error) => {
-      setIsMoving(false);
-      console.error("Error turning player party:", error);
-      alert("Failed to turn the party. Please try again.");
-    },
-  });
+  const { mutateAsync: turnParty, isPending: isPendingTurn } =
+    useTurnPartyQuery({
+      onSuccess: (data, direction) => {
+        party.setPartyFacing(direction);
+      },
+      onError: (error) => {
+        console.error("Error turning player party:", error);
+        alert("Failed to turn the party. Please try again.");
+      },
+    });
+  const { mutateAsync: moveParty, isPending: isPendingMove } =
+    useMovePartyQuery({
+      onSuccess: (data, position) => {
+        party.setPartyPosition(position);
+        if (data.status === "exploring" || data.status === "combat") {
+          party.setPartyStatus(data.status);
+        }
+      },
+      onError: (error) => {
+        console.error("Error turning player party:", error);
+        alert("Failed to turn the party. Please try again.");
+      },
+    });
 
   const {
     data: fetchedMap,
@@ -105,7 +102,6 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
     const partyFacing = partyData?.facing_direction;
     const tileMap = fetchedMap?.detail;
     if (!tileMap || !partyFacing) return;
-    setIsMoving(true);
 
     const order: FacingDirections[] = directionOrders[direction];
     const idx = order.indexOf(partyData?.facing_direction as FacingDirections);
@@ -148,7 +144,6 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
     const playerPosY = partyData?.position ? partyData.position[1] : undefined;
     const tileMap = fetchedMap?.detail;
     if (!partyFacing || !playerPosY || !playerPosX || !tileMap) return;
-    setIsMoving(true);
     const delta = getRelativeDelta(partyFacing, direction);
     const newX = playerPosX + delta.dx;
     const newY = playerPosY + delta.dy;
@@ -165,8 +160,6 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
         game_id: game?.id,
         position: [newX, newY],
       });
-    } else {
-      setIsMoving(false);
     }
   };
 
@@ -254,7 +247,7 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
     move,
     turn,
     MiniMap,
-    isMoving,
-    setIsMoving,
+    isPendingTurn,
+    isPendingMove,
   };
 }

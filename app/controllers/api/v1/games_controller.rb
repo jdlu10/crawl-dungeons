@@ -17,7 +17,9 @@ class Api::V1::GamesController < ApplicationController
     :use_item,
     :equip_item,
     :discard_item,
-    :use_character_ability
+    :use_character_ability,
+    :combat_info,
+    :combat_use_ability
   ]
 
   def index
@@ -49,6 +51,9 @@ class Api::V1::GamesController < ApplicationController
           setting = Setting.new(game: game, movement_controls_hud: true)
           setting.save!
 
+          battle = Battle.new()
+          battle.save!
+
           party = Party.new(game: game, name: "Player Party")
           party.current_map = game.campaign.starting_map
           party.position = game.campaign.starting_map.starting_position
@@ -56,9 +61,10 @@ class Api::V1::GamesController < ApplicationController
           party.position = find_starting_position(game)
           party.wealth = 0
           party.player_party = true
+          party.battles_id = battle.id
           party.save!
           # duplicate all character templates and save it with the new game
-          Character.where(template: true).each do |character_template|
+          Character.where(template: true, threat: nil).each do |character_template|
             new_game_character = character_template.dup
             new_game_character.template = false
             new_game_character.games_id = game.id
@@ -271,9 +277,10 @@ class Api::V1::GamesController < ApplicationController
     party.update(position: params[:position])
     
     ActiveRecord::Base.transaction do
-      set_up_battle(party)
-      set_up_enemies(party)
-      party.update(status: "combat") if Encounters.step(party)
+      if Encounters.step(party)
+        set_up_battle(party)
+        party.update(status: "combat")
+      end
     end
     
     render json: party, status: :ok
@@ -358,6 +365,66 @@ class Api::V1::GamesController < ApplicationController
     render json: party, status: :ok
   end
 
+  def combat_info
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    battle = party.battle
+
+    info = {
+      enemies: Character.includes(:race,
+        :visual_render,
+        { vocation: [:icon, vocation_abilities: :ability] },
+        { element: :visual_render }
+      ).where(id: BattleEnemy.where(battle: battle).pluck(:character_id)),
+      rewards: battle.inventories.includes(:item),
+      dropped_wealth: battle.dropped_wealth,
+      experience_gain: battle.experience_gain,
+      round: battle.round,
+      current_turn_character_id: battle.current_turn_character_id,
+      turn_order: battle.turn_order
+    }
+
+    render json: {
+      enemies: info[:enemies].as_json(
+        include: {
+          race: {},
+          visual_render: {},
+          vocation: {
+            include: [:icon, { vocation_abilities: { include: :ability } }]
+          },
+          element: { include: :visual_render }
+        }
+      ),
+      rewards: info[:rewards].as_json(include: :item),
+      dropped_wealth: info[:dropped_wealth],
+      experience_gain: info[:experience_gain],
+      round: info[:round],
+      current_turn_character_id: info[:current_turn_character_id],
+      turn_order: JSON.parse(info[:turn_order])
+    }, status: :ok
+  end
+
+  def combat_use_ability
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    ability = Ability.find(params[:ability_id])
+    current_turn_charcter = Character.find(party.battle.current_turn_charcter_id)
+    target_character = Character.find(params[:character_id]) if params[:character_id]
+
+    return json_error("Incorrect game id.") unless party.game_id == @game.id
+    return json_error("Unavailable action.") unless current_turn_charcter.vocation.abilities.find(params[:ability_id])
+
+    events = []
+
+    ActiveRecord::Base.transaction do
+      # ability.item_effects.each do |item_effect|
+      #   events.push(CharacterActions.execute(item_effect.effect.effect_key, inventory_item: inventory_item, target: target_character, item_effect: item_effect));
+      # end
+      # inventory_item.update(active: false);
+
+      # CharacterActions.execute(ability, source: current_turn_charcter, target: target_character, combat: true)
+    end
+
+    render json: events, status: :ok
+  end
 
   private
 
@@ -384,8 +451,46 @@ class Api::V1::GamesController < ApplicationController
   end
 
   def set_up_battle(party)
+    set_up_enemies(party)
+    # set up turn order
+    battle_enemies = Character.where(id: BattleEnemy.where(battle: party.battle).pluck(:character_id).compact)
+    characters_in_battle = battle_enemies + party.characters
+    turn_order = characters_in_battle.pluck(:id).shuffle
+    party.battle.update(dropped_wealth: 0, experience_gain: 0, round: 1, turn_order: turn_order.to_s, current_turn_character_id: turn_order.first)
   end
 
   def set_up_enemies(party)
+    # clear previous enemies
+    BattleEnemy.where(battle: party.battle).each do |old_battle_enemy|
+      old_battle_enemy.destroy
+    end
+
+    monster_templates = Character.where(template: true).where.not(threat: nil)
+    inverse_weights = monster_templates.map { |r| 1.0 / r.threat }
+    total_weight = inverse_weights.sum
+    
+    ActiveRecord::Base.transaction do
+      rand(1..4).times do |i|
+        random_point = rand * total_weight
+        running_sum = 0.0
+
+        monster_templates.zip(inverse_weights).each do |record, inverse_weight|
+          running_sum += inverse_weight
+          if running_sum >= random_point
+            clone_monster_template_for_battle(record, party)
+            break
+          end
+        end
+      end
+    end
+  end
+
+  def clone_monster_template_for_battle(mosnter_template, party)
+    new_monster = mosnter_template.dup
+    new_monster.template = false
+    new_monster.games_id = party.game.id
+    new_monster.save!
+    battle_enemy = BattleEnemy.new(battle: party.battle, character: new_monster)
+    battle_enemy.save!
   end
 end

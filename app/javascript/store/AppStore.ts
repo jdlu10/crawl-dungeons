@@ -45,6 +45,8 @@ type AppStore = {
     events: GameEvent[];
     enemies: Character[];
     rewards: Inventory[];
+    droppedWealth: number;
+    experienceGain: number;
     round: number;
     currentTurnCharacterId: number;
     turnOrder: number[];
@@ -52,6 +54,8 @@ type AppStore = {
     nextBattleEvent: () => GameEvent | undefined;
     setEnemies: (enemies: Character[]) => void;
     setRewards: (rewards: Inventory[]) => void;
+    setDroppedWealth: (droppedWealth: number) => void;
+    setExperienceGain: (experienceGain: number) => void;
     setRound: (round: number) => void;
     setCurrentTurnCharacterId: (characterId: number) => void;
     setTurnOrder: (turnOrder: number[]) => void;
@@ -147,6 +151,8 @@ export const useAppStore = create<AppStore>((set) => ({
     events: [],
     enemies: [],
     rewards: [],
+    droppedWealth: 0,
+    experienceGain: 0,
     round: 0,
     currentTurnCharacterId: 0,
     turnOrder: [],
@@ -169,6 +175,12 @@ export const useAppStore = create<AppStore>((set) => ({
     },
     setRewards: (rewards) => {
       set((state) => ({ battle: { ...state.battle, rewards } }));
+    },
+    setDroppedWealth: (droppedWealth) => {
+      set((state) => ({ battle: { ...state.battle, droppedWealth } }));
+    },
+    setExperienceGain: (experienceGain) => {
+      set((state) => ({ battle: { ...state.battle, experienceGain } }));
     },
     setRound: (round) => {
       set((state) => ({ battle: { ...state.battle, round } }));

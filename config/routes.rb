@@ -48,6 +48,10 @@ Rails.application.routes.draw do
 
       patch 'games/:id/party/turn', to: 'games#player_party_turn', as: :player_party_turn
       patch 'games/:id/party/move', to: 'games#player_party_move', as: :player_party_move
+
+      get 'games/:id/combat', to: 'games#combat_info', as: :combat_info
+      patch 'games/:id/combat/ability/:ability_id/use', to: 'games#combat_use_ability', as: :combat_use_ability
+      patch 'games/:id/combat/inventory/:inventory_id/use', to: 'games#combat_use_inventory', as: :combat_use_inventory
     end
   end
 

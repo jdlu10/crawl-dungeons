@@ -86,3 +86,13 @@ export type GameEvent = {
   description: string | undefined;
   played: boolean;
 };
+
+export type BattleInfo = {
+  enemies: Character[];
+  rewards: Inventory[];
+  dropped_wealth: number;
+  experience_gain: number;
+  round: number;
+  current_turn_character_id: number;
+  turn_order: number[];
+};

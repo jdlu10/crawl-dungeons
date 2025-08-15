@@ -3,11 +3,12 @@ import { useMiniMap } from "./MiniMap";
 import { CaretUp } from "../../Utils/Carets";
 
 export default function MovementControls() {
-  const { move, turn, isMoving } = useMiniMap();
+  const { move, turn, isPendingMove, isPendingTurn } = useMiniMap();
+  const moving = isPendingMove || isPendingTurn;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!isMoving) {
+      if (!moving) {
         switch (event.key.toLowerCase()) {
           case "w":
             move("forward");
@@ -37,13 +38,13 @@ export default function MovementControls() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isMoving, move, turn]);
+  }, [moving, move, turn]);
 
   return (
     <section className="movement-controls grid grid-cols-4 grid-rows-2 w-full h-full overflow-hidden opacity-50 gap-2.5 px-2.5">
       <button
         className="border cursor-pointer w-full h-full move-left"
-        disabled={isMoving}
+        disabled={moving}
         onClick={() => {
           move("left");
         }}
@@ -53,7 +54,7 @@ export default function MovementControls() {
       </button>
       <button
         className="border cursor-pointer w-full h-full col-span-2 move-forward"
-        disabled={isMoving}
+        disabled={moving}
         onClick={() => {
           move("forward");
         }}
@@ -63,7 +64,7 @@ export default function MovementControls() {
       </button>
       <button
         className="border cursor-pointer w-full h-full move-right"
-        disabled={isMoving}
+        disabled={moving}
         onClick={() => {
           move("right");
         }}
@@ -73,7 +74,7 @@ export default function MovementControls() {
       </button>
       <button
         className="border cursor-pointer w-full h-full turn-left"
-        disabled={isMoving}
+        disabled={moving}
         onClick={() => {
           turn("left");
         }}
@@ -83,7 +84,7 @@ export default function MovementControls() {
       </button>
       <button
         className="border cursor-pointer w-full h-full col-span-2 move-back"
-        disabled={isMoving}
+        disabled={moving}
         onClick={() => {
           move("back");
         }}
@@ -93,7 +94,7 @@ export default function MovementControls() {
       </button>
       <button
         className="border cursor-pointer w-full h-full turn-right"
-        disabled={isMoving}
+        disabled={moving}
         onClick={() => {
           turn("right");
         }}
