@@ -141,3 +141,33 @@
 .status-bar {
   transition: width 0.3s linear, height 0.3s linear;
 }
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.acting-character {
+  &::before {
+    content: "";
+    position: absolute;
+    box-sizing: border-box;
+    background: conic-gradient(from var(--angle), transparent 50%, #ffffff);
+    animation: rotateGradient 4s linear infinite;
+    pointer-events: none;
+    left: -3px;
+    right: -3px;
+    top: -3px;
+    bottom: -3px;
+  }
+}
+
+@keyframes rotateGradient {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}

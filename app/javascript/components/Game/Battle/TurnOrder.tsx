@@ -8,7 +8,6 @@ export default function TurnOrder() {
   );
   const enemies = useAppStore((s) => s.battle.enemies);
   const turnOrder = useAppStore((s) => s.battle.turnOrder);
-  console.log(turnOrder);
 
   const TurnOrderFrame = React.memo(function TurnOrderFrame({
     characterId,
@@ -23,11 +22,17 @@ export default function TurnOrder() {
     const character = allCombatActors?.find(
       (actor) => actor.id === characterId
     );
-    return <img src={character?.visual_render.url} className="w-full h-full" />;
+    return (
+      <img
+        title={character?.name}
+        src={character?.visual_render.url}
+        className="w-full h-full"
+      />
+    );
   });
 
   return (
-    <div className="order-list w-full h-full p-2.5">
+    <div className="order-list w-4/6 h-full">
       {Array.isArray(turnOrder) && turnOrder.length > 0 && (
         <ul>
           {turnOrder.map((characterId) => (

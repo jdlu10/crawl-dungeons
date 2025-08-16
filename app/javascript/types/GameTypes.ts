@@ -1,4 +1,4 @@
-import { Character, Inventory } from "./CharacterTypes";
+import { Ability, Character, Inventory } from "./CharacterTypes";
 
 export type Game = {
   id: number;
@@ -96,3 +96,8 @@ export type BattleInfo = {
   current_turn_character_id: number;
   turn_order: number[];
 };
+
+export type Command =
+  | { type: "ability"; command: Ability }
+  | { type: "inventory"; command: Inventory }
+  | undefined;

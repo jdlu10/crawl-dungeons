@@ -406,7 +406,7 @@ class Api::V1::GamesController < ApplicationController
   def combat_use_ability
     party = Party.find_by(game_id: @game.id, player_party: true)
     ability = Ability.find(params[:ability_id])
-    current_turn_charcter = Character.find(party.battle.current_turn_charcter_id)
+    current_turn_charcter = Character.find(party.battle.current_turn_character_id)
     target_character = Character.find(params[:character_id]) if params[:character_id]
 
     return json_error("Incorrect game id.") unless party.game_id == @game.id

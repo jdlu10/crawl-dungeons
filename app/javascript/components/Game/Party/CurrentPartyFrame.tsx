@@ -22,6 +22,10 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
   const playerId = useAppStore((state) => state.playerId);
   const game = useAppStore((state) => state.game);
   const partyData = useAppStore((state) => state.party.data);
+  const targetMode = useAppStore((state) => state.battle.targetMode);
+  const currentTurnCharacterId = useAppStore(
+    (state) => state.battle.currentTurnCharacterId
+  );
   const queryClient = useQueryClient();
   const innerFrameStyle = options?.innerFrameStyle || "w-32 h-32";
 
@@ -255,16 +259,27 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
   };
 
   const CurrentPartyFrame = () => (
-    <section className="party-frame grid grid-rows-[1fr_1fr] gap-y-4">
+    <section
+      className={`party-frame ${
+        partyData?.status === "combat" ? "in-combat" : ""
+      } grid grid-rows-[1fr_1fr] gap-y-4 ${targetMode && "relative z-20"}`}
+    >
       {partyPositions.map((partyPositionsRow, rowIndex) => (
         <div
           key={`party-frame-row-${rowIndex}`}
-          className="party-frame-row grid grid-cols-3 gap-x-2"
+          className={`party-frame-row grid grid-cols-3 ${
+            partyData?.status === "combat" ? "gap-x-5" : "gap-x-2"
+          }`}
         >
           {partyPositionsRow.map((idAtPosition, colIndex) => (
             <div
               key={`party-frame-col-${colIndex}`}
-              className="frame-inner justify-items-center"
+              className={`frame-inner justify-items-center relative  ${
+                currentTurnCharacterId !== 0 &&
+                currentTurnCharacterId === idAtPosition
+                  ? "acting-character"
+                  : ""
+              }`}
             >
               {renderPartyFrame(idAtPosition)}
             </div>

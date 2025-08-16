@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import {
+  Command,
   FacingDirections,
   GameEvent,
   GameSetting,
@@ -7,7 +8,7 @@ import {
   PartyCoordinates,
   TypeMap,
 } from "../types/GameTypes";
-import { Character, Inventory } from "../types/CharacterTypes";
+import { Ability, Character, Inventory } from "../types/CharacterTypes";
 
 type ThemeTypes = "light" | "dark" | "";
 type gameStateTypes =
@@ -42,6 +43,8 @@ type AppStore = {
     setPartyStatus: (status: "exploring" | "combat") => void;
   };
   battle: {
+    targetMode: boolean;
+    pending: boolean;
     events: GameEvent[];
     enemies: Character[];
     rewards: Inventory[];
@@ -50,6 +53,10 @@ type AppStore = {
     round: number;
     currentTurnCharacterId: number;
     turnOrder: number[];
+    currentAction: Command;
+    currentActionTarget: Character | undefined;
+    setTargetMode: (targetMode: boolean) => void;
+    setPending: (pending: boolean) => void;
     pushBattleEvent: (event: GameEvent) => void;
     nextBattleEvent: () => GameEvent | undefined;
     setEnemies: (enemies: Character[]) => void;
@@ -59,6 +66,11 @@ type AppStore = {
     setRound: (round: number) => void;
     setCurrentTurnCharacterId: (characterId: number) => void;
     setTurnOrder: (turnOrder: number[]) => void;
+    setCurrentAction: (currentAction: Command) => void;
+    setCurrentActionTarget: (
+      currentActionTarget: Character | undefined
+    ) => void;
+    resetCurrentAction: () => void;
   };
 };
 
@@ -148,6 +160,8 @@ export const useAppStore = create<AppStore>((set) => ({
     },
   },
   battle: {
+    targetMode: false,
+    pending: false,
     events: [],
     enemies: [],
     rewards: [],
@@ -156,6 +170,14 @@ export const useAppStore = create<AppStore>((set) => ({
     round: 0,
     currentTurnCharacterId: 0,
     turnOrder: [],
+    currentAction: undefined,
+    currentActionTarget: undefined,
+    setTargetMode: (targetMode) => {
+      set((state) => ({ battle: { ...state.battle, targetMode } }));
+    },
+    setPending: (pending) => {
+      set((state) => ({ battle: { ...state.battle, pending } }));
+    },
     pushBattleEvent: (event: GameEvent) => {
       set((state) => {
         state.battle.events.push(event);
@@ -185,11 +207,28 @@ export const useAppStore = create<AppStore>((set) => ({
     setRound: (round) => {
       set((state) => ({ battle: { ...state.battle, round } }));
     },
-    setCurrentTurnCharacterId: (characterId) => {
-      set((state) => ({ battle: { ...state.battle, characterId } }));
+    setCurrentTurnCharacterId: (currentTurnCharacterId) => {
+      set((state) => ({ battle: { ...state.battle, currentTurnCharacterId } }));
     },
     setTurnOrder: (turnOrder) => {
       set((state) => ({ battle: { ...state.battle, turnOrder } }));
+    },
+    setCurrentAction: (currentAction) => {
+      set((state) => ({ battle: { ...state.battle, currentAction } }));
+    },
+    setCurrentActionTarget: (currentActionTarget) => {
+      set((state) => ({ battle: { ...state.battle, currentActionTarget } }));
+    },
+    resetCurrentAction: () => {
+      set((state) => ({
+        battle: {
+          ...state.battle,
+          currentActionTarget: undefined,
+          currentAction: undefined,
+          targetMode: false,
+          pending: false,
+        },
+      }));
     },
   },
 }));

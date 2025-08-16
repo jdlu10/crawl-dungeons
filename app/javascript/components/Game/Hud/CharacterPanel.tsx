@@ -16,17 +16,17 @@ type EquippableSlot = {
 
 export default function CharacterPanel(params: {
   characterId: number;
-  party: Party | undefined;
   setCharacterSheetId:
     | React.Dispatch<React.SetStateAction<number | undefined>>
     | undefined;
 }) {
-  const { party, characterId, setCharacterSheetId } = params;
+  const { characterId, setCharacterSheetId } = params;
+  const game = useAppStore((s) => s.game);
+  const party = useAppStore((s) => s.party.data);
   const character =
     party?.characters.find((character) => character.id === characterId) ||
     ({} as Character);
   const [equippedItems, setEquippedItems] = useState<Inventory[]>([]);
-  const game = useAppStore((s) => s.game);
   const playerId = useAppStore((s) => s.playerId);
   const queryClient = useQueryClient();
 
@@ -194,7 +194,11 @@ export default function CharacterPanel(params: {
   }, [character.filtered_inventories]);
 
   return (
-    <section className="character-panel grid grid-cols-8 grid-rows-8 absolute inset-0 overflow-hidden gap-2.5 p-2.5 bg-black">
+    <section
+      className={`character-panel ${
+        party?.status === "combat" ? "in-combat" : ""
+      } grid grid-cols-8 grid-rows-8 absolute inset-0 overflow-hidden gap-2.5 p-2.5 bg-black`}
+    >
       <div className="paper-doll row-span-4 col-span-4 bg-[url('/images/characters/character-sheet.png')] bg-no-repeat bg-contain bg-center border-2 py-7 px-40 grid grid-cols-2 grid-rows-5">
         <div className="head ml-5">
           <EquipmentSlot equipmentSlotKey="head" />
