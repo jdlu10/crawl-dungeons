@@ -21,12 +21,13 @@ load 'db/seeds/elements.rb'
 load 'db/seeds/equippable_slots.rb'
 load 'db/seeds/effects.rb'
 load 'db/seeds/items.rb'
-load 'db/seeds/effect_links.rb'
 
 load 'db/seeds/vocations.rb'
 load 'db/seeds/abilities.rb'
 load 'db/seeds/vocation_abilities.rb'
 load 'db/seeds/races.rb'
+
+load 'db/seeds/effect_links.rb'
 
 load 'db/seeds/campaigns.rb'
 load 'db/seeds/maps.rb'
