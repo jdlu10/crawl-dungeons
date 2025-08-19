@@ -50,6 +50,7 @@ export default function Main() {
     <>
       {renderGame()}
       <pre className="debugging absolute w-150 h-150 right-0 bottom-0 overflow-scroll">
+        try
         {JSON.stringify(party, null, 2)}
         {JSON.stringify(battle, null, 2)}
       </pre>
