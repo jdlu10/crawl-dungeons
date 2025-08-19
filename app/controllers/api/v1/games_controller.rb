@@ -58,10 +58,11 @@ class Api::V1::GamesController < ApplicationController
           party.position = find_starting_position(game)
           party.wealth = 0
           party.player_party = true
-          party.save!
 
           battle = Battle.new(party: party)
           battle.save!
+
+          party.save!
 
           # duplicate all character templates and save it with the new game
           Character.where(template: true, threat: nil).each do |character_template|
