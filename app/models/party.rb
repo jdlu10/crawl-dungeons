@@ -1,6 +1,6 @@
 class Party < ApplicationRecord
   belongs_to :game
-  belongs_to :battle
+  has_one :battle
 
   has_many :characters
   has_many :inventories, as: :attachable

@@ -62,6 +62,7 @@ class Api::V1::GamesController < ApplicationController
           battle = Battle.new(party: party)
           battle.save!
 
+          party.battle = battle
           party.save!
 
           # duplicate all character templates and save it with the new game
