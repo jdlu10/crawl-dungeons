@@ -125,13 +125,18 @@ export default function GameScreen() {
   return (
     <div className="bg-gray-800 h-150 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl max-h-150 relative">
       {battle.pending && (
-        <div className="pending-modal absolute inset-0 z-50"></div>
+        <div className="pending-modal absolute inset-0 z-50 bg-black opacity-50"></div>
       )}
       {battle.targetMode && (
-        <div
-          className="target-mode-modal absolute inset-0 bg-black opacity-50 z-10"
-          onClick={resetCurrentAction}
-        ></div>
+        <>
+          <div
+            className="target-mode-modal absolute inset-0 bg-black opacity-50 z-10"
+            onClick={resetCurrentAction}
+          ></div>
+          <div className="absolute border-2 border-gray-200 text-gray-200 font-bold top-[53%] left-1/2 -translate-1/2 px-4 py-2 text-2xl z-11">
+            Choose a target
+          </div>
+        </>
       )}
       <section className="viewport-container absolute top-0 right-0 left-0 bottom-0 bg-black flex justify-center overflow-hidden">
         <GameViewport />

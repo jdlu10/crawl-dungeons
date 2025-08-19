@@ -16,11 +16,12 @@ load 'db/seeds/player_types.rb'
 load 'db/seeds/players.rb'
 load 'db/seeds/visual_renders.rb'
 
+load 'db/seeds/statuses.rb'
 load 'db/seeds/elements.rb'
 load 'db/seeds/equippable_slots.rb'
 load 'db/seeds/effects.rb'
 load 'db/seeds/items.rb'
-load 'db/seeds/item_effects.rb'
+load 'db/seeds/effect_links.rb'
 
 load 'db/seeds/vocations.rb'
 load 'db/seeds/abilities.rb'

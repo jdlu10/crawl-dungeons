@@ -1,6 +1,6 @@
-puts "Seeding Item Effects..."
+puts "Seeding Effect Links..."
 
-item_effects = [
+effect_links = [
     { attachable: Item.find_by(name: "Mace"), effect: Effect.find_by(effect_key: "stun", potency: 1) },
     { attachable: Item.find_by(name: "Great Hammer"), effect: Effect.find_by(effect_key: "stun", potency: 1) },
     { attachable: Item.find_by(name: "Staff"), effect: Effect.find_by(effect_key: "stun", potency: 1) },
@@ -14,11 +14,17 @@ item_effects = [
     { attachable: Item.find_by(name: "Potion of Healing"), effect: Effect.find_by(effect_key: "healing") },
     { attachable: Item.find_by(name: "Potion of Greater Healing"), effect: Effect.find_by(effect_key: "healing") },
     { attachable: Item.find_by(name: "Panacea"), effect: Effect.find_by(effect_key: "curing") },
+
+    { attachable: Ability.find_by(key: "full_swing"), effect: Effect.find_by(effect_key: "row") },
+    { attachable: Ability.find_by(key: "fire_bolt"), effect: Effect.find_by(effect_key: "burn") },
+    { attachable: Ability.find_by(key: "water_bolt"), effect: Effect.find_by(effect_key: "slow") },
+    { attachable: Ability.find_by(key: "earth_bolt"), effect: Effect.find_by(effect_key: "stun") },
+    { attachable: Ability.find_by(key: "lightning_bolt"), effect: Effect.find_by(effect_key: "paralyze") },
 ]
 
-item_effects.each do |item_effect|
-    ItemEffect.find_or_create_by!(item_effect)
-    puts "Created item_effect: #{item_effect[:name]}"
+effect_links.each do |effect_link|
+    EffectLink.find_or_create_by!(effect_link)
+    puts "Created effect_link: #{effect_link[:name]}"
 end
 
-puts "Seeding Item Effects completed!"
+puts "Seeding Effect Links completed!"

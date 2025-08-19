@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_19_031540) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -36,15 +36,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
     t.index ["icon_id"], name: "index_abilities_on_icon_id"
   end
 
-  create_table "ability_effects", force: :cascade do |t|
-    t.bigint "ability_id", null: false
-    t.bigint "effect_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["ability_id"], name: "index_ability_effects_on_ability_id"
-    t.index ["effect_id"], name: "index_ability_effects_on_effect_id"
-  end
-
   create_table "battle_enemies", force: :cascade do |t|
     t.bigint "character_id", null: false
     t.bigint "battle_id", null: false
@@ -62,6 +53,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
     t.datetime "updated_at", null: false
     t.integer "round"
     t.string "turn_order"
+    t.bigint "party_id"
+    t.index ["party_id"], name: "index_battles_on_party_id"
   end
 
   create_table "campaigns", force: :cascade do |t|
@@ -81,6 +74,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
     t.bigint "status_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "duration"
     t.index ["character_id"], name: "index_character_statuses_on_character_id"
     t.index ["status_id"], name: "index_character_statuses_on_status_id"
   end
@@ -118,6 +112,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
     t.index ["race_id"], name: "index_characters_on_race_id"
     t.index ["visual_render_id"], name: "index_characters_on_visual_render_id"
     t.index ["vocation_id"], name: "index_characters_on_vocation_id"
+  end
+
+  create_table "effect_links", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "effect_id", null: false
+    t.string "attachable_type", null: false
+    t.bigint "attachable_id", null: false
+    t.index ["attachable_type", "attachable_id"], name: "index_item_effects_on_attachable"
+    t.index ["effect_id"], name: "index_effect_links_on_effect_id"
   end
 
   create_table "effects", force: :cascade do |t|
@@ -183,16 +187,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
     t.boolean "active"
     t.index ["attachable_type", "attachable_id"], name: "index_inventories_on_attachable"
     t.index ["item_id"], name: "index_inventories_on_item_id"
-  end
-
-  create_table "item_effects", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "effect_id", null: false
-    t.string "attachable_type", null: false
-    t.bigint "attachable_id", null: false
-    t.index ["attachable_type", "attachable_id"], name: "index_item_effects_on_attachable"
-    t.index ["effect_id"], name: "index_item_effects_on_effect_id"
   end
 
   create_table "items", force: :cascade do |t|
@@ -319,10 +313,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
 
   add_foreign_key "abilities", "elements"
   add_foreign_key "abilities", "visual_renders", column: "icon_id"
-  add_foreign_key "ability_effects", "abilities"
-  add_foreign_key "ability_effects", "effects"
   add_foreign_key "battle_enemies", "battles"
   add_foreign_key "battle_enemies", "characters"
+  add_foreign_key "battles", "parties"
   add_foreign_key "campaigns", "maps", column: "starting_map_id"
   add_foreign_key "character_statuses", "characters"
   add_foreign_key "character_statuses", "statuses"
@@ -332,13 +325,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_181629) do
   add_foreign_key "characters", "races"
   add_foreign_key "characters", "visual_renders"
   add_foreign_key "characters", "vocations"
+  add_foreign_key "effect_links", "effects"
   add_foreign_key "elemental_effectivenesses", "elements", column: "source_element_id"
   add_foreign_key "elemental_effectivenesses", "elements", column: "target_element_id"
   add_foreign_key "elements", "visual_renders"
   add_foreign_key "games", "campaigns"
   add_foreign_key "games", "players"
   add_foreign_key "inventories", "items"
-  add_foreign_key "item_effects", "effects"
   add_foreign_key "items", "elements"
   add_foreign_key "items", "equippable_slots"
   add_foreign_key "items", "visual_renders"

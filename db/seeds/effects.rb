@@ -26,6 +26,8 @@ effects = [
     { name: "Sharp", effect_key: "sharp", potency: 1, description: "Chance to make target bleed", effect_type: 'weapons', prefix: true, suffix: false, rarity: 20.0 },
     { name: "Superior", effect_key: "quality", potency: 1.2, description: "Superior quality", effect_type: 'weapons', prefix: true, suffix: false, rarity: 20.0 },
     { name: "Masterwork", effect_key: "quality", potency: 1.5, description: "Master quality", effect_type: 'weapons', prefix: true, suffix: false, rarity: 5.0 },
+    { name: "Flaming", effect_key: "burn", potency: 1.5, description: "Chance to leave target burning", effect_type: 'weapons', prefix: true, suffix: false, rarity: 5.0 },
+    { name: "Slowing", effect_key: "slow", potency: 1.5, description: "Chance to slow the target", effect_type: 'weapons', prefix: true, suffix: false, rarity: 5.0 },
 
     { name: "Reaching", effect_key: "reaching", potency: 1, description: "Long reach", effect_type: 'abilities', prefix: false, suffix: false, rarity: 10.0 },
     { name: "Ranged", effect_key: "ranged", potency: 1, description: "Long range", effect_type: 'abilities', prefix: false, suffix: false, rarity: 10.0 },

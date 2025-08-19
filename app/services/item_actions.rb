@@ -1,13 +1,13 @@
 module ItemActions
   extend self
 
-  def execute(action_name, inventory_item:, target:, item_effect:, **kwargs)
+  def execute(action_name, inventory_item:, target:, effect_link:, **kwargs)
     return if !inventory_item.item.usable?
 
-    method_name = item_effect.effect.effect_key.to_s.underscore
+    method_name = effect_link.effect.effect_key.to_s.underscore
 
     if respond_to?(method_name, true)
-      send(method_name, inventory_item, target, item_effect, **kwargs)
+      send(method_name, inventory_item, target, effect_link, **kwargs)
     else
       raise ArgumentError, "Unknown action: #{action_name}"
     end
@@ -15,13 +15,13 @@ module ItemActions
 
   private
 
-  def curing(inventory_item, target, item_effect)
+  def curing(inventory_item, target, effect_link)
    
     target.character_statuses.each do |character_statuses|
     end
   end
 
-  def healing(inventory_item, target, item_effect)
+  def healing(inventory_item, target, effect_link)
     item = inventory_item.item
     amount ||= calculate_heal(item)
     target.update(hit_points: [target.max_hit_points, target.hit_points + amount].min)

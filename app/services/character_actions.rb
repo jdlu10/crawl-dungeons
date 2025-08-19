@@ -1,42 +1,45 @@
 module CharacterActions
   extend self
 
-  # Public method to run an action by name
-  def execute(action_name, actor:, target:, **kwargs)
-    method_name = action_name.to_s.underscore
+  def execute(method_name, ability:, current_turn_charcter:, target_character:, **kwargs)
+    # check power point usage
 
-    if respond_to?(method_name, true)
-      send(method_name, actor, target, **kwargs)
+    if respond_to?(method_name.parameterize(separator: "_"), true)
+      send(method_name, ability, current_turn_charcter, target_character, **kwargs)
     else
-      raise ArgumentError, "Unknown action: #{action_name}"
+      raise ArgumentError, "Unknown action: #{method_name}"
     end
   end
 
   private
 
-  # Example effect: Weapon attack
-  def weapon_attack(actor, target, damage: nil)
-    damage ||= calculate_damage(actor)
-    target.hp -= damage
-    target.save!
-    { message: "#{actor.name} hits #{target.name} for #{damage} damage!" }
+  def weapon_attack(ability, current_turn_charcter, target_character)
+    amount = current_turn_charcter.strength
+
+    GameEvents.event(
+      "physical_attack",
+      source_entity: current_turn_charcter,
+      target_entities: [target_character],
+      event_type: ability.key,
+      value: amount,
+      verb: "attacked",
+      units: "hit points",
+      description: "#{current_turn_charcter.name} attacked #{target_character.name} for #{amount} hit points!"
+    )
   end
 
-  # Example effect: Heal
-  def heal(actor, target, amount: nil)
-    amount ||= calculate_heal(actor)
-    target.hp += amount
-    target.hp = [target.hp, target.max_hp].min
-    target.save!
-    { message: "#{actor.name} heals #{target.name} for #{amount} HP!" }
+  def defend(ability, current_turn_charcter, target_character)
+    
+    GameEvents.event(
+      "maneuver",
+      source_entity: current_turn_charcter,
+      target_entities: [target_character],
+      event_type: ability.key,
+      value: amount,
+      verb: "defends",
+      units: "",
+      description: "#{current_turn_charcter.name} put up a defensive stance!"
+    )
   end
 
-  # Example helper methods
-  def calculate_damage(actor)
-    rand(5..10) + actor.strength
-  end
-
-  def calculate_heal(actor)
-    rand(4..8) + actor.intelligence
-  end
 end

@@ -3,5 +3,5 @@ class Item < ApplicationRecord
   belongs_to :element
   belongs_to :equippable_slot, optional: true
 
-  has_many :item_effects, as: :attachable
+  has_many :effect_links, as: :attachable
 end

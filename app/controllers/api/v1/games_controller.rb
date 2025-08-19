@@ -314,8 +314,8 @@ class Api::V1::GamesController < ApplicationController
     events = []
 
     ActiveRecord::Base.transaction do
-      inventory_item.item.item_effects.each do |item_effect|
-        events.push(ItemActions.execute(item_effect.effect.effect_key, inventory_item: inventory_item, target: character, item_effect: item_effect));
+      inventory_item.item.effect_links.each do |effect_link|
+        events.push(ItemActions.execute(effect_link.effect.effect_key, inventory_item: inventory_item, target: character, effect_link: effect_link));
       end
       inventory_item.update(active: false);
     end
@@ -414,13 +414,11 @@ class Api::V1::GamesController < ApplicationController
 
     events = []
 
-    ActiveRecord::Base.transaction do
-      # ability.item_effects.each do |item_effect|
-      #   events.push(CharacterActions.execute(item_effect.effect.effect_key, inventory_item: inventory_item, target: target_character, item_effect: item_effect));
-      # end
-      # inventory_item.update(active: false);
-
-      # CharacterActions.execute(ability, source: current_turn_charcter, target: target_character, combat: true)
+    if (ability)
+      ActiveRecord::Base.transaction do
+        events.push(CharacterActions.execute(ability.key, ability: ability, current_turn_charcter: current_turn_charcter, target_character: target_character));
+        events = party.battle.next_turn(events)
+      end
     end
 
     render json: events, status: :ok

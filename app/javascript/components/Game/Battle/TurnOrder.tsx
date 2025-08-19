@@ -8,6 +8,32 @@ export default function TurnOrder() {
   );
   const enemies = useAppStore((s) => s.battle.enemies);
   const turnOrder = useAppStore((s) => s.battle.turnOrder);
+  const currentTurnCharacterId = useAppStore(
+    (s) => s.battle.currentTurnCharacterId
+  );
+
+  const reorder = React.useCallback(function reorder({
+    currentTurnCharacterId,
+    turnOrder = [],
+  }: {
+    currentTurnCharacterId: number;
+    turnOrder: number[];
+  }) {
+    const currentTurnCharacterIndex = turnOrder.indexOf(currentTurnCharacterId);
+    if (currentTurnCharacterIndex === 0) {
+      return turnOrder;
+    } else {
+      const charactersToMove = turnOrder.slice(0, currentTurnCharacterIndex);
+      const frontOfList = turnOrder.slice(currentTurnCharacterIndex);
+      return [...frontOfList, ...charactersToMove];
+    }
+  },
+  []);
+
+  let currentTurnOrder: number[] = reorder({
+    currentTurnCharacterId,
+    turnOrder,
+  });
 
   const TurnOrderFrame = React.memo(function TurnOrderFrame({
     characterId,
@@ -31,11 +57,15 @@ export default function TurnOrder() {
     );
   });
 
+  useEffect(() => {
+    currentTurnOrder = reorder({ currentTurnCharacterId, turnOrder });
+  }, [currentTurnCharacterId]);
+
   return (
     <div className="order-list w-4/6 h-full">
-      {Array.isArray(turnOrder) && turnOrder.length > 0 && (
+      {Array.isArray(currentTurnOrder) && currentTurnOrder.length > 0 && (
         <ul>
-          {turnOrder.map((characterId) => (
+          {currentTurnOrder.map((characterId) => (
             <li key={characterId}>
               <TurnOrderFrame
                 characterId={characterId}
