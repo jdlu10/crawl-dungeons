@@ -51,9 +51,6 @@ class Api::V1::GamesController < ApplicationController
           setting = Setting.new(game: game, movement_controls_hud: true)
           setting.save!
 
-          battle = Battle.new()
-          battle.save!
-
           party = Party.new(game: game, name: "Player Party")
           party.current_map = game.campaign.starting_map
           party.position = game.campaign.starting_map.starting_position
@@ -61,8 +58,11 @@ class Api::V1::GamesController < ApplicationController
           party.position = find_starting_position(game)
           party.wealth = 0
           party.player_party = true
-          party.battles_id = battle.id
           party.save!
+
+          battle = Battle.new(party: party)
+          battle.save!
+
           # duplicate all character templates and save it with the new game
           Character.where(template: true, threat: nil).each do |character_template|
             new_game_character = character_template.dup
