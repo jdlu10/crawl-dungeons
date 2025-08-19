@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_19_031540) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_19_052846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -233,10 +233,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_031540) do
     t.bigint "current_map_id", null: false
     t.string "position"
     t.string "status"
-    t.bigint "battles_id"
     t.boolean "player_party"
     t.integer "steps_since_last_encounter"
-    t.index ["battles_id"], name: "index_parties_on_battles_id"
+    t.bigint "battle_id"
+    t.index ["battle_id"], name: "index_parties_on_battle_id"
     t.index ["current_map_id"], name: "index_parties_on_current_map_id"
     t.index ["game_id"], name: "index_parties_on_game_id"
   end
@@ -336,7 +336,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_031540) do
   add_foreign_key "items", "equippable_slots"
   add_foreign_key "items", "visual_renders"
   add_foreign_key "maps", "campaigns"
-  add_foreign_key "parties", "battles", column: "battles_id"
+  add_foreign_key "parties", "battles"
   add_foreign_key "parties", "games"
   add_foreign_key "parties", "maps", column: "current_map_id"
   add_foreign_key "players", "player_types"

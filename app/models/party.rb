@@ -1,5 +1,6 @@
 class Party < ApplicationRecord
   belongs_to :game
+  belongs_to :battle
 
   has_many :characters
   has_many :inventories, as: :attachable
@@ -10,9 +11,5 @@ class Party < ApplicationRecord
 
   def filtered_inventories
     inventories.select(&:active?)
-  end
-
-  def battle
-    Battle.find(battles_id)
   end
 end
