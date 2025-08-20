@@ -7,8 +7,8 @@ import VocationIcons from "../../Utils/VocationIcons";
 import EquipmentIcon from "../../Utils/EquipmentIcon";
 import { useQueryInventoryActions } from "../../../utils/hooks/characterHooks";
 import { useAppStore } from "../../../store/AppStore";
-import { useQueryClient } from "@tanstack/react-query";
 import { useContextMenu } from "../../../utils/hooks/utilityHooks";
+import { useInvalidateQueries } from "../../../utils/hooks/queryHooks";
 
 type EquippableSlot = {
   [key: string]: { inventoryId: number; imageUrl: string; itemName: string };
@@ -21,6 +21,7 @@ export default function CharacterPanel(params: {
     | undefined;
 }) {
   const { characterId, setCharacterSheetId } = params;
+  const { invalidatePartyInfo } = useInvalidateQueries();
   const game = useAppStore((s) => s.game);
   const party = useAppStore((s) => s.party.data);
   const character =
@@ -28,7 +29,6 @@ export default function CharacterPanel(params: {
     ({} as Character);
   const [equippedItems, setEquippedItems] = useState<Inventory[]>([]);
   const playerId = useAppStore((s) => s.playerId);
-  const queryClient = useQueryClient();
 
   const getEquippedItem = (
     equippedItems: Inventory[],
@@ -46,7 +46,7 @@ export default function CharacterPanel(params: {
 
   const { mutateAsync: inventoryAction, isPending } = useQueryInventoryActions({
     onSuccess: (data, action, targetCharacterId) => {
-      queryClient.invalidateQueries({ queryKey: ["party", game.id, playerId] });
+      invalidatePartyInfo();
       if (targetCharacterId) {
         setCharacterSheetId?.(targetCharacterId);
       }

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "../../store/AppStore";
-import { useQueryClient } from "@tanstack/react-query";
 import Button from "../Utils/Button";
 import Loading from "../Utils/Loading";
 import {
@@ -8,22 +7,23 @@ import {
   useQueryGetPlayerGames,
   useQueryLoadGameInfo,
 } from "../../utils/hooks/gameHooks";
+import { useInvalidateQueries } from "../../utils/hooks/queryHooks";
 
 type GamesProps = {
   setCurrentMenu: (menu: string) => void;
 };
 
 export default function Games(props: GamesProps) {
+  const { invalidateGames } = useInvalidateQueries();
   const playerId = useAppStore((state) => state.playerId);
   const game = useAppStore((state) => state.game);
-  const queryClient = useQueryClient();
   const [gameId, setGameId] = useState<number | undefined>(undefined);
 
   const { data: games, isLoading, isError } = useQueryGetPlayerGames(playerId);
 
   const { mutateAsync: deleteGame } = useDeleteGameQuery({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["games", playerId] });
+      invalidateGames();
       props.setCurrentMenu("main-menu");
     },
     onError: (error) => {

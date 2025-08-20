@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useAppStore } from "../../store/AppStore";
-import { useQueryClient } from "@tanstack/react-query";
 import Button from "../Utils/Button";
 import Loading from "../Utils/Loading";
 import {
@@ -13,16 +12,18 @@ import { useResumeAdventure } from "../../utils/hooks/gameHooks";
 import ElementIcons from "../Utils/ElementIcons";
 import { ElementName, VocationName } from "../../types/GameTypes";
 import VocationIcons from "../Utils/VocationIcons";
+import { useInvalidateQueries } from "../../utils/hooks/queryHooks";
 
 type PartyFormationProps = {
   setCurrentMenu: (menu: string) => void;
 };
 
 export default function PartyFormation(props: PartyFormationProps) {
+  const { invalidatePartyInfo, invalidateAvailableCharacters } =
+    useInvalidateQueries();
   const playerId = useAppStore((state) => state.playerId);
   const game = useAppStore((state) => state.game);
   const partyData = useAppStore((state) => state.party.data);
-  const queryClient = useQueryClient();
 
   const {
     data: available_characters,
@@ -32,10 +33,8 @@ export default function PartyFormation(props: PartyFormationProps) {
 
   const { mutateAsync: addCharacterToParty } = useAddCharacterToParty({
     onSuccess: (data, addedCharacterId) => {
-      queryClient.invalidateQueries({ queryKey: ["party", game.id, playerId] });
-      queryClient.invalidateQueries({
-        queryKey: ["available_characters", game.id, playerId],
-      });
+      invalidatePartyInfo();
+      invalidateAvailableCharacters();
     },
     onError: (error) => {
       console.error("Error adding character:", error);
@@ -48,12 +47,8 @@ export default function PartyFormation(props: PartyFormationProps) {
   const { mutateAsync: removeCharacterFromParty } = useRemoveCharacterFromParty(
     {
       onSuccess: (data, removedCharacterId) => {
-        queryClient.invalidateQueries({
-          queryKey: ["party", game.id, playerId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["available_characters", game.id, playerId],
-        });
+        invalidatePartyInfo();
+        invalidateAvailableCharacters();
       },
       onError: (error) => {
         console.error("Error removing character:", error);
@@ -80,10 +75,8 @@ export default function PartyFormation(props: PartyFormationProps) {
   });
 
   useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: ["available_characters", game.id, playerId],
-    });
-    queryClient.invalidateQueries({ queryKey: ["party", game.id, playerId] });
+    invalidateAvailableCharacters();
+    invalidatePartyInfo();
     setArrangePartyEnabled(true);
   }, []);
 

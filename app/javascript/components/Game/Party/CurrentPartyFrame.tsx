@@ -11,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import ElementIcons from "../../Utils/ElementIcons";
 import { ElementName, VocationName } from "../../../types/GameTypes";
 import VocationIcons from "../../Utils/VocationIcons";
+import { useInvalidateQueries } from "../../../utils/hooks/queryHooks";
 
 type TCurrentPartyFrameOptions = {
   onClick?: (character: Character) => void;
@@ -19,6 +20,7 @@ type TCurrentPartyFrameOptions = {
 };
 
 export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
+  const { invalidatePartyInfo } = useInvalidateQueries();
   const playerId = useAppStore((state) => state.playerId);
   const game = useAppStore((state) => state.game);
   const partyData = useAppStore((state) => state.party.data);
@@ -40,9 +42,7 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
 
   const { mutateAsync: partyMemberSwapPosition } = usePartyMemberSwapPosition({
     onSuccess: (data, swappedCharacterId) => {
-      queryClient.invalidateQueries({
-        queryKey: ["party", game.id, playerId],
-      });
+      invalidatePartyInfo();
     },
     onError: (error) => {
       console.error("Error switching character:", error);

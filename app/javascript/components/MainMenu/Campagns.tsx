@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { useAppStore } from "../../store/AppStore";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Button from "../Utils/Button";
 import Loading from "../Utils/Loading";
 import { useQueryCampaigns } from "../../utils/hooks/campaignHooks";
 import { useGameStart } from "../../utils/hooks/gameHooks";
+import { useInvalidateQueries } from "../../utils/hooks/queryHooks";
 
 type CampaignsProps = {
   setCurrentMenu: (menu: string) => void;
 };
 
 export default function Campaigns(props: CampaignsProps) {
-  const queryClient = useQueryClient();
+  const { invalidateGames } = useInvalidateQueries();
   const playerId = useAppStore((state) => state.playerId);
   const game = useAppStore((state) => state.game);
 
@@ -19,7 +19,7 @@ export default function Campaigns(props: CampaignsProps) {
 
   const { mutateAsync: startGame } = useGameStart({
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["games"] });
+      invalidateGames();
       game.setId(data.id);
       game.setGameState("party-preparation");
     },

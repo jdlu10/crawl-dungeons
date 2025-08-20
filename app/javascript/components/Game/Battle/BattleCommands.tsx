@@ -6,12 +6,11 @@ import {
   Inventory,
   VocationAbility,
 } from "../../../types/CharacterTypes";
-import { Command } from "../../../types/GameTypes";
 import { useQueryAbilityActions } from "../../../utils/hooks/combatHooks";
-import { useQueryClient } from "@tanstack/react-query";
+import { useInvalidateQueries } from "../../../utils/hooks/queryHooks";
 
 export default function BattleCommands() {
-  const queryClient = useQueryClient();
+  const { invalidateCombatInfo } = useInvalidateQueries();
   const [menuState, setMenuState] = useState("simple");
   const [basicCommands, setBasicCommands] = useState<VocationAbility[]>([]);
 
@@ -84,9 +83,7 @@ export default function BattleCommands() {
     isSuccess,
   } = useQueryAbilityActions({
     onSuccess: (data, actionItemId, targetCharacterId) => {
-      queryClient.invalidateQueries({
-        queryKey: ["load_combat_info", gameId, playerId],
-      });
+      invalidateCombatInfo();
       resetCurrentAction();
       setMenuState("simple");
     },
