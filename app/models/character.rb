@@ -11,4 +11,10 @@ class Character < ApplicationRecord
   def filtered_inventories
     inventories.select(&:active?)
   end
+
+  def getEquippedItem(equippable_slot_key = "nothing")
+    filtered_inventories.find do |inventory|
+      inventory.equipped && inventory.item.equippable_slot.key == equippable_slot_key
+    end
+  end
 end

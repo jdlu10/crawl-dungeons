@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { ReactNode, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useAppStore } from "../store/AppStore";
 import MainMenu from "./MainMenu/main-menu";
 import PartyPreparation from "./PartyPreparation/party-preparation";
@@ -46,14 +47,22 @@ export default function Main() {
     }
   };
 
+  function Debugger({ children }: { children: ReactNode }) {
+    const debuggerContainer = document.getElementById("debugging");
+    if (!debuggerContainer) return null;
+
+    return createPortal(children, debuggerContainer);
+  }
+
   return (
     <>
       {renderGame()}
-      <pre className="debugging absolute w-150 h-150 right-0 bottom-0 overflow-scroll">
-        try
-        {JSON.stringify(party, null, 2)}
-        {JSON.stringify(battle, null, 2)}
-      </pre>
+      <Debugger>
+        <pre>
+          {JSON.stringify(party, null, 2)}
+          {JSON.stringify(battle, null, 2)}
+        </pre>
+      </Debugger>
     </>
   );
 }

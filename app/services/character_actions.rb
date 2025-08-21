@@ -14,7 +14,7 @@ module CharacterActions
   private
 
   def weapon_attack(ability, current_turn_charcter, target_character)
-    amount = current_turn_charcter.strength
+    amount = CombatResolver.weapon_attack(current_turn_charcter, ability, target_character)
 
     GameEvents.event(
       "physical_attack",
@@ -29,16 +29,32 @@ module CharacterActions
   end
 
   def defend(ability, current_turn_charcter, target_character)
+
+
+    GameEvents.event(
+      "maneuver",
+      source_entity: current_turn_charcter,
+      target_entities: [target_character],
+      event_type: ability.key,
+      value: 0,
+      verb: "defends",
+      units: "",
+      description: "#{current_turn_charcter.name} put up a defensive stance!"
+    )
+  end
+
+  def flee(ability, current_turn_charcter, target_character)
+
     
     GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
-      value: amount,
-      verb: "defends",
+      value: 0,
+      verb: "flees",
       units: "",
-      description: "#{current_turn_charcter.name} put up a defensive stance!"
+      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
     )
   end
 
