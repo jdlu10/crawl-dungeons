@@ -10,7 +10,7 @@ import { useQueryAbilityActions } from "../../../utils/hooks/combatHooks";
 import { useInvalidateQueries } from "../../../utils/hooks/queryHooks";
 
 export default function BattleCommands() {
-  const { invalidateCombatInfo } = useInvalidateQueries();
+  const { invalidateCombatInfo, invalidatePartyInfo } = useInvalidateQueries();
   const [menuState, setMenuState] = useState("simple");
   const [basicCommands, setBasicCommands] = useState<VocationAbility[]>([]);
 
@@ -24,6 +24,7 @@ export default function BattleCommands() {
   const currentTurnCharacterId = useAppStore(
     (s) => s.battle.currentTurnCharacterId
   );
+  const battle = useAppStore((s) => s.battle);
   const resetCurrentAction = useAppStore(
     (state) => state.battle.resetCurrentAction
   );
@@ -82,8 +83,12 @@ export default function BattleCommands() {
     isPending,
     isSuccess,
   } = useQueryAbilityActions({
-    onSuccess: (data, actionItemId, targetCharacterId) => {
+    onSuccess: (battleEvents, actionItemId, targetCharacterId) => {
+      for (const event of battleEvents) {
+        battle.pushBattleEvent(event);
+      }
       invalidateCombatInfo();
+      // invalidatePartyInfo();
       resetCurrentAction();
       setMenuState("simple");
     },

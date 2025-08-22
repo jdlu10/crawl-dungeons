@@ -108,7 +108,23 @@ export default function GameScreen() {
     if (partyData?.status === "combat") {
       setGameScreenState("combat");
     }
-  }, [partyData]);
+  }, [partyData?.status]);
+
+  useEffect(() => {
+    if (gameScreenState === "combat") {
+      battle.pushBattleEvent({
+        action: "combat_message",
+        sourceEntity: undefined,
+        targetEntities: [],
+        eventType: "",
+        verb: "begin",
+        description: "Battle commence!",
+        played: false,
+        value: undefined,
+        units: undefined,
+      });
+    }
+  }, [gameScreenState]);
 
   useEffect(() => {
     if (battleInfo) {
@@ -119,6 +135,7 @@ export default function GameScreen() {
       battle.setRound(battleInfo.round);
       battle.setCurrentTurnCharacterId(battleInfo.current_turn_character_id);
       battle.setTurnOrder(battleInfo.turn_order);
+      battle.setStatus(battleInfo.status);
     }
   }, [battleInfo]);
 

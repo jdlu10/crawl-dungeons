@@ -370,6 +370,11 @@ class Api::V1::GamesController < ApplicationController
   def combat_info
     party = Party.find_by(game_id: @game.id, player_party: true)
     battle = party.battle
+    status = if battle.victory?
+               "victory"
+             elsif battle.defeat?
+               "defeat"
+             end
 
     info = {
       enemies: Character.includes(:race,
@@ -382,7 +387,8 @@ class Api::V1::GamesController < ApplicationController
       experience_gain: battle.experience_gain,
       round: battle.round,
       current_turn_character_id: battle.current_turn_character_id,
-      turn_order: battle.turn_order
+      turn_order: battle.turn_order,
+      status: status
     }
 
     render json: {
@@ -401,7 +407,8 @@ class Api::V1::GamesController < ApplicationController
       experience_gain: info[:experience_gain],
       round: info[:round],
       current_turn_character_id: info[:current_turn_character_id],
-      turn_order: JSON.parse(info[:turn_order])
+      turn_order: JSON.parse(info[:turn_order]),
+      status: info[:status]
     }, status: :ok
   end
 

@@ -17,4 +17,18 @@ class Character < ApplicationRecord
       inventory.equipped && inventory.item.equippable_slot.key == equippable_slot_key
     end
   end
+
+  def getDefenseValue
+    defense_value = 0
+    filtered_inventories.each do |inventory|
+      if inventory.equipped
+        defense_value += JSON.parse(inventory.item.defensive_value)[0]
+      end
+    end
+    defense_value
+  end
+
+  def dead?
+    hit_points <= 0
+  end
 end

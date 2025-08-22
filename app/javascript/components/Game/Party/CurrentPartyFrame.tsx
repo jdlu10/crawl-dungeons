@@ -144,6 +144,7 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
       <button
         key={`game-${character.id}`}
         className={`bg-element-${character.element.key} cursor-pointer border-gray-400 border-2 ${innerFrameStyle} relative overflow-hidden`}
+        disabled={targetMode && character.hit_points <= 0}
         onClick={
           options?.onClick ? (e) => options.onClick?.(character) : undefined
         }

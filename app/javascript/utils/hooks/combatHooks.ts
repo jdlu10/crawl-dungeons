@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { BattleInfo, Party } from "../../types/GameTypes";
+import { BattleInfo, GameEvent, Party } from "../../types/GameTypes";
 
 type loadCombatInfoParams = {
   gameId: number | undefined;
@@ -29,7 +29,7 @@ export function useQueryLoadCombatInfo(params: loadCombatInfoParams) {
 
 type useCharacterInteractionQueriesParams = {
   onSuccess?: (
-    data: Party,
+    data: GameEvent[],
     ability_id: number,
     targetCharacterId: number | undefined
   ) => void;

@@ -20,9 +20,10 @@ export default function Enemies() {
       {enemies &&
         enemies.map((enemy) => (
           <button
-            className={`enemy hover:bg-gray-600/50 border-gray-400 cursor-pointer ${
+            className={`enemy hover:bg-gray-600/50 border-gray-400 cursor-pointer disabled:cursor-default ${
               targetMode && "relative z-20"
             }`}
+            disabled={enemy.hit_points <= 0}
             onClick={() => {
               if (targetMode) {
                 handleEnemyClick(enemy);

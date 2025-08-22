@@ -55,4 +55,18 @@ module GameEvents
         played: false
     }
   end
+
+  def combat_message(source_entity, target_entities, event_type, value: nil, verb: nil, units: nil, description: nil)
+    {
+        action: "combat_message",
+        source_entity: nil,
+        target_entities: nil,
+        event_type: event_type,
+        value: nil,
+        verb: verb,
+        units: nil,
+        description: description,
+        played: false
+    }
+  end
 end

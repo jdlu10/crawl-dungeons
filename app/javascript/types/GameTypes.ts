@@ -77,7 +77,7 @@ export type GameSetting = {
 
 export type GameEvent = {
   action: string;
-  sourceEntity: Character;
+  sourceEntity: Character | undefined;
   targetEntities: Character[];
   eventType: string;
   value: number | undefined;
@@ -87,6 +87,8 @@ export type GameEvent = {
   played: boolean;
 };
 
+export type BattleStatus = "victory" | "defeat" | undefined;
+
 export type BattleInfo = {
   enemies: Character[];
   rewards: Inventory[];
@@ -95,6 +97,7 @@ export type BattleInfo = {
   round: number;
   current_turn_character_id: number;
   turn_order: number[];
+  status: BattleStatus;
 };
 
 export type Command =

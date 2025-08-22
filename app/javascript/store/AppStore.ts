@@ -7,8 +7,9 @@ import {
   Party,
   PartyCoordinates,
   TypeMap,
+  BattleStatus,
 } from "../types/GameTypes";
-import { Ability, Character, Inventory } from "../types/CharacterTypes";
+import { Character, Inventory } from "../types/CharacterTypes";
 
 type ThemeTypes = "light" | "dark" | "";
 type gameStateTypes =
@@ -55,6 +56,7 @@ type AppStore = {
     turnOrder: number[];
     currentAction: Command;
     currentActionTarget: Character | undefined;
+    status: BattleStatus;
     setTargetMode: (targetMode: boolean) => void;
     setPending: (pending: boolean) => void;
     pushBattleEvent: (event: GameEvent) => void;
@@ -70,6 +72,7 @@ type AppStore = {
     setCurrentActionTarget: (
       currentActionTarget: Character | undefined
     ) => void;
+    setStatus: (status: BattleStatus) => void;
     resetCurrentAction: () => void;
   };
 };
@@ -172,6 +175,7 @@ export const useAppStore = create<AppStore>((set) => ({
     turnOrder: [],
     currentAction: undefined,
     currentActionTarget: undefined,
+    status: undefined,
     setTargetMode: (targetMode) => {
       set((state) => ({ battle: { ...state.battle, targetMode } }));
     },
@@ -218,6 +222,9 @@ export const useAppStore = create<AppStore>((set) => ({
     },
     setCurrentActionTarget: (currentActionTarget) => {
       set((state) => ({ battle: { ...state.battle, currentActionTarget } }));
+    },
+    setStatus: (status) => {
+      set((state) => ({ battle: { ...state.battle, status } }));
     },
     resetCurrentAction: () => {
       set((state) => ({
