@@ -60,7 +60,7 @@ type AppStore = {
     setTargetMode: (targetMode: boolean) => void;
     setPending: (pending: boolean) => void;
     pushBattleEvent: (event: GameEvent) => void;
-    nextBattleEvent: () => GameEvent | undefined;
+    setAllEventsToPlayed: () => void;
     setEnemies: (enemies: Character[]) => void;
     setRewards: (rewards: Inventory[]) => void;
     setDroppedWealth: (droppedWealth: number) => void;
@@ -183,18 +183,23 @@ export const useAppStore = create<AppStore>((set) => ({
       set((state) => ({ battle: { ...state.battle, pending } }));
     },
     pushBattleEvent: (event: GameEvent) => {
-      set((state) => {
-        state.battle.events.push(event);
-        return { battle: { ...state.battle, events: state.battle.events } };
-      });
+      set((state) => ({
+        battle: {
+          ...state.battle,
+          events: [...state.battle.events, event], // new array each time
+        },
+      }));
     },
-    nextBattleEvent: () => {
-      let nextEvent: GameEvent | undefined;
-      set((state) => {
-        nextEvent = state.battle.events.shift();
-        return { battle: { ...state.battle, events: state.battle.events } };
-      });
-      return nextEvent;
+    setAllEventsToPlayed: () => {
+      set((state) => ({
+        battle: {
+          ...state.battle,
+          events: state.battle.events.map((event) => ({
+            ...event,
+            played: true,
+          })),
+        },
+      }));
     },
     setEnemies: (enemies) => {
       set((state) => ({ battle: { ...state.battle, enemies } }));

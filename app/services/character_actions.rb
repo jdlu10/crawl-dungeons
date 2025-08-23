@@ -23,7 +23,7 @@ module CharacterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -65,10 +65,10 @@ module CharacterActions
   end
 
   def power_attack(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
-      "physical_attack",
+      "use_skill",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -80,10 +80,10 @@ module CharacterActions
   end
 
   def full_swing(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
-      "physical_attack",
+      "use_skill",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -95,7 +95,7 @@ module CharacterActions
   end
 
   def hide(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
       "maneuver",
@@ -110,10 +110,10 @@ module CharacterActions
   end
 
   def sneak_attack(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
-      "physical_attack",
+      "use_skill",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -125,7 +125,7 @@ module CharacterActions
   end
 
   def steal(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
       "maneuver",
@@ -140,10 +140,10 @@ module CharacterActions
   end
 
   def fire_bolt(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
-      "magic",
+      "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -155,10 +155,10 @@ module CharacterActions
   end
 
   def water_bolt(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
-      "magic",
+      "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -170,10 +170,10 @@ module CharacterActions
   end
 
   def earth_bolt(ability, current_turn_charcter, target_character)
+    return if unable_to_use_ability(current_turn_charcter, ability)
 
-    
     GameEvents.event(
-      "magic",
+      "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -185,10 +185,10 @@ module CharacterActions
   end
 
   def lightning_bolt(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
-      "magic",
+      "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -200,10 +200,10 @@ module CharacterActions
   end
 
   def heal(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
-      "magic",
+      "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -215,10 +215,10 @@ module CharacterActions
   end
 
   def cure(ability, current_turn_charcter, target_character)
-
+    return if unable_to_use_ability(current_turn_charcter, ability)
     
     GameEvents.event(
-      "magic",
+      "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
@@ -227,5 +227,9 @@ module CharacterActions
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
     )
+  end
+
+  def unable_to_use_ability(actor, ability)
+    actor.hit_points <= 0 || actor.power_points < ability.cost
   end
 end

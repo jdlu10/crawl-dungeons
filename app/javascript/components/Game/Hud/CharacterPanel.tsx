@@ -235,7 +235,7 @@ export default function CharacterPanel(params: {
         <div className="portrait">
           <img
             src={character.visual_render.url}
-            className="h-full"
+            className={`h-full ${character.hit_points <= 0 && "incapacitated"}`}
             title={`${character.name} - ${character.description}`}
           />
         </div>
@@ -466,7 +466,13 @@ export default function CharacterPanel(params: {
                     {vocation_ability.ability.name}
                   </span>
                   {vocation_ability.ability.usable_outside_combat && (
-                    <button className="ability-use border-2 px-2.5 cursor-pointer text-sm hover:bg-green-700 active:bg-green-800 font-bold">
+                    <button
+                      className="ability-use border-2 px-2.5 cursor-pointer text-sm hover:bg-green-700 active:bg-green-800 font-bold disabled:bg-gray-700 disabled:cursor-not-allowed"
+                      disabled={
+                        character.hit_points <= 0 ||
+                        vocation_ability.ability.cost > character.power_points
+                      }
+                    >
                       Use
                     </button>
                   )}

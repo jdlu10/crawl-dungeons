@@ -11,6 +11,7 @@ import Enemies from "./Battle/Enemies";
 import BattleCommands from "./Battle/BattleCommands";
 import TurnOrder from "./Battle/TurnOrder";
 import BattleEvents from "./Battle/BattleEvents";
+import BattleAnimations from "./Battle/BattleAnimations";
 
 type GameState = "exploring" | "combat" | undefined;
 
@@ -142,7 +143,7 @@ export default function GameScreen() {
   return (
     <div className="bg-gray-800 h-150 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl max-h-150 relative">
       {battle.pending && (
-        <div className="pending-modal absolute inset-0 z-50 bg-black opacity-50"></div>
+        <div className="pending-modal absolute inset-0 z-50 bg-black opacity-0"></div>
       )}
       {battle.targetMode && (
         <>
@@ -189,6 +190,7 @@ export default function GameScreen() {
           <div className="battle-events row-start-4 row-span-3 col-start-10 col-span-3 justify-items-center content-end">
             <BattleEvents />
           </div>
+          <BattleAnimations />
         </section>
       )}
       {characterSheetId && (

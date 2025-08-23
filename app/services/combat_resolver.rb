@@ -13,7 +13,7 @@ module CombatResolver
     pivot = 10.0
     factor = pivot / (pivot + defense)
 
-    hit = rand < 0.65
+    hit = rand < 0.8
 
     if hit
       damage = [((base_damage + weapon_damage) * factor).round, 0].max

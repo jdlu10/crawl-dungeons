@@ -28,6 +28,7 @@ export type Party = {
   player_party: boolean;
   filtered_inventories: Inventory[];
   characters: Character[];
+  events: GameEvent[];
 };
 
 export type useQueryGetGameInfoParams = {
@@ -76,7 +77,13 @@ export type GameSetting = {
 };
 
 export type GameEvent = {
-  action: string;
+  action:
+    | "use_item"
+    | "weapon_attack"
+    | "use_magic"
+    | "maneuver"
+    | "use_skill"
+    | "combat_message";
   sourceEntity: Character | undefined;
   targetEntities: Character[];
   eventType: string;

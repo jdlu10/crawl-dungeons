@@ -39,14 +39,14 @@ class Battle < ApplicationRecord
     self.party.characters.all? { |c| c.dead? }
   end
 
-  private
-
   def handle_monster_turn(events)
     enemy_character = Character.find(self.current_turn_character_id)
 
     events.push(MonsterActions.execute(enemy_character.name, enemy_character: enemy_character, party: self.party));
     next_turn(events)
   end
+
+  private
 
   def a_turn_order
     JSON.parse(turn_order)

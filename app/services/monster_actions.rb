@@ -14,7 +14,7 @@ module MonsterActions
   private
 
   def goblin(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -24,7 +24,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -36,7 +36,7 @@ module MonsterActions
   end
 
   def goblin_warrior(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -46,7 +46,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -58,7 +58,7 @@ module MonsterActions
   end
 
   def orc(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -68,7 +68,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -80,7 +80,7 @@ module MonsterActions
   end
 
   def skeleton(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -90,7 +90,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -102,7 +102,7 @@ module MonsterActions
   end
 
   def skeleton_warrior(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -112,7 +112,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -124,7 +124,7 @@ module MonsterActions
   end
 
   def zombie(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -134,7 +134,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -146,7 +146,7 @@ module MonsterActions
   end
 
   def ghost(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -156,7 +156,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -168,7 +168,7 @@ module MonsterActions
   end
 
   def wolf(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -178,7 +178,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -190,7 +190,7 @@ module MonsterActions
   end
 
   def imp(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -200,7 +200,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -212,7 +212,7 @@ module MonsterActions
   end
 
   def slime(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -222,7 +222,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -234,7 +234,7 @@ module MonsterActions
   end
 
   def stone_golem(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -244,7 +244,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -256,7 +256,7 @@ module MonsterActions
   end
 
   def dragon(enemy_character, party)
-    target = party.characters.sample
+    target = available_player_targets(party)
     amount = CombatResolver.weapon_attack(enemy_character, target)
     verb = "attacked"
     description = "#{enemy_character.name} attacked #{target.name} for #{amount} hit points!"
@@ -266,7 +266,7 @@ module MonsterActions
     end
 
     GameEvents.event(
-      "physical_attack",
+      "weapon_attack",
       source_entity: enemy_character,
       target_entities: [target],
       event_type: "enemy_action",
@@ -275,5 +275,9 @@ module MonsterActions
       units: "hit points",
       description: description
     )
+  end
+
+  def available_player_targets(party)
+    party.characters.select { |character| character.hit_points > 0 }.sample
   end
 end

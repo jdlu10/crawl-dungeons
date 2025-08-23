@@ -127,7 +127,7 @@ class Api::V1::GamesController < ApplicationController
 
     # TODO, validate attribute point totals? nah, players can cheat if they like
 
-    if game_characters.count <= 12
+    if game_characters.count <= 12 && params[:max_hit_points] != 0
       new_character = nil
       ActiveRecord::Base.transaction do
         new_character = Character.new(
@@ -276,16 +276,18 @@ class Api::V1::GamesController < ApplicationController
 
   def player_party_move
     party = Party.find_by(game_id: @game.id, player_party: true)
-    party.update(position: params[:position])
+    events = []
     
     ActiveRecord::Base.transaction do
+      party.update(position: params[:position])
+
       if Encounters.step(party)
-        set_up_battle(party)
+        events = set_up_battle(party)
         party.update(status: "combat")
       end
     end
     
-    render json: party, status: :ok
+    render json: party.as_json.merge(events: events), status: :ok
   end
 
   def move_item
@@ -464,6 +466,13 @@ class Api::V1::GamesController < ApplicationController
     characters_in_battle = battle_enemies + party.characters
     turn_order = characters_in_battle.pluck(:id).shuffle
     party.battle.update(dropped_wealth: 0, experience_gain: 0, round: 1, turn_order: turn_order.to_s, current_turn_character_id: turn_order.first)
+
+    next_turn_is_enemy = battle_enemies.find { |be| be.id == turn_order.first }
+    if next_turn_is_enemy.present?
+      party.battle.handle_monster_turn([]) 
+    else
+      []
+    end
   end
 
   def set_up_enemies(party)
@@ -475,16 +484,20 @@ class Api::V1::GamesController < ApplicationController
     monster_templates = Character.where(template: true).where.not(threat: nil)
     inverse_weights = monster_templates.map { |r| 1.0 / r.threat }
     total_weight = inverse_weights.sum
+    num_monsters = 0
     
     ActiveRecord::Base.transaction do
       rand(1..4).times do |i|
         random_point = rand * total_weight
         running_sum = 0.0
-
+        
         monster_templates.zip(inverse_weights).each do |record, inverse_weight|
           running_sum += inverse_weight
           if running_sum >= random_point
-            clone_monster_template_for_battle(record, party)
+            clone_monster = clone_monster_template_for_battle(record, party)
+            clone_monster.update(party_position_row: 0)
+            clone_monster.update(party_position_column: num_monsters)
+            num_monsters += 1
             break
           end
         end
@@ -499,5 +512,6 @@ class Api::V1::GamesController < ApplicationController
     new_monster.save!
     battle_enemy = BattleEnemy.new(battle: party.battle, character: new_monster)
     battle_enemy.save!
+    battle_enemy.character
   end
 end

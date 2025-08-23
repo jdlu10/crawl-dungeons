@@ -52,7 +52,11 @@ export default function TurnOrder() {
       <img
         title={character?.name}
         src={character?.visual_render.url}
-        className="w-full h-full"
+        className={`w-full h-full ${
+          character?.hit_points !== undefined && character.hit_points <= 0
+            ? "incapacitated"
+            : ""
+        }`}
       />
     );
   });

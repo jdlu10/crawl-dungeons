@@ -53,6 +53,7 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
   const playerId = useAppStore((s) => s.playerId);
   const party = useAppStore((s) => s.party);
   const partyData = useAppStore((s) => s.party.data);
+  const pushBattleEvent = useAppStore((s) => s.battle.pushBattleEvent);
   const [zoomLevel, setZoonLevel] = useState<number>(ZOOM_LEVEL_NORMAL);
   const [minimap, setMinimap] = useState<React.ReactElement>(<></>);
 
@@ -75,10 +76,15 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
         if (data.status === "exploring" || data.status === "combat") {
           party.setPartyStatus(data.status);
         }
+        if (data.status === "combat" && data.events.length > 0) {
+          for (const event of data.events) {
+            pushBattleEvent(event);
+          }
+        }
       },
       onError: (error) => {
-        console.error("Error turning player party:", error);
-        alert("Failed to turn the party. Please try again.");
+        console.error("Error moving player party:", error);
+        alert("Failed to move the party. Please try again.");
       },
     });
 
