@@ -48,9 +48,11 @@ export default function BattleAnimations() {
         events[currentEventIndex] && (
           <div
             key={currentEventIndex} // force re-render new animation
-            className="battle-animations animate-battle-event bg-amber-800 w-full h-full flex items-center justify-center absolute inset-0"
+            className="battle-animations animate-battle-event w-full h-full flex items-center justify-center absolute inset-0"
             onAnimationEnd={handleAnimationEnd}
-          ></div>
+          >
+            <span className="font-bold text-3xl capitalize">Battle Effect</span>
+          </div>
         )}
     </>
   );
