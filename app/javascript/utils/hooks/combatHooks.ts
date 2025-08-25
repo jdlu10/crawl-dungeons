@@ -21,7 +21,7 @@ export function useQueryLoadCombatInfo(params: loadCombatInfoParams) {
       }
       return (await response.json()) as BattleInfo;
     },
-    enabled: combat === "combat",
+    enabled: combat === "combat" || combat === "victory" || combat === "defeat",
   });
 
   return loadCombatInfoQuery;

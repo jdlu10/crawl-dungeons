@@ -51,7 +51,9 @@ export default function BattleAnimations() {
             className="battle-animations animate-battle-event w-full h-full flex items-center justify-center absolute inset-0"
             onAnimationEnd={handleAnimationEnd}
           >
-            <span className="font-bold text-3xl capitalize">Battle Effect</span>
+            <span className="anchor font-bold text-3xl capitalize">
+              Battle Effect
+            </span>
           </div>
         )}
     </>

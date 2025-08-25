@@ -23,7 +23,7 @@ export type Party = {
   facing_direction: string;
   current_map_id: number;
   position: [x: number, y: number];
-  status: string;
+  status: "combat" | "exploring" | "victory" | "defeat";
   battles_id: number;
   player_party: boolean;
   filtered_inventories: Inventory[];

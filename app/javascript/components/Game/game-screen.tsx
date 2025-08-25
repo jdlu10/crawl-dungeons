@@ -12,8 +12,9 @@ import BattleCommands from "./Battle/BattleCommands";
 import TurnOrder from "./Battle/TurnOrder";
 import BattleEvents from "./Battle/BattleEvents";
 import BattleAnimations from "./Battle/BattleAnimations";
+import Rewards from "./Battle/Rewards";
 
-type GameState = "exploring" | "combat" | undefined;
+type GameState = "exploring" | "combat" | "victory" | "defeat" | undefined;
 
 export default function GameScreen() {
   const game = useAppStore((s) => s.game);
@@ -106,9 +107,7 @@ export default function GameScreen() {
   });
 
   useEffect(() => {
-    if (partyData?.status === "combat") {
-      setGameScreenState("combat");
-    }
+    setGameScreenState(partyData?.status);
   }, [partyData?.status]);
 
   useEffect(() => {
@@ -170,6 +169,21 @@ export default function GameScreen() {
           <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">
             <CurrentPartyFrame />
           </div>
+        </section>
+      )}
+      {(gameScreenState === "victory" || gameScreenState === "defeat") && (
+        <section className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12">
+          <div className="turn-order row-start-1 row-span-3 col-span-1 justify-items-left">
+            <TurnOrder />
+          </div>
+          <div className="combat-screen row-start-1 row-span-3 col-start-2 col-span-10 justify-items-center">
+            {gameScreenState === "victory" && <Rewards />}
+          </div>
+          <div className="battle-commands row-start-4 row-span-3 col-start-2 col-span-2 justify-items-center content-end"></div>
+          <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">
+            <CurrentPartyFrame />
+          </div>
+          <div className="battle-events row-start-4 row-span-3 col-start-10 col-span-3 justify-items-center content-end"></div>
         </section>
       )}
       {!characterSheetId && gameScreenState === "combat" && (

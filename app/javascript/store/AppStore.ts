@@ -74,6 +74,7 @@ type AppStore = {
     ) => void;
     setStatus: (status: BattleStatus) => void;
     resetCurrentAction: () => void;
+    resetBattle: () => void;
   };
 };
 
@@ -239,6 +240,26 @@ export const useAppStore = create<AppStore>((set) => ({
           currentAction: undefined,
           targetMode: false,
           pending: false,
+        },
+      }));
+    },
+    resetBattle: () => {
+      set((state) => ({
+        battle: {
+          ...state.battle,
+          targetMode: false,
+          pending: false,
+          events: [],
+          enemies: [],
+          rewards: [],
+          droppedWealth: 0,
+          experienceGain: 0,
+          round: 0,
+          currentTurnCharacterId: 0,
+          turnOrder: [],
+          currentAction: undefined,
+          currentActionTarget: undefined,
+          status: undefined,
         },
       }));
     },

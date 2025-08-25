@@ -19,7 +19,8 @@ class Api::V1::GamesController < ApplicationController
     :discard_item,
     :use_character_ability,
     :combat_info,
-    :combat_use_ability
+    :combat_use_ability,
+    :accept_combat_rewards,
   ]
 
   def index
@@ -428,8 +429,57 @@ class Api::V1::GamesController < ApplicationController
     if (ability)
       ActiveRecord::Base.transaction do
         events.push(CharacterActions.execute(ability.key, ability: ability, current_turn_charcter: current_turn_charcter, target_character: target_character));
-        events = party.battle.next_turn(events)
+        
+        if party.battle.victory? || party.battle.defeat?
+          events = battle_completion(events, party)
+        else
+          events = party.battle.next_turn(events)
+        end
       end
+    end
+
+    render json: events, status: :ok
+  end
+
+  def accept_combat_rewards
+    events = []
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    battle = party.battle
+    return unless battle && battle.victory? && party.status == "victory"
+
+    ActiveRecord::Base.transaction do
+      # distribute experience points
+      total_experience = 0
+      battle.battle_enemies.each do |be|
+        total_experience += be.character.level * 20
+      end
+      battle.update(experience_gain: total_experience)
+      experience_per_character = (total_experience / party.characters.count.to_f).ceil
+      party.characters.each do |character|
+        character.update(experience_points: character.experience_points + experience_per_character)
+      end
+
+      # distribute loot
+      total_wealth = 0
+      battle.battle_enemies.each do |be|
+        total_wealth += rand(5..20) * be.character.level
+        be.character.inventories.where(equipped: false).each do |item_inventory|
+          item_inventory.update(attachable: battle, equipped: false)
+        end
+      end
+      battle.update(dropped_wealth: total_wealth)
+      party.update(wealth: party.wealth + total_wealth)
+
+      party.update(status: "exploring")
+    
+      events.push(battle_experience_event(total_experience))
+      events.push(battle_loot_gold_event(total_wealth))
+      battle.inventories.each do |item|
+        events.push(battle_loot_items_event(item.item))
+      end
+
+      reset_battle(party)
+
     end
 
     render json: events, status: :ok
@@ -505,6 +555,13 @@ class Api::V1::GamesController < ApplicationController
     end
   end
 
+  def reset_battle(party)
+    BattleEnemy.where(battle: party.battle).each do |old_battle_enemy|
+      old_battle_enemy.destroy
+    end
+    party.battle.update(current_turn_character_id: nil, turn_order: nil, round: 0, dropped_wealth: 0, experience_gain: 0)
+  end
+
   def clone_monster_template_for_battle(mosnter_template, party)
     new_monster = mosnter_template.dup
     new_monster.template = false
@@ -513,5 +570,138 @@ class Api::V1::GamesController < ApplicationController
     battle_enemy = BattleEnemy.new(battle: party.battle, character: new_monster)
     battle_enemy.save!
     battle_enemy.character
+  end
+
+  def battle_completion(events, party)
+    battle = party.battle
+    return unless battle
+
+    if battle.victory?
+      ActiveRecord::Base.transaction do
+        # calculate experience points
+        total_experience = 0
+        battle.battle_enemies.each do |be|
+          total_experience += (be.character.threat * 20 * be.character.level).round 
+        end
+        battle.update(experience_gain: total_experience)
+        
+        # experience_per_character = (total_experience / party.characters.count.to_f).ceil
+        # party.characters.each do |character|
+        #   character.gain_experience(experience_per_character)
+        # end
+
+        # calculate loot
+        total_wealth = 0
+        battle.battle_enemies.each do |be|
+          total_wealth += rand(5..20) * be.character.level * be.character.threat.round
+        end
+        battle.update(dropped_wealth: total_wealth)
+
+        # calculate item drops
+        battle.battle_enemies.each do |be|
+          item_drop_probability = [1, 2.5, 5, 7.5, 9].find { |p| p >= be.character.threat } || 1
+          item_drop = rand(1..100) <= item_drop_probability * 10
+          next unless item_drop
+
+          item_drop_quality_modifier = be.character.threat + be.character.level * 10
+          Inventory.new(
+            attachable: battle, item: Item.where(template: true).where("rarity >= ?", item_drop_quality_modifier).order("RANDOM()").first, equipped: false, active: true
+          ).save!
+        end
+
+        # party.update(wealth: party.wealth + total_wealth)
+
+        # events.push(GameEvents.event(
+        #   "combat_message",
+        #   source_entity: nil,
+        #   target_entities: [],
+        #   event_type: "combat_loot",
+        #   verb: "loot",
+        #   description: "Party found #{total_wealth} gold pieces."
+        # ))
+
+        # battle.inventories.includes(:item).each do |inventory_item|
+        #   events.push(GameEvents.event(
+        #     "combat_message",
+        #     source_entity: nil,
+        #     target_entities: [],
+        #     event_type: "combat_loot",
+        #     verb: "loot",
+        #     description: "Party found item: #{inventory_item.item.name}."
+        #   ))
+        # end
+
+        party.update(status: "victory")
+
+        events.push(victory_event)
+      end
+    elsif battle.defeat?
+      ActiveRecord::Base.transaction do
+        party.update(status: "defeat")
+
+        events.push(defeat_event)
+      end
+    end
+
+    events
+  end
+
+  def victory_event
+    GameEvents.event(
+      "combat_message",
+      source_entity: nil,
+      target_entities: [],
+      event_type: "combat_result",
+      verb: "victory",
+      description: "Party is victorious!"
+    )
+  end
+
+  def defeat_event
+    GameEvents.event(
+      "combat_message",
+      source_entity: nil,
+      target_entities: [],
+      event_type: "combat_result",
+      verb: "defeated",
+      description: "Party is defeated!"
+    )
+  end
+
+  def battle_experience_event(experience_points)
+    GameEvents.event(
+      "combat_message",
+      source_entity: nil,
+      target_entities: [],
+      event_type: "combat_result",
+      verb: "gained",
+      amount: experience_points,
+      units: "experience points",
+      description: "Party gained #{experience_points} experience points."
+    )
+  end
+
+  def battle_loot_gold_event(gold_amount)
+    GameEvents.event(
+      "combat_message",
+      source_entity: nil,
+      target_entities: [],
+      event_type: "combat_result",
+      verb: "gained",
+      amount: gold_amount,
+      units: "gold coins",
+      description: "Party gained #{gold_amount} gold coins."
+    )
+  end
+
+  def battle_loot_items_event(item)
+    GameEvents.event(
+      "combat_message",
+      source_entity: nil,
+      target_entities: [],
+      event_type: "combat_result",
+      verb: "obtained",
+      description: "Party obtained item: #{item.name}."
+    )
   end
 end

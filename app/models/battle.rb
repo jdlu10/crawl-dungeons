@@ -5,12 +5,6 @@ class Battle < ApplicationRecord
   has_many :battle_enemies
 
   def next_turn(events)
-    if victory?
-      return events.push(victory_event);
-    elsif defeat?
-      return events.push(defeat_event);
-    end
-
     current_turn_charcter_in_turn_order = a_turn_order.index(current_turn_character_id)
     next_character_index_in_turn_order = (current_turn_charcter_in_turn_order + 1) % a_turn_order.length
     self.current_turn_character_id = a_turn_order[next_character_index_in_turn_order]
@@ -50,27 +44,5 @@ class Battle < ApplicationRecord
 
   def a_turn_order
     JSON.parse(turn_order)
-  end
-
-  def victory_event
-    GameEvents.event(
-      "combat_message",
-      source_entity: nil,
-      target_entities: [],
-      event_type: "combat_result",
-      verb: "victory",
-      description: "Party is victorious!"
-    )
-  end
-
-  def defeat_event
-    GameEvents.event(
-      "combat_message",
-      source_entity: nil,
-      target_entities: [],
-      event_type: "combat_result",
-      verb: "defeated",
-      description: "Party is defeated!"
-    )
   end
 end
