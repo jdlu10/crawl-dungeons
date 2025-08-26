@@ -31,6 +31,22 @@ export type Character = CharacterBase & {
   vocation: Vocation;
   visual_render: VisualRender;
   filtered_inventories: Inventory[];
+  character_statuses: CharacterStatus[];
+};
+
+export type CharacterStatus = {
+  id: number;
+  status_id: number;
+  duration: number;
+  status: Status;
+};
+
+export type Status = {
+  id: number;
+  name: string;
+  key: string;
+  description: string;
+  status_type: string;
 };
 
 export const abilityScoreKeys = [

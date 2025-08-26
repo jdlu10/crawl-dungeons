@@ -20,6 +20,7 @@ class Api::V1::GamesController < ApplicationController
     :use_character_ability,
     :combat_info,
     :combat_use_ability,
+    :combat_use_inventory,
     :accept_combat_rewards,
   ]
 
@@ -178,7 +179,8 @@ class Api::V1::GamesController < ApplicationController
         :visual_render,
         { inventories: { item: [:visual_render, :element, :equippable_slot] } },
         { vocation: [:icon, vocation_abilities: :ability] },
-        { element: :visual_render }
+        { element: :visual_render },
+        { character_statuses: :status }
       ]
     ).find_by(game_id: @game.id, player_party: true)
 
@@ -201,7 +203,8 @@ class Api::V1::GamesController < ApplicationController
               }
             },
             vocation: { include: [:icon, vocation_abilities: {include: :ability}] },
-            element: { include: :visual_render }
+            element: { include: :visual_render },
+            character_statuses: { include: :status }
           }
         }
       }
@@ -299,10 +302,10 @@ class Api::V1::GamesController < ApplicationController
     return json_error("Incorrect game id.") unless party.game_id == @game.id
     return json_error("Inactive item.") unless inventory_item&.active?
 
-    if character
-      inventory_item.update(attachable: character)
-    else 
+    if character.nil? || inventory_item.attachable == character
       inventory_item.update(attachable: party)
+    elsif character
+      inventory_item.update(attachable: character)
     end
 
     player_party
@@ -340,7 +343,10 @@ class Api::V1::GamesController < ApplicationController
       if (inventory_item.equipped?)
         inventory_item.update(equipped: false)
       elsif (character)
-        inventory_item.update(equipped: true, attachable: character)
+        ActiveRecord::Base.transaction do
+          character.getEquippedItem(inventory_item.item.equippable_slot.key).update(equipped: false) if character.getEquippedItem(inventory_item.item.equippable_slot.key)
+          inventory_item.update(equipped: true, attachable: character)
+        end
       else
         inventory_item.update(equipped: true)
       end
@@ -430,10 +436,44 @@ class Api::V1::GamesController < ApplicationController
       ActiveRecord::Base.transaction do
         events.push(CharacterActions.execute(ability.key, ability: ability, current_turn_charcter: current_turn_charcter, target_character: target_character));
         
+        party.reload
+        party.battle.reload
+
+        if (party.status == "combat") # in case the ability changed the party status, e.g. flee
+          events = party.battle.next_turn(events)
+
+          if party.battle.victory? || party.battle.defeat?
+            events = battle_completion(events, party)
+          end
+        end
+      end
+    end
+
+    render json: events, status: :ok
+  end
+
+  def combat_use_inventory
+    party = Party.find_by(game_id: @game.id, player_party: true)
+    inventory_item = Inventory.find(params[:inventory_id])
+    current_turn_charcter = Character.find(party.battle.current_turn_character_id)
+    target_character = Character.find(params[:character_id]) if params[:character_id]
+
+    return json_error("Incorrect game id.") unless party.game_id == @game.id
+    return json_error("Unavailable item.") unless inventory_item&.active? && inventory_item.attachable_type == "Character" && inventory_item.attachable_id == current_turn_charcter.id
+
+    events = []
+
+    if (inventory_item)
+      ActiveRecord::Base.transaction do
+        inventory_item.item.effect_links.each do |effect_link|
+          events.push(ItemActions.execute(effect_link.effect.effect_key, inventory_item: inventory_item, target: target_character, effect_link: effect_link));
+        end
+        inventory_item.update(active: false);
+
+        events = party.battle.next_turn(events)
+
         if party.battle.victory? || party.battle.defeat?
           events = battle_completion(events, party)
-        else
-          events = party.battle.next_turn(events)
         end
       end
     end
@@ -449,37 +489,25 @@ class Api::V1::GamesController < ApplicationController
 
     ActiveRecord::Base.transaction do
       # distribute experience points
-      total_experience = 0
-      battle.battle_enemies.each do |be|
-        total_experience += be.character.level * 20
-      end
-      battle.update(experience_gain: total_experience)
-      experience_per_character = (total_experience / party.characters.count.to_f).ceil
+      experience_per_character = (battle.experience_gain / party.characters.count.to_f).ceil
       party.characters.each do |character|
         character.update(experience_points: character.experience_points + experience_per_character)
+        events.push(battle_experience_event(experience_per_character, character))
       end
+      
+      # distribute wealth
+      party.update(wealth: party.wealth + battle.dropped_wealth)
+      events.push(battle_loot_gold_event(battle.dropped_wealth))
 
-      # distribute loot
-      total_wealth = 0
-      battle.battle_enemies.each do |be|
-        total_wealth += rand(5..20) * be.character.level
-        be.character.inventories.where(equipped: false).each do |item_inventory|
-          item_inventory.update(attachable: battle, equipped: false)
-        end
-      end
-      battle.update(dropped_wealth: total_wealth)
-      party.update(wealth: party.wealth + total_wealth)
-
-      party.update(status: "exploring")
-    
-      events.push(battle_experience_event(total_experience))
-      events.push(battle_loot_gold_event(total_wealth))
+      # distribute items
       battle.inventories.each do |item|
+        item.update(attachable: party)
         events.push(battle_loot_items_event(item.item))
       end
 
       reset_battle(party)
 
+      party.update(status: "exploring")
     end
 
     render json: events, status: :ok
@@ -516,9 +544,12 @@ class Api::V1::GamesController < ApplicationController
     characters_in_battle = battle_enemies + party.characters
     turn_order = characters_in_battle.pluck(:id).shuffle
     party.battle.update(dropped_wealth: 0, experience_gain: 0, round: 1, turn_order: turn_order.to_s, current_turn_character_id: turn_order.first)
+    first_to_go_character = Character.find(turn_order.first)
 
-    next_turn_is_enemy = battle_enemies.find { |be| be.id == turn_order.first }
-    if next_turn_is_enemy.present?
+    next_turn_is_enemy = battle_enemies.find { |be| be == first_to_go_character }
+    if first_to_go_character.dead?
+      party.battle.next_turn([])
+    elsif next_turn_is_enemy.present?
       party.battle.handle_monster_turn([]) 
     else
       []
@@ -559,7 +590,7 @@ class Api::V1::GamesController < ApplicationController
     BattleEnemy.where(battle: party.battle).each do |old_battle_enemy|
       old_battle_enemy.destroy
     end
-    party.battle.update(current_turn_character_id: nil, turn_order: nil, round: 0, dropped_wealth: 0, experience_gain: 0)
+    party.battle.reset
   end
 
   def clone_monster_template_for_battle(mosnter_template, party)
@@ -585,11 +616,6 @@ class Api::V1::GamesController < ApplicationController
         end
         battle.update(experience_gain: total_experience)
         
-        # experience_per_character = (total_experience / party.characters.count.to_f).ceil
-        # party.characters.each do |character|
-        #   character.gain_experience(experience_per_character)
-        # end
-
         # calculate loot
         total_wealth = 0
         battle.battle_enemies.each do |be|
@@ -608,28 +634,6 @@ class Api::V1::GamesController < ApplicationController
             attachable: battle, item: Item.where(template: true).where("rarity >= ?", item_drop_quality_modifier).order("RANDOM()").first, equipped: false, active: true
           ).save!
         end
-
-        # party.update(wealth: party.wealth + total_wealth)
-
-        # events.push(GameEvents.event(
-        #   "combat_message",
-        #   source_entity: nil,
-        #   target_entities: [],
-        #   event_type: "combat_loot",
-        #   verb: "loot",
-        #   description: "Party found #{total_wealth} gold pieces."
-        # ))
-
-        # battle.inventories.includes(:item).each do |inventory_item|
-        #   events.push(GameEvents.event(
-        #     "combat_message",
-        #     source_entity: nil,
-        #     target_entities: [],
-        #     event_type: "combat_loot",
-        #     verb: "loot",
-        #     description: "Party found item: #{inventory_item.item.name}."
-        #   ))
-        # end
 
         party.update(status: "victory")
 
@@ -668,16 +672,16 @@ class Api::V1::GamesController < ApplicationController
     )
   end
 
-  def battle_experience_event(experience_points)
+  def battle_experience_event(experience_points, character)
     GameEvents.event(
       "combat_message",
       source_entity: nil,
       target_entities: [],
       event_type: "combat_result",
       verb: "gained",
-      amount: experience_points,
+      value: experience_points,
       units: "experience points",
-      description: "Party gained #{experience_points} experience points."
+      description: "#{character.name} gained #{experience_points} experience points."
     )
   end
 
@@ -688,7 +692,7 @@ class Api::V1::GamesController < ApplicationController
       target_entities: [],
       event_type: "combat_result",
       verb: "gained",
-      amount: gold_amount,
+      value: gold_amount,
       units: "gold coins",
       description: "Party gained #{gold_amount} gold coins."
     )

@@ -171,6 +171,13 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
         >
           <VocationIcons name={character.vocation.icon.name as VocationName} />
         </div>
+        {character.character_statuses.length > 0 && (
+          <div className="w-full h-full absolute inset-0 icon-status pointer-events-none content-center">
+            {character.character_statuses.map((character_status) => (
+              <p>{character_status.status.name}</p>
+            ))}
+          </div>
+        )}
       </button>
       {options?.additionalElements && (
         <div className="party-frame-sub-elements flex">

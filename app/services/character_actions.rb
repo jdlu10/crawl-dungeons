@@ -35,7 +35,11 @@ module CharacterActions
   end
 
   def defend(ability, current_turn_charcter, target_character)
-
+    CharacterStatus.create!(
+      character: current_turn_charcter,
+      status: Status.find_by(key: "defending"),
+      duration: 1,
+    )
 
     GameEvents.event(
       "maneuver",
@@ -50,7 +54,12 @@ module CharacterActions
   end
 
   def flee(ability, current_turn_charcter, target_character)
-
+    flee_result = "#{current_turn_charcter.name} orders the party to flee from combat but failed!"
+    if rand < 0.4
+      flee_result = "#{current_turn_charcter.name} orders the party to flee from combat!"
+      current_turn_charcter.party.update(status: "exploring")
+      current_turn_charcter.party.battle.reset
+    end
     
     GameEvents.event(
       "maneuver",
@@ -60,7 +69,7 @@ module CharacterActions
       value: 0,
       verb: "flees",
       units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+      description: flee_result
     )
   end
 

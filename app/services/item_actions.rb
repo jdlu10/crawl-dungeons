@@ -16,7 +16,6 @@ module ItemActions
   private
 
   def curing(inventory_item, target, effect_link)
-   
     target.character_statuses.each do |character_statuses|
     end
   end

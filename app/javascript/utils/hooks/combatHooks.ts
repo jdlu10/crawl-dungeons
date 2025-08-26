@@ -39,7 +39,7 @@ type useCharacterInteractionQueriesParams = {
 export function useQueryAbilityActions(
   params: useCharacterInteractionQueriesParams
 ) {
-  const createCharacterQuery = useMutation({
+  const combatAbilityActionQuery = useMutation({
     mutationFn: async (abilityActionParams: {
       game_id: number | undefined;
       player_id: number | undefined;
@@ -78,5 +78,99 @@ export function useQueryAbilityActions(
     },
     onError: params?.onError,
   });
-  return createCharacterQuery;
+  return combatAbilityActionQuery;
+}
+
+type useCombatInventoryQueriesParams = {
+  onSuccess?: (
+    data: GameEvent[],
+    inventory_id: number,
+    targetCharacterId: number | undefined
+  ) => void;
+  onError?: (error: any) => void;
+};
+
+export function useQueryCombatInventoryActions(
+  params: useCombatInventoryQueriesParams
+) {
+  const combatInventoryActionQuery = useMutation({
+    mutationFn: async (inventoryActionParams: {
+      game_id: number | undefined;
+      player_id: number | undefined;
+      character_id: number | undefined;
+      inventory_id: number;
+    }) => {
+      const response = await fetch(
+        "/api/v1/games/" +
+          inventoryActionParams.game_id +
+          "/combat/inventory/" +
+          inventoryActionParams.inventory_id +
+          "/use",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(inventoryActionParams),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to use item: ${inventoryActionParams.inventory_id} ${
+            inventoryActionParams.character_id
+              ? "on character " + inventoryActionParams.character_id
+              : ""
+          }`
+        );
+      }
+      return await response.json();
+    },
+    onSuccess: (data, variables) => {
+      if (params?.onSuccess) {
+        params?.onSuccess(data, variables.inventory_id, variables.character_id);
+      }
+    },
+    onError: params?.onError,
+  });
+  return combatInventoryActionQuery;
+}
+
+export function useQueryCombatRewardsActions(
+  params:
+    | {
+        onSuccess?: (data: GameEvent[]) => void;
+        onError?: (error: any) => void;
+      }
+    | undefined
+) {
+  const combatAcceptRewardsQuery = useMutation({
+    mutationFn: async (acceptRewardsQueryParams: {
+      game_id: number | undefined;
+      player_id: number | undefined;
+    }) => {
+      const response = await fetch(
+        "/api/v1/games/" +
+          acceptRewardsQueryParams.game_id +
+          "/combat/accept_rewards",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(acceptRewardsQueryParams),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to accept combat rewards`);
+      }
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      if (params?.onSuccess) {
+        params?.onSuccess(data);
+      }
+    },
+    onError: params?.onError,
+  });
+  return combatAcceptRewardsQuery;
 }

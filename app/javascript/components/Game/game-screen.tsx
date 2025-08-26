@@ -13,6 +13,7 @@ import TurnOrder from "./Battle/TurnOrder";
 import BattleEvents from "./Battle/BattleEvents";
 import BattleAnimations from "./Battle/BattleAnimations";
 import Rewards from "./Battle/Rewards";
+import { useInvalidateQueries } from "../../utils/hooks/queryHooks";
 
 type GameState = "exploring" | "combat" | "victory" | "defeat" | undefined;
 
@@ -42,6 +43,8 @@ export default function GameScreen() {
     playerId: playerId,
     combat: gameScreenState,
   });
+
+  const { invalidateCombatInfo } = useInvalidateQueries();
 
   const { MiniMap } = useMiniMap();
 
@@ -106,6 +109,14 @@ export default function GameScreen() {
     ),
   });
 
+  const Defeat = () => (
+    <div
+      className={`enemies w-full h-full p-2.5 flex flex-col gap-8 items-center justify-end`}
+    >
+      <p className="text-2xl">Your party has been defeated!</p>
+    </div>
+  );
+
   useEffect(() => {
     setGameScreenState(partyData?.status);
   }, [partyData?.status]);
@@ -123,6 +134,7 @@ export default function GameScreen() {
         value: undefined,
         units: undefined,
       });
+      invalidateCombatInfo();
     }
   }, [gameScreenState]);
 
@@ -178,6 +190,7 @@ export default function GameScreen() {
           </div>
           <div className="combat-screen row-start-1 row-span-3 col-start-2 col-span-10 justify-items-center">
             {gameScreenState === "victory" && <Rewards />}
+            {gameScreenState === "defeat" && <Defeat />}
           </div>
           <div className="battle-commands row-start-4 row-span-3 col-start-2 col-span-2 justify-items-center content-end"></div>
           <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">

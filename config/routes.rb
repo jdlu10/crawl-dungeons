@@ -52,6 +52,7 @@ Rails.application.routes.draw do
       get 'games/:id/combat', to: 'games#combat_info', as: :combat_info
       patch 'games/:id/combat/ability/:ability_id/use', to: 'games#combat_use_ability', as: :combat_use_ability
       patch 'games/:id/combat/inventory/:inventory_id/use', to: 'games#combat_use_inventory', as: :combat_use_inventory
+      patch 'games/:id/combat/accept_rewards', to: 'games#accept_combat_rewards', as: :accept_combat_rewards
     end
   end
 

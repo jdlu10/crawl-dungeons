@@ -411,7 +411,10 @@ export default function CharacterPanel(params: {
                   >
                     {inventory.item.name}
                   </span>
-                  <ItemActions inventory_item={inventory} />
+                  <ItemActions
+                    inventory_item={inventory}
+                    character={character}
+                  />
                 </li>
               );
             }
@@ -420,7 +423,7 @@ export default function CharacterPanel(params: {
       </div>
       <div className="inventory row-start-5 row-span-4 col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
         <h3 className="border-b-2 sticky top-0 font-bold text-lg pt-2.5 bg-black">
-          Party Inventory
+          Party Inventory (Wealth: {party?.wealth} gold coins)
         </h3>
         <ul className="flex flex-col gap-2.5 pt-2.5">
           {party?.filtered_inventories.map((inventory) => {
