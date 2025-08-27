@@ -60,6 +60,7 @@ class Api::V1::GamesController < ApplicationController
           party.position = find_starting_position(game)
           party.wealth = 0
           party.player_party = true
+          party.status = "exploring"
 
           battle = Battle.new(party: party)
           battle.save!
