@@ -42,6 +42,20 @@ module GameEvents
     }
   end
 
+  def use_skill(source_entity, target_entities, event_type, value: nil, verb: nil, units: nil, description: nil)
+    {
+        action: "use_skill",
+        source_entity: source_entity,
+        target_entities: target_entities,
+        event_type: event_type,
+        value: value,
+        verb: verb,
+        units: units,
+        description: description,
+        played: false
+    }
+  end
+
   def use_magic(source_entity, target_entities, event_type, value: nil, verb: nil, units: nil, description: nil)
     {
         action: "use_magic",

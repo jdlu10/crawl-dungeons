@@ -14,24 +14,26 @@ module CharacterActions
   private
 
   def weapon_attack(ability, current_turn_charcter, target_character)
-    amount = CombatResolver.weapon_attack(current_turn_charcter, target_character)
+    damage = CombatResolver.weapon_attack(current_turn_charcter, target_character)
     verb = "attacked"
-    description = "#{current_turn_charcter.name} attacked #{target_character.name} for #{amount} hit points!"
-    if amount == 0
+    description = "#{current_turn_charcter.name} attacked #{target_character.name} for #{damage} hit points!"
+    if damage == 0
       verb = "missed"
       description = "#{current_turn_charcter.name} attacked #{target_character.name} and missed!"
+    else
+      target_character.update(hit_points: [target_character.hit_points - damage, 0].max)
     end
 
-    GameEvents.event(
+    [GameEvents.event(
       "weapon_attack",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
-      value: amount,
+      value: damage,
       verb: verb,
       units: "hit points",
       description: description
-    )
+    )]
   end
 
   def defend(ability, current_turn_charcter, target_character)
@@ -41,7 +43,7 @@ module CharacterActions
       duration: 1,
     )
 
-    GameEvents.event(
+    [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -50,7 +52,7 @@ module CharacterActions
       verb: "defends",
       units: "",
       description: "#{current_turn_charcter.name} put up a defensive stance!"
-    )
+    )]
   end
 
   def flee(ability, current_turn_charcter, target_character)
@@ -61,7 +63,7 @@ module CharacterActions
       current_turn_charcter.party.battle.reset
     end
     
-    GameEvents.event(
+    [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -70,58 +72,104 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: flee_result
-    )
+    )]
   end
 
   def power_attack(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+
+    damage = CombatResolver.weapon_attack(current_turn_charcter, target_character)
+    damage = (damage * ability.potency).round
+    verb = "used power attack on"
+    description = "#{current_turn_charcter.name} used power attack on #{target_character.name} and hit for #{damage} hit points!"
+    if damage == 0
+      verb = "missed"
+      description = "#{current_turn_charcter.name} used power attack on #{target_character.name} and missed!"
+    else
+      target_character.update(hit_points: [target_character.hit_points - damage, 0].max)
+    end
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    [GameEvents.event(
       "use_skill",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
-      value: 0,
-      verb: "flees",
-      units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+      value: damage,
+      verb: verb,
+      units: "hit points",
+      description: description
+    )]
   end
 
   def full_swing(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
     
-    GameEvents.event(
-      "use_skill",
-      source_entity: current_turn_charcter,
-      target_entities: [target_character],
-      event_type: ability.key,
-      value: 0,
-      verb: "flees",
-      units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    events = []
+
+    enemies = current_turn_charcter.party.battle.battle_enemies.map { |be| be.character }
+    
+    enemies.each do |enemy|
+      damage = CombatResolver.weapon_attack(current_turn_charcter, enemy)
+      damage = (damage * ability.potency).round
+      verb = "used full swing on"
+      description = "#{current_turn_charcter.name} used full swing on #{enemy.name} and hit for #{damage} hit points!"
+      if damage == 0
+        verb = "missed"
+        description = "#{current_turn_charcter.name} used full swing on #{enemy.name} and missed!"
+      else
+        enemy.update(hit_points: [enemy.hit_points - damage, 0].max)
+      end
+
+      events.push(GameEvents.event(
+        "use_skill",
+        source_entity: current_turn_charcter,
+        target_entities: [enemy],
+        event_type: ability.key,
+        value: damage,
+        verb: verb,
+        units: "hit points",
+        description: description
+      ))
+    end
+
+    reduce_power_points(current_turn_charcter, ability)
+
+    events
   end
 
   def hide(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    hidden_status = CharacterStatus.find_or_initialize_by(
+      character: current_turn_charcter,
+      status: Status.find_by(key: "hidden")
+    )
+
+    hidden_status.update!(duration: 3)
+
+    [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
       value: 0,
-      verb: "flees",
+      verb: "hides",
       units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+      description: "#{current_turn_charcter.name} hides in the shadows..."
+    )]
   end
 
   def sneak_attack(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+    return if !current_turn_charcter.has_status?("hidden")
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    [GameEvents.event(
       "use_skill",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -130,13 +178,16 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    )]
   end
 
   def steal(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+    return if !current_turn_charcter.has_status?("hidden")
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -145,13 +196,15 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    )]
   end
 
   def fire_bolt(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -160,13 +213,15 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    )]
   end
 
   def water_bolt(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -175,13 +230,15 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    )]
   end
 
   def earth_bolt(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
 
-    GameEvents.event(
+    reduce_power_points(current_turn_charcter, ability)
+
+    [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -190,13 +247,15 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    )]
   end
 
   def lightning_bolt(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -205,13 +264,15 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    )]
   end
 
   def heal(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -220,13 +281,15 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    )]
   end
 
   def cure(ability, current_turn_charcter, target_character)
     return if unable_to_use_ability(current_turn_charcter, ability)
+
+    reduce_power_points(current_turn_charcter, ability)
     
-    GameEvents.event(
+    [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
@@ -235,10 +298,14 @@ module CharacterActions
       verb: "flees",
       units: "",
       description: "#{current_turn_charcter.name} orders the party to flee from combat!"
-    )
+    )]
   end
 
   def unable_to_use_ability(actor, ability)
-    actor.hit_points <= 0 || actor.power_points < ability.cost
+    actor.dead? || actor.power_points < ability.cost
+  end
+
+  def reduce_power_points(actor, ability)
+    actor.update(power_points: [actor.power_points - ability.cost, 0].max)
   end
 end

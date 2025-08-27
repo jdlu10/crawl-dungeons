@@ -41,6 +41,10 @@ class Battle < ApplicationRecord
 
   def reset
     update!(current_turn_character_id: 0, turn_order: [], round: 0, dropped_wealth: 0, experience_gain: 0)
+
+    self.party.characters.each do |character|
+      character.character_statuses.destroy_all
+    end
   end
 
   private

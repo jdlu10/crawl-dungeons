@@ -434,7 +434,7 @@ class Api::V1::GamesController < ApplicationController
 
     if (ability)
       ActiveRecord::Base.transaction do
-        events.push(CharacterActions.execute(ability.key, ability: ability, current_turn_charcter: current_turn_charcter, target_character: target_character));
+        events.push(*CharacterActions.execute(ability.key, ability: ability, current_turn_charcter: current_turn_charcter, target_character: target_character));
         
         party.reload
         party.battle.reload

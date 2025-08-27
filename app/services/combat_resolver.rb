@@ -18,7 +18,9 @@ module CombatResolver
     if hit
       damage = [((base_damage + weapon_damage) * factor).round, 0].max
 
-      target.update(hit_points: [target.hit_points - damage, 0].max)
+      if target.has_status?("defending")
+        damage = (damage / 2.0).round
+      end
 
       return damage
     else

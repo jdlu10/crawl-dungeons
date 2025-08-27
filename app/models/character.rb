@@ -6,6 +6,7 @@ class Character < ApplicationRecord
   belongs_to :party, optional: true
 
   has_many :character_statuses
+  has_many :statuses, through: :character_statuses
   has_many :inventories, as: :attachable
 
   validates_uniqueness_of :party_id, scope: %i[party_position_row party_position_column], allow_nil: true
@@ -18,6 +19,10 @@ class Character < ApplicationRecord
     filtered_inventories.find do |inventory|
       inventory.equipped && inventory.item.equippable_slot.key == equippable_slot_key
     end
+  end
+
+  def has_status?(key)
+    statuses.exists?(key: key)
   end
 
   def getDefenseValue

@@ -47,6 +47,19 @@ export default function BattleCommands() {
     []
   );
 
+  const noHiddenStatusRequired = useCallback(
+    (character: Character | undefined, ability: Ability) => {
+      if (!["sneak_attack", "steal"].includes(ability.key)) {
+        return false;
+      }
+
+      return !character?.character_statuses.some(
+        (cs) => cs.status.key === "hidden"
+      );
+    },
+    []
+  );
+
   const skipTargetMode = useCallback(() => {
     return (
       currentAction?.type === "ability" &&
@@ -171,10 +184,16 @@ export default function BattleCommands() {
                     vocation_ability.ability
                   );
                 }}
-                disabled={usableAbility(
-                  currentTurnCharacter,
-                  vocation_ability.ability
-                )}
+                disabled={
+                  usableAbility(
+                    currentTurnCharacter,
+                    vocation_ability.ability
+                  ) ||
+                  noHiddenStatusRequired(
+                    currentTurnCharacter,
+                    vocation_ability.ability
+                  )
+                }
                 className="w-full text-left px-2.5 py-1 font-bold cursor-pointer disabled:text-gray-600 disabled:cursor-not-allowed hover:bg-gray-700"
               >
                 {vocation_ability.ability.name}

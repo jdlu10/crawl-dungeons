@@ -7,6 +7,7 @@ statuses = [
     { name: "Poisoned", key: "poisoned", status_type: "debuff", description: "Poisoned, taking damage over time." },
     { name: "Paralyzed", key: "paralyzed", status_type: "debuff", description: "Paraylzed, would not be able to act for a period of time." },
     { name: "Slowed", key: "slowed", status_type: "debuff", description: "Slowed, move to the end of the turn order." },
+    { name: "Hidden", key: "hidden", status_type: "buff", description: "Concealed from view, harder to hit." },
 ]
 
 statuses.each do |status|
