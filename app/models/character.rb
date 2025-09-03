@@ -38,4 +38,12 @@ class Character < ApplicationRecord
   def dead?
     hit_points <= 0
   end
+
+  def update_hitpoints(amount)
+    if amount > 0
+      update(hit_points: [hit_points + amount, max_hit_points].min)
+    else
+      update(hit_points: [hit_points + amount, 0].max)
+    end
+  end
 end

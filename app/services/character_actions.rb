@@ -21,7 +21,7 @@ module CharacterActions
       verb = "missed"
       description = "#{current_turn_charcter.name} attacked #{target_character.name} and missed!"
     else
-      target_character.update(hit_points: [target_character.hit_points - damage, 0].max)
+      target_character.update_hitpoints(-damage)
     end
 
     [GameEvents.event(
@@ -86,7 +86,7 @@ module CharacterActions
       verb = "missed"
       description = "#{current_turn_charcter.name} used power attack on #{target_character.name} and missed!"
     else
-      target_character.update(hit_points: [target_character.hit_points - damage, 0].max)
+      target_character.update_hitpoints(-damage)
     end
 
     reduce_power_points(current_turn_charcter, ability)
@@ -119,7 +119,7 @@ module CharacterActions
         verb = "missed"
         description = "#{current_turn_charcter.name} used full swing on #{enemy.name} and missed!"
       else
-        enemy.update(hit_points: [enemy.hit_points - damage, 0].max)
+        enemy.update_hitpoints(-damage)
       end
 
       events.push(GameEvents.event(
@@ -168,16 +168,27 @@ module CharacterActions
     return if !current_turn_charcter.has_status?("hidden")
 
     reduce_power_points(current_turn_charcter, ability)
+
+    damage = CombatResolver.weapon_attack(current_turn_charcter, target_character)
+    damage = (damage * ability.potency).round
+    verb = "used sneak attack on"
+    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
+    if damage == 0
+      verb = "missed"
+      description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and missed!"
+    else
+      target_character.update_hitpoints(-damage)
+    end
     
     [GameEvents.event(
       "use_skill",
-      source_entity: current_turn_charcter,
-      target_entities: [target_character],
-      event_type: ability.key,
-      value: 0,
-      verb: "flees",
-      units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+        source_entity: current_turn_charcter,
+        target_entities: [target_character],
+        event_type: ability.key,
+        value: damage,
+        verb: verb,
+        units: "hit points",
+        description: description
     )]
   end
 
@@ -186,6 +197,20 @@ module CharacterActions
     return if !current_turn_charcter.has_status?("hidden")
 
     reduce_power_points(current_turn_charcter, ability)
+
+    success = rand < 0.3
+
+    if success
+      item_drop_quality_modifier = target_character.threat + target_character.level * 10
+      treasure = Inventory.new(
+        attachable: current_turn_charcter, item: Item.where(template: true).where("rarity >= ?", item_drop_quality_modifier).order("RANDOM()").first, equipped: false, active: true
+      )
+      treasure.save!
+
+      description = "#{current_turn_charcter.name} stole #{treasure.item.name} from #{target_character.name}!"
+    else
+      description = "#{current_turn_charcter.name} tried to steal from #{target_character.name} and failed!"
+    end
     
     [GameEvents.event(
       "maneuver",
@@ -193,9 +218,9 @@ module CharacterActions
       target_entities: [target_character],
       event_type: ability.key,
       value: 0,
-      verb: "flees",
+      verb: "stole from",
       units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+      description: description
     )]
   end
 
@@ -203,16 +228,20 @@ module CharacterActions
     return if unable_to_use_ability(current_turn_charcter, ability)
 
     reduce_power_points(current_turn_charcter, ability)
+
+    damage = CombatResolver.magic_attack(current_turn_charcter, ability, target_character)
+    verb = "used fire bolt on"
+    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
     
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
-      value: 0,
-      verb: "flees",
-      units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+      value: damage,
+      verb: verb,
+      units: "hit points",
+      description: description
     )]
   end
 
@@ -220,16 +249,20 @@ module CharacterActions
     return if unable_to_use_ability(current_turn_charcter, ability)
 
     reduce_power_points(current_turn_charcter, ability)
+
+    damage = CombatResolver.magic_attack(current_turn_charcter, ability, target_character)
+    verb = "used water bolt on"
+    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
     
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
-      value: 0,
-      verb: "flees",
-      units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+      value: damage,
+      verb: verb,
+      units: "hit points",
+      description: description
     )]
   end
 
@@ -238,15 +271,19 @@ module CharacterActions
 
     reduce_power_points(current_turn_charcter, ability)
 
+    damage = CombatResolver.magic_attack(current_turn_charcter, ability, target_character)
+    verb = "used earth bolt on"
+    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
+
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
-      value: 0,
-      verb: "flees",
-      units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+      value: damage,
+      verb: verb,
+      units: "hit points",
+      description: description
     )]
   end
 
@@ -254,16 +291,20 @@ module CharacterActions
     return if unable_to_use_ability(current_turn_charcter, ability)
 
     reduce_power_points(current_turn_charcter, ability)
+
+    damage = CombatResolver.magic_attack(current_turn_charcter, ability, target_character)
+    verb = "used lightning bolt on"
+    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
     
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
-      value: 0,
-      verb: "flees",
-      units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+      value: damage,
+      verb: verb,
+      units: "hit points",
+      description: description
     )]
   end
 
@@ -271,16 +312,20 @@ module CharacterActions
     return if unable_to_use_ability(current_turn_charcter, ability)
 
     reduce_power_points(current_turn_charcter, ability)
+
+    amount = CombatResolver.heal(current_turn_charcter, ability, target_character)
+    verb = "used heal on"
+    description = "#{current_turn_charcter.name} used heal on #{target_character.name} and healed for #{damage} hit points!"
     
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
       target_entities: [target_character],
       event_type: ability.key,
-      value: 0,
-      verb: "flees",
+      value: amount,
+      verb: verb,
       units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+      description: description
     )]
   end
 
@@ -288,6 +333,10 @@ module CharacterActions
     return if unable_to_use_ability(current_turn_charcter, ability)
 
     reduce_power_points(current_turn_charcter, ability)
+
+    CombatResolver.cure(current_turn_charcter, ability, target_character)
+    verb = "used cure on"
+    description = "#{current_turn_charcter.name} used cure on #{target_character.name}!"
     
     [GameEvents.event(
       "use_magic",
@@ -295,9 +344,9 @@ module CharacterActions
       target_entities: [target_character],
       event_type: ability.key,
       value: 0,
-      verb: "flees",
+      verb: verb,
       units: "",
-      description: "#{current_turn_charcter.name} orders the party to flee from combat!"
+      description: description
     )]
   end
 

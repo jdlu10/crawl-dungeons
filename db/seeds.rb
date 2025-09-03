@@ -22,6 +22,8 @@ load 'db/seeds/equippable_slots.rb'
 load 'db/seeds/effects.rb'
 load 'db/seeds/items.rb'
 
+load 'db/seeds/effect_statuses.rb'
+
 load 'db/seeds/vocations.rb'
 load 'db/seeds/abilities.rb'
 load 'db/seeds/vocation_abilities.rb'

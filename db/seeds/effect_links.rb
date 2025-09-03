@@ -24,7 +24,7 @@ effect_links = [
 
 effect_links.each do |effect_link|
     EffectLink.find_or_create_by!(effect_link)
-    puts "Created effect_link: #{effect_link[:name]}"
+    puts "Created effect_link: #{effect_link[:attachable].name} -> #{effect_link[:effect].effect_key}"
 end
 
 puts "Seeding Effect Links completed!"

@@ -33,17 +33,46 @@ module CombatResolver
   end
 
   def magic_attack(caster, ability, target)
-    base_damage = caster.intelligence * ability.power
-    resistance = target.magic_defense.to_i
+    base_damage = (caster.intelligence / 5) + (rand(1..6) * ability.potency)
+    resistance = target.wisdom / 5
 
-    [base_damage - resistance, 0].max
+    damage = [base_damage - resistance, 0].max
+
+    target_character.update_hitpoints(-damage)
+
+    apply_status_effects(ability, target)
+
+    damage
   end
 
   def heal(caster, ability, target)
-    caster.intelligence * ability.power
+    amount = (caster.wisdom / 5) + (rand(1..6) * ability.potency)
+
+    target_character.update_hitpoints(amount)
+
+    amount
   end
 
   def cure(caster, ability, target)
-    caster.intelligence * ability.power
+    target.statuses.each do |status|
+      if status.negative?
+        target.statuses.destroy(status)
+      end
+    end
+  end
+
+  def apply_status_effects(ability, target)
+    ability.effect_links.each do |effect_link|
+      if rand > 0.6
+        next
+      end
+      
+      status = CharacterStatus.find_or_initialize_by(
+        character: target,
+        status: Status.find_by(key: effect_link.effect.effect_key),
+      )
+
+      status.update!(duration: rand(1..3))
+    end
   end
 end
