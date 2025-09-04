@@ -27,7 +27,7 @@ module CharacterActions
     [GameEvents.event(
       "weapon_attack",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: damage,
       verb: verb,
@@ -46,7 +46,7 @@ module CharacterActions
     [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: 0,
       verb: "defends",
@@ -66,7 +66,7 @@ module CharacterActions
     [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: 0,
       verb: "flees",
@@ -94,7 +94,7 @@ module CharacterActions
     [GameEvents.event(
       "use_skill",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: damage,
       verb: verb,
@@ -154,7 +154,7 @@ module CharacterActions
     [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: 0,
       verb: "hides",
@@ -183,7 +183,7 @@ module CharacterActions
     [GameEvents.event(
       "use_skill",
         source_entity: current_turn_charcter,
-        target_entities: [target_character],
+        target_entities: Array(target_character),
         event_type: ability.key,
         value: damage,
         verb: verb,
@@ -215,7 +215,7 @@ module CharacterActions
     [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: 0,
       verb: "stole from",
@@ -236,7 +236,7 @@ module CharacterActions
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: damage,
       verb: verb,
@@ -257,7 +257,7 @@ module CharacterActions
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: damage,
       verb: verb,
@@ -278,7 +278,7 @@ module CharacterActions
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: damage,
       verb: verb,
@@ -299,7 +299,7 @@ module CharacterActions
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: damage,
       verb: verb,
@@ -320,7 +320,7 @@ module CharacterActions
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: amount,
       verb: verb,
@@ -341,7 +341,7 @@ module CharacterActions
     [GameEvents.event(
       "use_magic",
       source_entity: current_turn_charcter,
-      target_entities: [target_character],
+      target_entities: Array(target_character),
       event_type: ability.key,
       value: 0,
       verb: verb,

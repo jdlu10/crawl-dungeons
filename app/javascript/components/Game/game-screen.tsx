@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useCurrentPartyFrame } from "./Party/CurrentPartyFrame";
 import { useMiniMap } from "./Hud/MiniMap";
 import GameViewport from "./Hud/GameViewport";
@@ -29,6 +29,14 @@ export default function GameScreen() {
   const resetCurrentAction = useAppStore(
     (state) => state.battle.resetCurrentAction
   );
+
+  const enemyGraphicAnchors = useRef<{
+    anchors: React.RefObject<HTMLButtonElement>[];
+  }>(null);
+  const partyPortraitAnchors = useRef<{
+    anchors: React.RefObject<HTMLDivElement>[];
+  }>(null);
+
   const [gameScreenState, setGameScreenState] =
     useState<GameState>("exploring");
   const [characterSheetId, setCharacterSheetId] = useState<
@@ -126,8 +134,8 @@ export default function GameScreen() {
     if (gameScreenState === "combat") {
       battle.pushBattleEvent({
         action: "combat_message",
-        sourceEntity: undefined,
-        targetEntities: [],
+        source_entity: undefined,
+        target_entities: [],
         eventType: "",
         verb: "begin",
         description: "Battle commence!",
@@ -208,19 +216,21 @@ export default function GameScreen() {
             <TurnOrder />
           </div>
           <div className="combat-screen row-start-1 row-span-3 col-start-2 col-span-10 justify-items-center">
-            <Enemies />
-            {/* <Rewards /> */}
+            <Enemies ref={enemyGraphicAnchors} />
           </div>
           <div className="battle-commands row-start-4 row-span-3 col-start-2 col-span-2 justify-items-center content-end">
             <BattleCommands />
           </div>
           <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">
-            <CurrentPartyFrame />
+            <CurrentPartyFrame ref={partyPortraitAnchors} />
           </div>
           <div className="battle-events row-start-4 row-span-3 col-start-10 col-span-3 justify-items-center content-end">
             <BattleEvents />
           </div>
-          <BattleAnimations />
+          <BattleAnimations
+            enemyAnchors={enemyGraphicAnchors}
+            partyPortraitAnchors={partyPortraitAnchors}
+          />
         </section>
       )}
       {characterSheetId && (

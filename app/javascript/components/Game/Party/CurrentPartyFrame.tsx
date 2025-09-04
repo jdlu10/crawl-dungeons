@@ -142,7 +142,7 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
   const PartyCharacterFrame = ({ character }: { character: Character }) => (
     <div className="party-frame-container relative flex">
       <button
-        key={`game-${character.id}`}
+        id={`character-icon-${character.id}`}
         className={`bg-element-${character.element.key} cursor-pointer border-gray-400 border-2 ${innerFrameStyle} relative overflow-hidden`}
         disabled={targetMode && character.hit_points <= 0}
         onClick={
@@ -173,8 +173,8 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
         </div>
         {character.character_statuses.length > 0 && (
           <div className="w-full h-full absolute inset-0 icon-status pointer-events-none content-center">
-            {character.character_statuses.map((character_status) => (
-              <p>{character_status.status.name}</p>
+            {character.character_statuses.map((character_status, index) => (
+              <p key={`c-status-${index}`}>{character_status.status.name}</p>
             ))}
           </div>
         )}
@@ -266,35 +266,59 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
     return character.id ? <PartyCharacterFrame character={character} /> : <></>;
   };
 
-  const CurrentPartyFrame = () => (
-    <section
-      className={`party-frame ${
-        partyData?.status === "combat" ? "in-combat" : ""
-      } grid grid-rows-[1fr_1fr] gap-y-4 ${targetMode && "relative z-20"}`}
-    >
-      {partyPositions.map((partyPositionsRow, rowIndex) => (
-        <div
-          key={`party-frame-row-${rowIndex}`}
-          className={`party-frame-row grid grid-cols-3 ${
-            partyData?.status === "combat" ? "gap-x-5" : "gap-x-2"
-          }`}
+  const CurrentPartyFrame = React.forwardRef(
+    (
+      props,
+      ref: React.Ref<{ anchors: React.RefObject<HTMLDivElement | null>[] }>
+    ) => {
+      let partyMemberIndex = -1;
+
+      const refs = [...Array(partyData?.characters?.length)].map(() =>
+        React.createRef<HTMLDivElement>()
+      );
+
+      React.useImperativeHandle(ref, () => ({
+        anchors: refs,
+      }));
+
+      return (
+        <section
+          className={`party-frame ${
+            partyData?.status === "combat" ? "in-combat" : ""
+          } grid grid-rows-[1fr_1fr] gap-y-4 ${targetMode && "relative z-20"}`}
         >
-          {partyPositionsRow.map((idAtPosition, colIndex) => (
+          {partyPositions.map((partyPositionsRow, rowIndex) => (
             <div
-              key={`party-frame-col-${colIndex}`}
-              className={`frame-inner justify-items-center relative  ${
-                currentTurnCharacterId !== 0 &&
-                currentTurnCharacterId === idAtPosition
-                  ? "acting-character"
-                  : ""
+              key={`party-frame-row-${rowIndex}`}
+              className={`party-frame-row grid grid-cols-3 ${
+                partyData?.status === "combat" ? "gap-x-5" : "gap-x-2"
               }`}
             >
-              {renderPartyFrame(idAtPosition)}
+              {partyPositionsRow.map((idAtPosition, colIndex) => {
+                if (idAtPosition !== 0) {
+                  partyMemberIndex += 1;
+                }
+
+                return (
+                  <div
+                    ref={refs[partyMemberIndex]}
+                    key={`party-frame-col-${colIndex}`}
+                    className={`frame-inner justify-items-center relative  ${
+                      currentTurnCharacterId !== 0 &&
+                      currentTurnCharacterId === idAtPosition
+                        ? "acting-character"
+                        : ""
+                    }`}
+                  >
+                    {renderPartyFrame(idAtPosition)}
+                  </div>
+                );
+              })}
             </div>
           ))}
-        </div>
-      ))}
-    </section>
+        </section>
+      );
+    }
   );
   return {
     partyPositions,

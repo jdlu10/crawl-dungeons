@@ -49,15 +49,17 @@ export default function TurnOrder() {
       (actor) => actor.id === characterId
     );
     return (
-      <img
-        title={character?.name}
-        src={character?.visual_render.url}
-        className={`w-full h-full ${
-          character?.hit_points !== undefined && character.hit_points <= 0
-            ? "incapacitated"
-            : ""
-        }`}
-      />
+      <figure className="overflow-hidden mb-1 max-h-10">
+        <img
+          title={character?.name}
+          src={character?.visual_render.url}
+          className={`w-full h-full ${
+            character?.hit_points !== undefined && character.hit_points <= 0
+              ? "incapacitated"
+              : ""
+          }`}
+        />
+      </figure>
     );
   });
 

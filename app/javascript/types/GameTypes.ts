@@ -84,8 +84,8 @@ export type GameEvent = {
     | "maneuver"
     | "use_skill"
     | "combat_message";
-  sourceEntity: Character | undefined;
-  targetEntities: Character[];
+  source_entity: Character | undefined;
+  target_entities: Character[];
   eventType: string;
   value: number | undefined;
   verb: string | undefined;
