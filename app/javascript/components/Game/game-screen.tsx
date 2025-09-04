@@ -22,6 +22,7 @@ export default function GameScreen() {
   const playerId = useAppStore((s) => s.playerId);
   const battle = useAppStore((s) => s.battle);
   const partyData = useAppStore<Party | undefined>((state) => state.party.data);
+  const resetBattle = useAppStore((s) => s.battle.resetBattle);
   const setCurrentActionTarget = useAppStore(
     (s) => s.battle.setCurrentActionTarget
   );
@@ -135,6 +136,8 @@ export default function GameScreen() {
         units: undefined,
       });
       invalidateCombatInfo();
+    } else if (gameScreenState === "exploring") {
+      resetBattle();
     }
   }, [gameScreenState]);
 
