@@ -231,7 +231,7 @@ module CharacterActions
 
     damage = CombatResolver.magic_attack(current_turn_charcter, ability, target_character)
     verb = "used fire bolt on"
-    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
+    description = "#{current_turn_charcter.name} used fire bolt on #{target_character.name} and hit for #{damage} hit points!"
     
     [GameEvents.event(
       "use_magic",
@@ -252,7 +252,7 @@ module CharacterActions
 
     damage = CombatResolver.magic_attack(current_turn_charcter, ability, target_character)
     verb = "used water bolt on"
-    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
+    description = "#{current_turn_charcter.name} used water bolt on #{target_character.name} and hit for #{damage} hit points!"
     
     [GameEvents.event(
       "use_magic",
@@ -273,7 +273,7 @@ module CharacterActions
 
     damage = CombatResolver.magic_attack(current_turn_charcter, ability, target_character)
     verb = "used earth bolt on"
-    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
+    description = "#{current_turn_charcter.name} used earth bolt on #{target_character.name} and hit for #{damage} hit points!"
 
     [GameEvents.event(
       "use_magic",
@@ -294,7 +294,7 @@ module CharacterActions
 
     damage = CombatResolver.magic_attack(current_turn_charcter, ability, target_character)
     verb = "used lightning bolt on"
-    description = "#{current_turn_charcter.name} used sneak attack on #{target_character.name} and hit for #{damage} hit points!"
+    description = "#{current_turn_charcter.name} used lightning bolt on #{target_character.name} and hit for #{damage} hit points!"
     
     [GameEvents.event(
       "use_magic",
@@ -315,7 +315,7 @@ module CharacterActions
 
     amount = CombatResolver.heal(current_turn_charcter, ability, target_character)
     verb = "used heal on"
-    description = "#{current_turn_charcter.name} used heal on #{target_character.name} and healed for #{damage} hit points!"
+    description = "#{current_turn_charcter.name} used heal on #{target_character.name} and healed for #{amount} hit points!"
     
     [GameEvents.event(
       "use_magic",

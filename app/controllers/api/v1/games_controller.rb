@@ -588,9 +588,9 @@ class Api::V1::GamesController < ApplicationController
   end
 
   def reset_battle(party)
-    BattleEnemy.where(battle: party.battle).each do |old_battle_enemy|
-      old_battle_enemy.destroy
-    end
+    # BattleEnemy.where(battle: party.battle).each do |old_battle_enemy|
+    #   old_battle_enemy.destroy
+    # end
     party.battle.reset
   end
 

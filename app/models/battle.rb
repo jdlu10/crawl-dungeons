@@ -45,6 +45,11 @@ class Battle < ApplicationRecord
     self.party.characters.each do |character|
       character.character_statuses.destroy_all
     end
+
+    self.battle_enemies.each do |battle_enemy|
+      battle_enemy.character.character_statuses.destroy_all
+      battle_enemy.destroy
+    end
   end
 
   private
