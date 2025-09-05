@@ -154,7 +154,7 @@ module CharacterActions
     [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
-      target_entities: Array(target_character),
+      target_entities: [],
       event_type: ability.key,
       value: 0,
       verb: "hides",
@@ -215,7 +215,7 @@ module CharacterActions
     [GameEvents.event(
       "maneuver",
       source_entity: current_turn_charcter,
-      target_entities: Array(target_character),
+      target_entities: [],
       event_type: ability.key,
       value: 0,
       verb: "stole from",

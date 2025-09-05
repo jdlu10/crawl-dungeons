@@ -73,7 +73,7 @@ export default function GameScreen() {
         <div
           className={`party-frame-character-hp ${
             partyData?.status === "combat" ? "w-4" : "w-2"
-          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-red-950 relative status-bar`}
+          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-red-950 relative status-bar overflow-hidden`}
           title={`HP: ${character.hit_points} / ${character.max_hit_points}`}
         >
           <div
@@ -89,7 +89,7 @@ export default function GameScreen() {
         <div
           className={`party-frame-character-pp ${
             partyData?.status === "combat" ? "w-4" : "w-2"
-          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-blue-950 relative status-bar`}
+          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-blue-950 relative status-bar overflow-hidden`}
           title={`PP: ${character.power_points} / ${character.max_power_points}`}
         >
           <div
@@ -105,7 +105,7 @@ export default function GameScreen() {
         <div
           className={`party-frame-character-xp ${
             partyData?.status === "combat" ? "w-4" : "w-2"
-          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-yellow-950 relative status-bar`}
+          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-yellow-950 relative status-bar overflow-hidden`}
           title={`XP: ${character.experience_points} / 10000`}
         >
           <div

@@ -1,3 +1,5 @@
+@use "sass:math";
+
 .viewport {
   perspective: 400px;
   .viewport-grid {
@@ -183,6 +185,14 @@ img {
     opacity: 0;
     transform: scale(0.9);
   }
+  15% {
+    opacity: 0.8;
+    transform: scale(0.9);
+  }
+  85% {
+    opacity: 1;
+    transform: scale(1);
+  }
   100% {
     opacity: 1;
     transform: scale(1);
@@ -191,4 +201,141 @@ img {
 
 .animate-battle-event {
   animation: battleEvent 0.8s ease-out forwards;
+}
+
+.slashable {
+  --slash-color: #7ffcff; /* glow tint */
+  --slash-angle: 56deg; /* diagonal */
+  --slash-time: 600ms; /* duration */
+
+  position: relative;
+  padding: 0.9rem 1.2rem;
+  border: 0;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px #2a2a2a;
+}
+
+/* the flash */
+.slashable::after {
+  content: "";
+  position: absolute;
+  inset: -60% -20%; /* give room outside edges */
+  background: linear-gradient(
+    90deg,
+    transparent 0 44%,
+    rgba(255, 255, 255, 0.95) 50%,
+    transparent 56% 100%
+  );
+  transform: rotate(var(--slash-angle)) translateY(-100%);
+  filter: blur(1.5px) drop-shadow(0 0 6px white)
+    drop-shadow(0 0 18px var(--slash-color));
+  opacity: 0;
+  pointer-events: none;
+
+  animation: slash var(--slash-time) cubic-bezier(0.2, 0.6, 0.1, 1) forwards;
+}
+
+@keyframes slash {
+  0% {
+    transform: rotate(var(--slash-angle)) translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--slash-angle)) translateY(100%);
+    opacity: 1;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .slashable::after {
+    animation: none !important;
+  }
+  .slashable:hover::after {
+    opacity: 0;
+  }
+}
+
+$spark-count: 8;
+$spark-size-min: 3;
+$spark-size-max: 20;
+$rx: 100; // max horizontal offset in px
+$ry: 100; // max vertical offset in px
+
+.sparks {
+  position: relative;
+  width: 40px;
+  height: 40px;
+
+  span {
+    background: #ffbf00;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    box-shadow: 0 0 20px rgba(255, 232, 167, 0.9);
+    animation: sparkFly 700ms cubic-bezier(0.2, 0.6, 0.1, 1) forwards;
+  }
+
+  // generate per-span values at compile time
+  @for $i from 1 through $spark-count {
+    $sx: math.random($spark-size-max - $spark-size-min + 1) +
+      $spark-size-min -
+      1; // size px
+    // math.random() returns 1..n, shift to get -$rx..$rx
+    $tx: math.random(($rx * 2) + 1) - $rx - 1; // -rx .. rx
+    $ty: math.random(($ry * 2) + 1) - $ry - 1; // -ry .. ry
+    $delay-ms: math.random(300) - 1; // 0..299ms
+
+    & span:nth-child(#{$i}) {
+      width: #{$sx}px;
+      height: #{$sx}px;
+      // store the final translation in a custom property for clarity
+      --tx: #{$tx}px;
+      --ty: #{$ty}px;
+      animation-delay: #{$delay-ms}ms;
+    }
+  }
+}
+
+@keyframes sparkFly {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty)))
+      scale(0.3);
+  }
+}
+
+.action-value {
+  animation: actionValueRise 1s ease-out forwards;
+  text-shadow: 0 0 6px #000000, 0 0 12px #000000;
+}
+
+@keyframes actionValueRise {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px) scale(1.5);
+  }
 }

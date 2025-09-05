@@ -94,8 +94,8 @@ export default function BattleAnimations({
             if (partyRef && partyRef.current) {
               const rect = partyRef.current.getBoundingClientRect();
               position = {
-                left: rect.left - gameScreenPosition.left + rect.width / 2,
-                top: rect.top - gameScreenPosition.top + rect.height / 2,
+                left: rect.left - gameScreenPosition.left + rect.width / 4,
+                top: rect.top - gameScreenPosition.top + rect.height / 4,
               };
             }
           }
@@ -115,19 +115,41 @@ export default function BattleAnimations({
           position ? position : { inset: "0", width: "100%", height: "100%" }
         }
       >
-        <span className="anchor font-bold text-3xl capitalize">
-          {events[currentEventIndex].description}
-        </span>
+        {currentEvent.action === "weapon_attack" ||
+        currentEvent.action === "use_skill" ? (
+          <>
+            <div className="slashable"></div>
+            <div className="action-value absolute inset-0 w-full h-full font-bold text-3xl">
+              {currentEvent.value}
+            </div>
+          </>
+        ) : currentEvent.action === "use_magic" ? (
+          <>
+            <div className="sparks">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div className="action-value absolute inset-0 w-full h-full font-bold text-3xl text-shadow-black ">
+              {currentEvent.value}
+            </div>
+          </>
+        ) : (
+          <span className="anchor font-bold text-3xl capitalize">
+            {events[currentEventIndex].description}
+          </span>
+        )}
       </div>
     );
   };
 
   return (
     <>
-      <div
-        className="battle-animations animate-battle-event w-10 h-10 flex items-center justify-center absolute"
-        style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
-      ></div>
       {currentEventIndex >= 0 &&
         currentEventIndex < events.length &&
         events[currentEventIndex] &&
