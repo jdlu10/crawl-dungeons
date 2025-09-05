@@ -21,6 +21,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -43,6 +45,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -65,6 +69,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -87,6 +93,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -109,6 +117,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -131,6 +141,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -153,6 +165,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -175,6 +189,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -197,6 +213,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -219,6 +237,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -241,6 +261,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(
@@ -263,6 +285,8 @@ module MonsterActions
     if amount == 0
       verb = "missed"
       description = "#{enemy_character.name} attacked #{target.name} and missed!"
+    else
+      target.update_hitpoints(-amount)
     end
 
     GameEvents.event(

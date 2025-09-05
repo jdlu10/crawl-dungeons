@@ -26,10 +26,12 @@ export default function Rewards() {
     <div
       className={`enemies w-full h-full p-2.5 flex flex-col gap-8 items-center justify-end`}
     >
-      <p className="text-2xl">
-        The party has gained {experienceGain} experience points and found{" "}
-        {droppedWealth} gold coins!
-      </p>
+      {experienceGain > 0 && (
+        <p className="text-2xl">
+          The party has gained {experienceGain} experience points and found{" "}
+          {droppedWealth} gold coins!
+        </p>
+      )}
       {droppedItems.length > 0 && (
         <p className="text-2xl">
           The following items were found on the monsters:{" "}

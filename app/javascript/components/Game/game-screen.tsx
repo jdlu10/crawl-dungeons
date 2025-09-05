@@ -30,6 +30,8 @@ export default function GameScreen() {
     (state) => state.battle.resetCurrentAction
   );
 
+  const gameScreenRef = useRef<HTMLDivElement>(null);
+
   const enemyGraphicAnchors = useRef<{
     anchors: React.RefObject<HTMLButtonElement>[];
   }>(null);
@@ -211,7 +213,10 @@ export default function GameScreen() {
         </section>
       )}
       {!characterSheetId && gameScreenState === "combat" && (
-        <section className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12">
+        <section
+          ref={gameScreenRef}
+          className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12"
+        >
           <div className="turn-order row-start-1 row-span-3 col-span-1 justify-items-left">
             <TurnOrder />
           </div>
@@ -230,6 +235,7 @@ export default function GameScreen() {
           <BattleAnimations
             enemyAnchors={enemyGraphicAnchors}
             partyPortraitAnchors={partyPortraitAnchors}
+            gameScreenRef={gameScreenRef}
           />
         </section>
       )}
