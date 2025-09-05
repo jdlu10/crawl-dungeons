@@ -83,14 +83,9 @@ export default function BattleAnimations({
 
       // If not found among enemies, check party members
       if (!position && partyPortraitAnchors.current) {
-        // console.log("Checking party characters for target:", targetId);
-        // console.log("Party characters:", partyCharacters);
-        // console.log("Party anchors:", partyPortraitAnchors.current.anchors);
         partyCharacters?.forEach((character, index) => {
           if (character.id === targetId) {
             const partyRef = partyPortraitAnchors.current?.anchors[index];
-            console.log("Party ref:", partyRef);
-            console.log("Party ref current:", partyRef?.current);
             if (partyRef && partyRef.current) {
               const rect = partyRef.current.getBoundingClientRect();
               position = {
@@ -102,9 +97,6 @@ export default function BattleAnimations({
         });
       }
     }
-
-    console.log("Animation position:", position);
-    console.log("Game screen position:", gameScreenPosition);
 
     return (
       <div
@@ -120,7 +112,7 @@ export default function BattleAnimations({
           <>
             <div className="slashable"></div>
             <div className="action-value absolute inset-0 w-full h-full font-bold text-3xl">
-              {currentEvent.value}
+              {currentEvent.value || "Miss"}
             </div>
           </>
         ) : currentEvent.action === "use_magic" ? (
@@ -136,7 +128,7 @@ export default function BattleAnimations({
               <span></span>
             </div>
             <div className="action-value absolute inset-0 w-full h-full font-bold text-3xl text-shadow-black ">
-              {currentEvent.value}
+              {currentEvent.value || "Miss"}
             </div>
           </>
         ) : (

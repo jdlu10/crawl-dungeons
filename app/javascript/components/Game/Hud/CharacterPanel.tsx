@@ -98,7 +98,7 @@ export default function CharacterPanel(params: {
         )}
       </EquipmentIcon>
     ) : (
-      <EquipmentIcon />
+      <EquipmentIcon title={params.equipmentSlotKey} />
     );
   };
 

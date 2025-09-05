@@ -295,11 +295,6 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
               }`}
             >
               {partyPositionsRow.map((idAtPosition, colIndex) => {
-                console.log("Rendering position:", {
-                  rowIndex,
-                  colIndex,
-                  idAtPosition,
-                });
                 if (idAtPosition !== 0) {
                   partyMemberIndex += 1;
                 }
