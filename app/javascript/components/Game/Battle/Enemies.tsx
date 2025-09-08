@@ -37,7 +37,7 @@ const Enemies = React.forwardRef(
                 ref={refs[index]}
                 key={enemy.id}
                 id={`character-icon-${enemy.id}`}
-                className={`enemy hover:bg-gray-600/50 border-gray-400 cursor-pointer disabled:cursor-default overflow-hidden max-w-[20%] ${
+                className={`enemy hover:bg-gray-600/50 border-gray-400 cursor-pointer disabled:cursor-default overflow-hidden max-w-none lg:max-w-[20%] ${
                   targetMode && "relative z-20"
                 }`}
                 disabled={enemy.hit_points <= 0}

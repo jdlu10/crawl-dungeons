@@ -66,6 +66,7 @@ export default function PartyFormation(props: PartyFormationProps) {
           character_id: character.id,
         });
       },
+      innerFrameStyle: "w-20 h-15 lg:w-32 lg:h-32",
     });
 
   const { mutateAsync: resumeGame } = useResumeAdventure({
@@ -81,13 +82,13 @@ export default function PartyFormation(props: PartyFormationProps) {
   }, []);
 
   return (
-    <div className="h-full grid grid-cols-5 grid-rows-[auto_auto_1fr_auto] gap-4">
+    <div className="h-full grid grid-cols-5 grid-rows-[auto auto auto auto 1fr auto] lg:grid-rows-[auto_auto_1fr_auto] gap-4">
       <div className="col-span-5">
         <h1 className="mb-1 text-4xl font-semibold tracking-tight">
           Form your party
         </h1>
       </div>
-      <div className="col-span-3 row-start-2 flex gap-4 items-center">
+      <div className="col-span-6 lg:col-span-3 row-start-2 flex gap-4 items-center">
         <h2 className="font-bold">
           Create your character or select from below
         </h2>
@@ -98,10 +99,10 @@ export default function PartyFormation(props: PartyFormationProps) {
           Create Character
         </Button>
       </div>
-      <div className="col-span-2 row-start-2 flex items-center">
+      <div className="col-span-6 lg:col-span-2 row-start-3 lg:row-start-2 flex items-center">
         <h2 className="font-bold">Current party (Choose up to 4 max)</h2>
       </div>
-      <div className="col-span-3 row-start-3 overflow-y-auto flex flex-col">
+      <div className="col-span-6 lg:col-span-3 row-start-5 lg:row-start-3 overflow-y-auto flex flex-col min-h-40">
         {isLoadingAvailableCharacters && <Loading />}
         {available_characters?.map((available_character) => (
           <button
@@ -147,15 +148,15 @@ export default function PartyFormation(props: PartyFormationProps) {
           </button>
         ))}
       </div>
-      <div className="col-span-2 row-start-3">
+      <div className="col-span-6 lg:col-span-2 row-start-4 lg:row-start-3">
         <CurrentPartyFrame />
       </div>
-      <div className="col-span-3 row-start-4 pt-5">
+      <div className="col-span-3 row-start-6 lg:row-start-4 pt-5">
         <Button onClick={() => game.setGameState("main-menu")}>
           Back to Main Menu
         </Button>
       </div>
-      <div className="col-span-2 row-start-4 pt-5 justify-self-center">
+      <div className="col-span-2 row-start-6 lg:row-start-4 pt-5 justify-self-center">
         <Button
           onClick={() => {
             resumeGame({ game_id: game.id, player_id: playerId });

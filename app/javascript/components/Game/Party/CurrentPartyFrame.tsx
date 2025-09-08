@@ -154,7 +154,7 @@ export function useCurrentPartyFrame(options?: TCurrentPartyFrameOptions) {
           className={`${character.hit_points <= 0 && "incapacitated"}`}
           title={`${character.name} - ${character.description}`}
         />
-        <div className="font-bold text-lg absolute bottom-0 left-0 right-0 bg-opacity-75 bg-gray-900">
+        <div className="font-bold text-xs md:text-lg absolute bottom-0 left-0 right-0 bg-opacity-75 bg-gray-900">
           {character.name}
         </div>
         <div

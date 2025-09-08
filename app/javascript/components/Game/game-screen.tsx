@@ -67,13 +67,13 @@ export default function GameScreen() {
         setCharacterSheetId(character.id);
       }
     },
-    innerFrameStyle: "w-24 h-24",
+    innerFrameStyle: "w-15 h-20 sm:w-35 sm:h-35 lg:w-24 lg:h-24",
     additionalElements: (character) => (
       <>
         <div
           className={`party-frame-character-hp ${
             partyData?.status === "combat" ? "w-4" : "w-2"
-          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-red-950 relative status-bar overflow-hidden`}
+          } h-full border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-red-950 relative status-bar overflow-hidden`}
           title={`HP: ${character.hit_points} / ${character.max_hit_points}`}
         >
           <div
@@ -89,7 +89,7 @@ export default function GameScreen() {
         <div
           className={`party-frame-character-pp ${
             partyData?.status === "combat" ? "w-4" : "w-2"
-          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-blue-950 relative status-bar overflow-hidden`}
+          } h-full border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-blue-950 relative status-bar overflow-hidden`}
           title={`PP: ${character.power_points} / ${character.max_power_points}`}
         >
           <div
@@ -105,7 +105,7 @@ export default function GameScreen() {
         <div
           className={`party-frame-character-xp ${
             partyData?.status === "combat" ? "w-4" : "w-2"
-          } h-24 border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-yellow-950 relative status-bar overflow-hidden`}
+          } h-full border-t-2 border-r-2 border-b-2 border-l-0 border-gray-400 bg-yellow-950 relative status-bar overflow-hidden`}
           title={`XP: ${character.experience_points} / 10000`}
         >
           <div
@@ -165,7 +165,7 @@ export default function GameScreen() {
   }, [battleInfo]);
 
   return (
-    <div className="bg-gray-800 h-150 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl max-h-150 relative">
+    <div className="bg-gray-800  border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl h-dvh lg:max-h-150 relative">
       {battle.pending && (
         <div className="pending-modal absolute inset-0 z-50 bg-black opacity-0"></div>
       )}
@@ -180,36 +180,34 @@ export default function GameScreen() {
           </div>
         </>
       )}
-      <section className="viewport-container absolute top-0 right-0 left-0 bottom-0 bg-black flex justify-center overflow-hidden">
+      <section className="viewport-container absolute inset-0 bg-black flex justify-center overflow-hidden">
         <GameViewport />
       </section>
       {gameScreenState === "exploring" && (
         <section className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12">
-          <div className="minimap row-start-1 col-start-11 col-span-2 row-span-2">
+          <div className="minimap row-start-1 col-start-1 col-span-12 row-span-1 lg:row-start-1 lg:col-start-11 lg:col-span-2 lg:row-span-2 justify-items-center">
             <MiniMap />
           </div>
-          <div className="movement row-start-1 col-start-3 col-span-8 row-span-3">
+          <div className="movement row-start-2 col-start-1 col-span-12 row-span-3 lg:row-start-1 lg:col-start-3 lg:col-span-8 lg:row-span-3">
             <MovementControls />
           </div>
-          <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">
+          <div className="party-frame row-start-5 row-span-2 col-start-1 col-span-12 lg:row-start-4 lg:row-span-3 lg:col-start-4 lg:col-span-6 justify-items-center content-end">
             <CurrentPartyFrame />
           </div>
         </section>
       )}
       {(gameScreenState === "victory" || gameScreenState === "defeat") && (
         <section className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12">
-          <div className="turn-order row-start-1 row-span-3 col-span-1 justify-items-left">
+          <div className="turn-order row-start-1 row-span-3 col-span-1 justify-items-left hidden lg:block">
             <TurnOrder />
           </div>
-          <div className="combat-screen row-start-1 row-span-3 col-start-2 col-span-10 justify-items-center">
+          <div className="combat-screen row-start-1 row-span-4 col-start-1 col-span-12 lg:row-span-3 lg:col-start-2 lg:col-span-10 justify-items-center">
             {gameScreenState === "victory" && <Rewards />}
             {gameScreenState === "defeat" && <Defeat />}
           </div>
-          <div className="battle-commands row-start-4 row-span-3 col-start-2 col-span-2 justify-items-center content-end"></div>
-          <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">
+          <div className="party-frame row-start-5 row-span-2 col-start-1 col-span-12 lg:row-start-4 lg:row-span-3 lg:col-start-4 lg:col-span-6 justify-items-center content-end">
             <CurrentPartyFrame />
           </div>
-          <div className="battle-events row-start-4 row-span-3 col-start-10 col-span-3 justify-items-center content-end"></div>
         </section>
       )}
       {!characterSheetId && gameScreenState === "combat" && (
@@ -217,19 +215,19 @@ export default function GameScreen() {
           ref={gameScreenRef}
           className="p-5 absolute inset-0 grid grid-rows-6 grid-cols-12"
         >
-          <div className="turn-order row-start-1 row-span-3 col-span-1 justify-items-left">
+          <div className="turn-order row-start-1 row-span-3 col-span-1 justify-items-left hidden lg:block">
             <TurnOrder />
           </div>
-          <div className="combat-screen row-start-1 row-span-3 col-start-2 col-span-10 justify-items-center">
+          <div className="combat-screen row-start-1 row-span-2 col-start-1 col-span-12 lg:row-span-3 lg:col-start-2 lg:col-span-10 justify-items-center">
             <Enemies ref={enemyGraphicAnchors} />
           </div>
-          <div className="battle-commands row-start-4 row-span-3 col-start-2 col-span-2 justify-items-center content-end">
+          <div className="battle-commands row-start-3 row-span-2 col-start-1 col-span-12 lg:row-start-4 lg:row-span-3 lg:col-start-2 lg:col-span-2 justify-items-center content-end">
             <BattleCommands />
           </div>
-          <div className="party-frame row-start-4 row-span-3 col-start-4 col-span-6 justify-items-center content-end">
+          <div className="party-frame row-start-5 row-span-2 col-start-1 col-span-12 lg:row-start-4 lg:row-span-3 lg:col-start-4 lg:col-span-6 justify-items-center content-end">
             <CurrentPartyFrame ref={partyPortraitAnchors} />
           </div>
-          <div className="battle-events row-start-4 row-span-3 col-start-10 col-span-3 justify-items-center content-end">
+          <div className="battle-events row-start-4 row-span-3 col-start-10 col-span-3 justify-items-center content-end hidden lg:block">
             <BattleEvents />
           </div>
           <BattleAnimations

@@ -245,7 +245,7 @@ export function useMiniMap(options?: TMiniMapFrameOptions) {
   }, [partyData?.position, partyData?.facing_direction]);
 
   const MiniMap = () => (
-    <section className="mini-map w-full h-full overflow-hidden opacity-65">
+    <section className="mini-map w-[60%] h-[80%] lg:w-full lg:h-full overflow-hidden opacity-65">
       {minimap}
     </section>
   );

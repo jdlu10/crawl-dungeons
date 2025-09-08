@@ -10,8 +10,8 @@ export default function MainMenu() {
   const [currentMenu, setCurrentMenu] = useState("main-menu");
 
   return (
-    <div className="bg-amber-950 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl relative max-h-150">
-      <div className="rounded-t-lg overflow-hidden relative h-150 rounded-lg">
+    <div className="bg-amber-950 border-3 border-black rounded-lg shadow-md text-gray-300 mx-auto w-full max-w-6xl relative h-dvh lg:max-h-150">
+      <div className="rounded-t-lg overflow-hidden relative h-full rounded-lg">
         <img
           className="w-full object-cover h-full"
           src="/images/entrance-main-landscape.png"

@@ -92,7 +92,7 @@ export default function CharacterPanel(params: {
       >
         {equippedItem && (
           <img
-            className="max-w-14 max-h-14"
+            className="max-w-10 max-h-10 lg:max-w-14 lg:max-h-14"
             src={equippedItem.item.visual_render.url}
           />
         )}
@@ -197,31 +197,31 @@ export default function CharacterPanel(params: {
     <section
       className={`character-panel ${
         party?.status === "combat" ? "in-combat" : ""
-      } grid grid-cols-8 grid-rows-8 absolute inset-0 overflow-hidden gap-2.5 p-2.5 bg-black`}
+      } grid grid-cols-8 grid-rows-8 absolute inset-0 overflow-y-auto lg:overflow-y-hidden lg:overflow-hidden gap-2.5 p-2.5 bg-black`}
     >
-      <div className="paper-doll row-span-4 col-span-4 bg-[url('/images/characters/character-sheet.png')] bg-no-repeat bg-contain bg-center border-2 py-7 px-40 grid grid-cols-2 grid-rows-5">
+      <div className="paper-doll row-start-2 lg:row-start-1 row-span-3 lg:row-span-4 col-span-4 bg-[url('/images/characters/character-sheet.png')] bg-no-repeat bg-contain bg-center border-2 py-7 px-7 lg:px-40 grid grid-cols-2 grid-rows-5">
         <div className="head ml-5">
           <EquipmentSlot equipmentSlotKey="head" />
         </div>
         <div className="neck justify-self-end mr-5">
           <EquipmentSlot equipmentSlotKey="neck" />
         </div>
-        <div className="body -ml-5">
+        <div className="body lg:-ml-5">
           <EquipmentSlot equipmentSlotKey="body" />
         </div>
-        <div className="back justify-self-end -mr-5">
+        <div className="back justify-self-end lg:-mr-5">
           <EquipmentSlot equipmentSlotKey="back" />
         </div>
-        <div className="left-hand -ml-15">
+        <div className="left-hand -ml-5 lg:-ml-15">
           <EquipmentSlot equipmentSlotKey="right_hand_one" />
         </div>
-        <div className="right-hand justify-self-end -mr-15">
+        <div className="right-hand justify-self-end -mr-5 lg:-mr-15">
           <EquipmentSlot equipmentSlotKey="left_hand_one" />
         </div>
-        <div className="waist -ml-5">
+        <div className="waist lg:-ml-5">
           <EquipmentSlot equipmentSlotKey="waist" />
         </div>
-        <div className="hands justify-self-end -mr-5">
+        <div className="hands justify-self-end lg:-mr-5">
           <EquipmentSlot equipmentSlotKey="hands" />
         </div>
         <div className="left-ring ml-5">
@@ -231,7 +231,7 @@ export default function CharacterPanel(params: {
           <EquipmentSlot equipmentSlotKey="feet" />
         </div>
       </div>
-      <div className="name-and-race row-span-2 col-span-4 flex gap-5 border-2">
+      <div className="name-and-race row-start-1 row-span-1 lg:row-span-2 col-span-8 lg:col-span-4 flex gap-5 border-2">
         <div className="portrait">
           <img
             src={character.visual_render.url}
@@ -240,12 +240,12 @@ export default function CharacterPanel(params: {
           />
         </div>
         <div className="flex flex-col gap-2 flex-1 pt-2.5">
-          <h1 className="text-3xl font-bold">{character.name}</h1>
-          <h2 className="text-2xl">
+          <h1 className="text-xl lg:text-3xl font-bold">{character.name}</h1>
+          <h2 className="text-base lg:text-2xl">
             Level {character.level} {character.race.name}{" "}
             {character.vocation.name}
           </h2>
-          <div className="character-icons flex gap-2.5">
+          <div className="character-icons flex gap-2.5 absolute right-20 lg:relative">
             <div
               className={`w-7 h-7 icon-element-${character.element.key}`}
               title={character.element.description}
@@ -274,8 +274,8 @@ export default function CharacterPanel(params: {
           </button>
         </div>
       </div>
-      <div className="status row-span-2 col-span-2 border-2 grid grid-cols-[auto_1fr] grid-rows-3 gap-0.5 bg-gray-100">
-        <div className="hit-points text-lg font-bold text-center bg-black content-center px-2.5">
+      <div className="status row-start-2 lg:row-start-3 row-span-1 lg:row-span-2 col-span-4 lg:col-span-2 border-2 grid grid-cols-[auto_1fr] grid-rows-3 gap-0.5 bg-gray-100">
+        <div className="hit-points text-base lg:text-lg font-bold text-center bg-black content-center px-2.5">
           HP
         </div>
         <div className="hit-points-value bg-red-950 relative">
@@ -288,11 +288,11 @@ export default function CharacterPanel(params: {
                 ) + "%",
             }}
           ></div>
-          <div className="absolute inset-0 content-center font-bold text-2xl text-center">
+          <div className="absolute inset-0 content-center font-bold text-base lg:text-2xl text-center">
             {character.hit_points} / {character.max_hit_points}
           </div>
         </div>
-        <div className="power-points text-lg font-bold text-center bg-black content-center px-2.5">
+        <div className="power-points text-base lg:text-lg font-bold text-center bg-black content-center px-2.5">
           PP
         </div>
         <div className="power-points-value bg-blue-950 relative">
@@ -305,11 +305,11 @@ export default function CharacterPanel(params: {
                 ) + "%",
             }}
           ></div>
-          <div className="absolute inset-0 content-center font-bold text-2xl text-center">
+          <div className="absolute inset-0 content-center font-bold text-base lg:text-2xl text-center">
             {character.power_points} / {character.max_power_points}
           </div>
         </div>
-        <div className="experience-points text-lg font-bold text-center bg-black content-center px-2.5">
+        <div className="experience-points text-base lg:text-lg font-bold text-center bg-black content-center px-2.5">
           XP
         </div>
         <div className="experience-points-value bg-yellow-950 relative">
@@ -320,80 +320,80 @@ export default function CharacterPanel(params: {
                 Math.floor((character.experience_points / 10000) * 100) + "%",
             }}
           ></div>
-          <div className="absolute inset-0 content-center font-bold text-2xl text-center">
+          <div className="absolute inset-0 content-center font-bold text-base lg:text-2xl text-center">
             {character.experience_points} / 10000
           </div>
         </div>
       </div>
-      <div className="attributes row-span-2 col-span-2 border-2 grid grid-cols-2 grid-rows-3 gap-0.5 bg-gray-100">
+      <div className="attributes row-start-3 row-span-2 col-span-4 lg:col-span-2 border-2 grid grid-cols-2 grid-rows-3 gap-0.5 bg-gray-100">
         <div className="attribute-strength flex flex-row bg-black items-center">
           <h3
             title="Strength"
-            className="text-lg font-bold pb-1 pt-1 w-1/2 border-b-white border-r-2 text-center content-center"
+            className="text-base lg:text-lg font-bold pb-1 pt-1 w-1/2 border-b-white border-r-2 text-center content-center"
           >
             STR
           </h3>
-          <div className="attribute-value flex-1 text-2xl content-center text-center w-1/2 font-bold">
+          <div className="attribute-value flex-1 text-lg lg:text-2xl content-center text-center w-1/2 font-bold">
             {character.strength}
           </div>
         </div>
         <div className="attribute-intelligence flex flex-row bg-black items-center">
           <h3
             title="Intellignce"
-            className="text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
+            className="text-base lg:text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
           >
             INT
           </h3>
-          <div className="attribute-value flex-1 text-2xl content-center text-center w-1/2 font-bold">
+          <div className="attribute-value flex-1 text-lg lg:text-2xl content-center text-center w-1/2 font-bold">
             {character.intelligence}
           </div>
         </div>
         <div className="attribute-dexterity flex flex-row bg-black items-center">
           <h3
             title="Dexterity"
-            className="text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
+            className="text-base lg:text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
           >
             DEX
           </h3>
-          <div className="attribute-value flex-1 text-2xl content-center text-center w-1/2 font-bold">
+          <div className="attribute-value flex-1 text-lg lg:text-2xl content-center text-center w-1/2 font-bold">
             {character.dexterity}
           </div>
         </div>
         <div className="attribute-wisdom flex flex-row bg-black items-center">
           <h3
             title="Wisdom"
-            className="text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
+            className="text-base lg:text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
           >
             WIS
           </h3>
-          <div className="attribute-value flex-1 text-2xl content-center text-center w-1/2 font-bold">
+          <div className="attribute-value flex-1 text-lg lg:text-2xl content-center text-center w-1/2 font-bold">
             {character.wisdom}
           </div>
         </div>
         <div className="attribute-constitution flex flex-row bg-black items-center">
           <h3
             title="Constitution"
-            className="text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
+            className="text-base lg:text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
           >
             CON
           </h3>
-          <div className="attribute-value flex-1 text-2xl content-center text-center w-1/2 font-bold">
+          <div className="attribute-value flex-1 text-lg lg:text-2xl content-center text-center w-1/2 font-bold">
             {character.constitution}
           </div>
         </div>
         <div className="attribute-charisma flex flex-row bg-black items-center">
           <h3
             title="Charisma"
-            className="text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
+            className="text-base lg:text-lg font-bold pb-1 pt-1  w-1/2 border-b-white border-r-2 text-center content-center"
           >
             CHA
           </h3>
-          <div className="attribute-value flex-1 text-2xl content-center text-center w-1/2 font-bold">
+          <div className="attribute-value flex-1 text-lg lg:text-2xl content-center text-center w-1/2 font-bold">
             {character.charisma}
           </div>
         </div>
       </div>
-      <div className="inventory row-start-5 row-span-4 col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
+      <div className="inventory row-start-5 row-span-2 lg:row-span-4 col-span-8 lg:col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
         <h3 className="border-b-2 sticky top-0 font-bold text-lg pt-2.5 bg-black">
           Character Inventory
         </h3>
@@ -406,7 +406,7 @@ export default function CharacterPanel(params: {
                   className="flex gap-2.5 align-middle hover:bg-gray-800"
                 >
                   <span
-                    className="item-name flex-1"
+                    className="item-name flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
                     title={inventory.item.description}
                   >
                     {inventory.item.name}
@@ -421,9 +421,9 @@ export default function CharacterPanel(params: {
           })}
         </ul>
       </div>
-      <div className="inventory row-start-5 row-span-4 col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
+      <div className="inventory row-start-7 lg:row-start-5 row-span-2 lg:row-span-4 col-span-8 lg:col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
         <h3 className="border-b-2 sticky top-0 font-bold text-lg pt-2.5 bg-black">
-          Party Inventory (Wealth: {party?.wealth} gold coins)
+          Party Inventory (Gold: {party?.wealth})
         </h3>
         <ul className="flex flex-col gap-2.5 pt-2.5">
           {party?.filtered_inventories.map((inventory) => {
@@ -434,7 +434,7 @@ export default function CharacterPanel(params: {
                   className="flex gap-2.5 align-middle hover:bg-gray-800"
                 >
                   <span
-                    className="item-name flex-1"
+                    className="item-name flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
                     title={inventory.item.description}
                   >
                     {inventory.item.name}
@@ -450,7 +450,7 @@ export default function CharacterPanel(params: {
         </ul>
       </div>
 
-      <div className="skills row-span-2 col-span-2 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto">
+      <div className="skills row-span-2 col-span-4 lg:col-span-2 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto">
         <h3 className="border-b-2 sticky top-0 font-bold text-lg pt-2.5 bg-black">
           Skills
         </h3>
@@ -485,7 +485,7 @@ export default function CharacterPanel(params: {
           })}
         </ul>
       </div>
-      <div className="notes row-span-2 col-span-2 border-2 p-2.5 overflow-auto">
+      <div className="notes row-span-2 col-span-4 lg:col-span-2 border-2 p-2.5 overflow-auto">
         {character.description}
       </div>
       {ContextMenu}
