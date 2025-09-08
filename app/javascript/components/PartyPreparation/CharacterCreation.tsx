@@ -234,11 +234,11 @@ export default function CharacterCreation(props: PartyFormationProps) {
         id="create-character-form"
         className="form-create-character grid gap-4 grid-cols-6 items-start"
       >
-        <h1 className="mb-3 text-4xl font-semibold tracking-tight col-span-6">
+        <h1 className="mb-3 text-2xl lg:text-4xl font-semibold tracking-tight col-span-6">
           Create Your Character
         </h1>
 
-        <section className="character-portrait row-start-2 relative w-36 h-36 overflow-hidden">
+        <section className="character-portrait row-start-2 col-span-3 lg:col-span-1 relative w-36 h-36 overflow-hidden">
           {isLoadingCharacterPortraits && <Loading />}
           {characterPortraits && (
             <>
@@ -291,7 +291,7 @@ export default function CharacterCreation(props: PartyFormationProps) {
           )}
         </section>
 
-        <section className="character-name row-start-2 col-span-2">
+        <section className="character-name row-start-2 col-span-3 lg:col-span-2">
           <label
             htmlFor="name"
             className="w-full mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -340,7 +340,7 @@ export default function CharacterCreation(props: PartyFormationProps) {
           )}
         </section>
 
-        <section className="character-element row-start-3 col-span-3 flex flex-wrap gap-2">
+        <section className="character-element row-start-4 col-span-6 lg:row-start-3 lg:col-span-3 flex flex-wrap gap-2">
           <h3 className="w-full mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Element:
           </h3>
@@ -372,7 +372,7 @@ export default function CharacterCreation(props: PartyFormationProps) {
             ))}
         </section>
 
-        <section className="character-vocation row-start-4 flex flex-wrap gap-2">
+        <section className="character-vocation row-start-3 col-span-6 lg:row-start-4 lg:col-span-1 flex flex-wrap gap-2">
           <h3 className="w-full mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Vocation:
           </h3>
@@ -404,7 +404,7 @@ export default function CharacterCreation(props: PartyFormationProps) {
             ))}
         </section>
 
-        <section className="character-skills row-start-4 col-span-2">
+        <section className="character-skills row-start-6 col-span-6 lg:row-start-4 lg:col-span-2">
           <h3 className="w-full mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Vocation Skills:
           </h3>
@@ -429,12 +429,12 @@ export default function CharacterCreation(props: PartyFormationProps) {
           </ul>
         </section>
 
-        <section className="attributes row-start-2 col-span-3 row-span-2 text-lg">
+        <section className="attributes row-start-5 col-span-6 lg:row-start-2 lg:col-span-3 lg:row-span-2 text-lg">
           <div className="flex flex-wrap">
-            <p className="character-level block w-1/2">
+            <p className="character-level w-1/2 hidden lg:block">
               Level: {fetchedCharacterTemplate?.level}
             </p>
-            <p className="character-hit-points block w-1/2">
+            <p className="character-hit-points block w-full lg:w-1/2">
               <input
                 {...register("hit_points")}
                 type="hidden"
@@ -448,11 +448,11 @@ export default function CharacterCreation(props: PartyFormationProps) {
               Hit Points: {fetchedCharacterTemplate?.hit_points} /{" "}
               {fetchedCharacterTemplate?.max_hit_points}
             </p>
-            <p className="character-experience-points block w-1/2">
+            <p className="character-experience-points w-1/2 hidden lg:block">
               Experience Points: {fetchedCharacterTemplate?.experience_points}
             </p>
 
-            <p className="character-power-points mb-2.5 block w-1/2">
+            <p className="character-power-points mb-2.5 block w-full lg:w-1/2">
               <input
                 {...register("power_points")}
                 type="hidden"
@@ -481,7 +481,7 @@ export default function CharacterCreation(props: PartyFormationProps) {
 
             {renderAbilityScoreButton("charisma")}
           </div>
-          <strong>
+          <strong className="mr-5">
             Unallocated bonus points:{" "}
             <span>
               {abilityScores.maxTotalScore - abilityScores.totalScore}
@@ -490,13 +490,13 @@ export default function CharacterCreation(props: PartyFormationProps) {
           <button
             onClick={rerollAbilityScores}
             type="button"
-            className="bg-blue-800 disabled:bg-gray-600 rounded cursor-pointer inline-flex items-center py-2 px-4 ml-5 uppercase text-lg font-semibold text-center"
+            className="bg-blue-800 disabled:bg-gray-600 rounded cursor-pointer inline-flex items-center py-2 px-4 uppercase text-lg font-semibold text-center"
           >
             Reroll
           </button>
         </section>
 
-        <section className="character-notes row-start-4 col-span-3">
+        <section className="character-notes row-start-7 col-span-6 lg:row-start-4 lg:col-span-3">
           <h3 className="w-full mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Notes:
           </h3>
@@ -506,13 +506,13 @@ export default function CharacterCreation(props: PartyFormationProps) {
           ></textarea>
         </section>
 
-        <section className="back-to-party-formation row-start-5 col-span-4">
+        <section className="back-to-party-formation row-start-8 col-span-3 lg:row-start-5 lg:col-span-4">
           <Button onClick={() => props.setCurrentMenu("party-formation")}>
             Back to Party Formation
           </Button>
         </section>
 
-        <section className="character-create row-start-5 col-start-5 col-span-2">
+        <section className="character-create row-start-8 col-span-3 lg:row-start-5 lg:col-start-5 lg:col-span-2">
           <button
             type="submit"
             disabled={
