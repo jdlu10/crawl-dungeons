@@ -245,7 +245,7 @@ export default function CharacterPanel(params: {
             Level {character.level} {character.race.name}{" "}
             {character.vocation.name}
           </h2>
-          <div className="character-icons flex gap-2.5 absolute right-20 lg:relative">
+          <div className="character-icons flex gap-2.5 absolute right-20 lg:right-0 lg:relative">
             <div
               className={`w-7 h-7 icon-element-${character.element.key}`}
               title={character.element.description}
@@ -278,7 +278,7 @@ export default function CharacterPanel(params: {
         <div className="hit-points text-base lg:text-lg font-bold text-center bg-black content-center px-2.5">
           HP
         </div>
-        <div className="hit-points-value bg-red-950 relative">
+        <div className="hit-points-value bg-red-950 relative overflow-hidden">
           <div
             className="hp-bar status-bar block h-full bg-red-800 absolute"
             style={{
@@ -295,7 +295,7 @@ export default function CharacterPanel(params: {
         <div className="power-points text-base lg:text-lg font-bold text-center bg-black content-center px-2.5">
           PP
         </div>
-        <div className="power-points-value bg-blue-950 relative">
+        <div className="power-points-value bg-blue-950 relative overflow-hidden">
           <div
             className="pp-bar status-bar block h-full bg-blue-800 absolute"
             style={{
@@ -312,7 +312,7 @@ export default function CharacterPanel(params: {
         <div className="experience-points text-base lg:text-lg font-bold text-center bg-black content-center px-2.5">
           XP
         </div>
-        <div className="experience-points-value bg-yellow-950 relative">
+        <div className="experience-points-value bg-yellow-950 relative overflow-hidden">
           <div
             className="xp-bar status-bar block h-full bg-yellow-800 absolute"
             style={{
@@ -393,7 +393,7 @@ export default function CharacterPanel(params: {
           </div>
         </div>
       </div>
-      <div className="inventory row-start-5 row-span-2 lg:row-span-4 col-span-8 lg:col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
+      <div className="inventory row-start-5 col-start-1 row-span-2 lg:row-span-4 col-span-8 lg:col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
         <h3 className="border-b-2 sticky top-0 font-bold text-lg pt-2.5 bg-black">
           Character Inventory
         </h3>
@@ -421,7 +421,7 @@ export default function CharacterPanel(params: {
           })}
         </ul>
       </div>
-      <div className="inventory row-start-7 lg:row-start-5 row-span-2 lg:row-span-4 col-span-8 lg:col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
+      <div className="inventory row-start-7 lg:row-start-5 lg:col-start-4 row-span-2 lg:row-span-4 col-span-8 lg:col-span-3 border-2 pl-2.5 pr-2.5 pb-2.5 overflow-auto relative">
         <h3 className="border-b-2 sticky top-0 font-bold text-lg pt-2.5 bg-black">
           Party Inventory (Gold: {party?.wealth})
         </h3>
